@@ -33,6 +33,10 @@ FlatRenderer.prototype.draw = function(){
 	gl.uniformMatrix4fv(this.MVPLocation, false, rModel.getMVP());
 	gl.uniform4fv(this.colorLocation, rModel.getColor());
 
+	gl.cullFace(gl.BACK);
+	gl.drawArrays(gl.TRIANGLES, 0, rModel.getTrianglesCount()*3);
+
+	gl.cullFace(gl.FRONT);
 	gl.drawArrays(gl.TRIANGLES, 0, rModel.getTrianglesCount()*3);
 }
 
@@ -81,10 +85,15 @@ DirectFaceRenderer.prototype.draw = function(){
 	gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.getMVP());
 	gl.uniformMatrix4fv(this.modelLocation, false, this.rModel.getModelMatrix());
 	gl.uniform4fv(this.colorLocation, rModel.getColor());
-	gl.uniform3fv(this.reverseLightDirectionLocation, lightDirection);
-
+	
 	gl.bindVertexArray(this.vao);
 
+    gl.cullFace(gl.BACK);
+    gl.uniform3fv(this.reverseLightDirectionLocation, lightDirection);
+	gl.drawArrays(gl.TRIANGLES, 0, rModel.getTrianglesCount()*3);
+
+	gl.cullFace(gl.FRONT);
+	gl.uniform3fv(this.reverseLightDirectionLocation, vec3.negate(lightDirection, lightDirection));
 	gl.drawArrays(gl.TRIANGLES, 0, rModel.getTrianglesCount()*3);
 }
 
@@ -132,8 +141,13 @@ DirectVertexRenderer.prototype.draw = function(){
 	gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.getMVP());
 	gl.uniformMatrix4fv(this.modelLocation, false, this.rModel.getModelMatrix());
 	gl.uniform4fv(this.colorLocation, this.rModel.getColor());
+	
+	gl.cullFace(gl.BACK);
 	gl.uniform3fv(this.reverseLightDirectionLocation, lightDirection);
+	gl.drawArrays(gl.TRIANGLES, 0, this.rModel.getTrianglesCount()*3);
 
+	gl.cullFace(gl.FRONT);
+	gl.uniform3fv(this.reverseLightDirectionLocation, vec3.negate(lightDirection, lightDirection));
 	gl.drawArrays(gl.TRIANGLES, 0, this.rModel.getTrianglesCount()*3);
 }
 
