@@ -6,6 +6,7 @@ var mainRenderer;
 var secondaryRenderers = [];
 
 var trackBall;
+var translator;
 var dragging = false;
 
 var file = document.getElementById('model_file');
@@ -26,10 +27,12 @@ file.onchange = function(){
        changeViewType();
        setRenderers();
        trackBall = new virtualTrackBall();
-       trackBall.setWinSize(gl.canvas.clientWidth, gl.canvas.clientHeight);
+       trackBall.setWinSize();
+       translator = new moveHelper();
+       translator.setWinSize();
        updateInfo();
        draw();
-       initEventHandlers();
+       updateEventHandlers();
       }
     }
     reader.readAsBinaryString(file.files[0]);
@@ -107,10 +110,11 @@ function changeViewType(){
 }
 
 function resetView(){
-  if(trackBall == undefined)
+  if(trackBall == undefined || translator == undefined)
     return;
 
   trackBall.reset();
+  translator.reset();
   rModel.reset();
   draw();
 }
@@ -121,7 +125,7 @@ function draw(){
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
-  //gl.enable(gl.CULL_FACE);
+  gl.enable(gl.CULL_FACE);
   if(mainRenderer != null){
     mainRenderer.draw();
   }
@@ -135,36 +139,85 @@ function degToRad(d) {
   return d * Math.PI / 180;
 }
 
-function initEventHandlers(){
-  canvas.onmousedown = function(e){
-    dragging = true;
+function rotate_mousedown(e){
+  dragging = true;
+  var rect = canvas.getBoundingClientRect();
+  trackBall.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
+}
+
+function rotate_mouseup(e){
+  dragging = false;
+}
+
+function rotate_mousemove(e){
+  if(dragging){
     var rect = canvas.getBoundingClientRect();
-    trackBall.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
-  }
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    trackBall.rotateTo(x, y);
 
-  canvas.onmouseup = function(e){
-    dragging = false;
-  }
-
-  canvas.onmousemove = function(e){
-    if(dragging){
-      var rect = canvas.getBoundingClientRect();
-      var x = event.clientX - rect.left;
-      var y = event.clientY - rect.top;
-      trackBall.rotateTo(x, y);
-
-      rModel.setRotation(trackBall.getRotationMatrix());
-      draw();
-    }
-  }
-
-  canvas.onwheel = function(e){
-    e.preventDefault();
-    if(e.deltaY < 0){
-      rModel.setScale(0.1);
-    }else{
-      rModel.setScale(-0.1);
-    }
+    rModel.setRotation(trackBall.getRotationMatrix());
     draw();
   }
+}
+
+function move_mousedown(e){
+  dragging = true;
+  var rect = canvas.getBoundingClientRect();
+  translator.setMovementStart(event.clientX - rect.left, event.clientY - rect.top)
+}
+
+function move_mouseup(e){
+  dragging = false;
+}
+
+function move_mousemove(e){
+  if(dragging){
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    translator.moveTo(x, y);
+
+    rModel.setTranslation(translator.getMovementVector());
+    draw();
+  }
+}
+
+function updateEventHandlers(){
+  var mode = document.getElementsByName("interaction");
+  for(var i = 0; i < mode.length; i++){
+    if(mode[i].checked){
+      var name = mode[i].value;
+      if(name == "rotate"){
+        canvas.removeEventListener("mousedown", move_mousedown);
+        canvas.removeEventListener("mouseup", move_mouseup);
+        canvas.removeEventListener("mousemove", move_mousemove);
+
+        canvas.addEventListener("mousedown", rotate_mousedown);
+        canvas.addEventListener("mouseup", rotate_mouseup);
+        canvas.addEventListener("mousemove", rotate_mousemove);
+      }else{
+        canvas.removeEventListener("mousedown", rotate_mousedown);
+        canvas.removeEventListener("mouseup", rotate_mouseup);
+        canvas.removeEventListener("mousemove", rotate_mousemove); 
+
+        canvas.addEventListener("mousedown", move_mousedown);
+        canvas.addEventListener("mouseup", move_mouseup);
+        canvas.addEventListener("mousemove", move_mousemove);
+      }
+    }
+  } 
+}
+
+canvas.onwheel = function(e){
+  if(rModel == undefined){
+    return;
+  }
+  e.preventDefault();
+  if(e.deltaY < 0){
+    rModel.setScale(0.1);
+  }else{
+    rModel.setScale(-0.1);
+  }
+  draw();
 }

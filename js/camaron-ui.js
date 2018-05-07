@@ -1,8 +1,8 @@
 var virtualTrackBall = function(){};
 
-virtualTrackBall.prototype.setWinSize = function(width, height){
-  this.width = width;
-  this.height = height;
+virtualTrackBall.prototype.setWinSize = function(){
+  this.width = gl.canvas.clientWidth;
+  this.height = gl.canvas.clientHeight;
   this.r = Math.min(this.width, this.height)/2;
   this.q = quat.create();
   this.start;
@@ -59,4 +59,44 @@ virtualTrackBall.prototype.reset = function(){
   this.height = gl.canvas.clientHeight;
   this.r = Math.min(this.width, this.height)/2;
   this.q = quat.create();
+}
+
+var moveHelper = function(){};
+
+moveHelper.prototype.setWinSize = function(){
+  this.width = gl.canvas.clientWidth;
+  this.height = gl.canvas.clientHeight;
+  this.startX;
+  this.startY;
+  this.v = vec3.create();
+}
+
+moveHelper.prototype.setMovementStart = function(win_x, win_y){
+  this.startX = win_x;
+  this.startY = win_y;
+}
+
+moveHelper.prototype.moveTo = function(win_x, win_y){
+  this.endX = win_x;
+  this.endY = win_y;
+
+  var dx = this.startX - this.endX;
+  var dy = this.startY - this.endY;
+  
+  this.v[0] += -dx;
+  this.v[1] +=  dy;
+  this.v[2] +=  0.0;
+
+  this.startX = this.endX;
+  this.startY = this.endY;
+}
+
+moveHelper.prototype.getMovementVector = function(){
+  return this.v;
+}
+
+moveHelper.prototype.reset = function(){
+  this.width = gl.canvas.clientWidth;
+  this.height = gl.canvas.clientHeight;
+  this.v = vec3.create();
 }

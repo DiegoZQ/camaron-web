@@ -84,13 +84,13 @@
         <div class="col s2">
           <p>
             <label>
-              <input name="interaction" value="rotate" type="radio" checked />
+              <input name="interaction" value="rotate" onchange="updateEventHandlers();" type="radio" checked />
               <span>Rotate</span>
             </label>
           </p>
           <p>
             <label>
-              <input name="interaction" value="move" type="radio" />
+              <input name="interaction" value="move" onchange="updateEventHandlers();" type="radio" />
               <span>Move</span>
             </label>
           </p>

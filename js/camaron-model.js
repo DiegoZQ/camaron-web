@@ -379,6 +379,18 @@ RModel.prototype.setRotation = function(rotationMatrix){
   this.recalculateMVP = true;
 }
 
+RModel.prototype.setTranslation = function(translationVector){
+  var xFactor = this.modelWidth/500;
+  var yFactor = this.modelHeight/500;
+
+  this.translation[0] = translationVector[0] * xFactor;
+  this.translation[1] = translationVector[1] * yFactor;
+
+
+  this.recalculateMV = true;
+  this.recalculateMVP = true;
+}
+
 RModel.prototype.setScale = function(scaleDelta){
   this.scale[0] += scaleDelta;
   this.scale[1] += scaleDelta;
@@ -446,7 +458,7 @@ RModel.prototype.getOrthoProjectionMatrix = function(){
     width = this.modelHeight*this.aspect;
     height = this.modelHeight;
   }
-  mat4.ortho(orthoProjectionMatrix, -(width/2)*margin, (width/2)*margin, -(height/2)*margin, (height/2)*margin, -(this.modelDepth/2)*100, (this.modelDepth/2)*100)
+  mat4.ortho(orthoProjectionMatrix, -(width/2)*margin, (width/2)*margin, -(height/2)*margin, (height/2)*margin, 1, this.modelDepth*50)
   
   return orthoProjectionMatrix;
 }
@@ -454,7 +466,7 @@ RModel.prototype.getOrthoProjectionMatrix = function(){
 RModel.prototype.getPerspectiveProjectionMatrix = function(){
   var perspectiveProjectionMatrix = mat4.create();
   var fieldOfViewRadians = degToRad(60);
-  mat4.perspective(perspectiveProjectionMatrix, fieldOfViewRadians, this.aspect, 1, this.modelDepth*100);
+  mat4.perspective(perspectiveProjectionMatrix, fieldOfViewRadians, this.aspect, 1, this.modelDepth*50);
   
   return perspectiveProjectionMatrix;
 }
