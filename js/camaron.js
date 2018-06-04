@@ -5,7 +5,7 @@ var rModel;
 var mainRenderer;
 var secondaryRenderers = [];
 
-var trackBall;
+var rotator;
 var translator;
 var dragging = false;
 
@@ -26,10 +26,8 @@ file.onchange = function(){
        rModel.loadData();
        changeViewType();
        setRenderers();
-       trackBall = new virtualTrackBall();
-       trackBall.setWinSize();
-       translator = new moveHelper();
-       translator.setWinSize();
+       rotator = new Rotator();
+       translator = new Translator();
        updateInfo();
        draw();
        updateEventHandlers();
@@ -110,10 +108,10 @@ function changeViewType(){
 }
 
 function resetView(){
-  if(trackBall == undefined || translator == undefined)
+  if(rotator == undefined || translator == undefined)
     return;
 
-  trackBall.reset();
+  rotator.reset();
   translator.reset();
   rModel.reset();
   draw();
@@ -142,7 +140,7 @@ function degToRad(d) {
 function rotate_mousedown(e){
   dragging = true;
   var rect = canvas.getBoundingClientRect();
-  trackBall.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
+  rotator.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
 }
 
 function rotate_mouseup(e){
@@ -154,9 +152,9 @@ function rotate_mousemove(e){
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
-    trackBall.rotateTo(x, y);
+    rotator.rotateTo(x, y);
 
-    rModel.setRotation(trackBall.getRotationMatrix());
+    rModel.setRotation(rotator.getRotationMatrix());
     draw();
   }
 }

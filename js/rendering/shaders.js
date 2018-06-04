@@ -1,4 +1,4 @@
-// VERTEX SHADERS
+// NORMAL PROGRAM
 
 var normalVertexShader = `#version 300 es
 
@@ -36,6 +36,8 @@ void main() {
 }
 `;
 
+
+// BASIC PROGRAM
 var basicVertexShader = `#version 300 es
 
 in vec4 a_position;
