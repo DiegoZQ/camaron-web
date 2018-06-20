@@ -9,6 +9,8 @@ var rotator;
 var translator;
 var dragging = false;
 
+var colorConfig = new ColorConfig();
+
 var file = document.getElementById('model_file');
 var canvas = document.getElementById("glCanvas");
 var gl = canvas.getContext("webgl2");

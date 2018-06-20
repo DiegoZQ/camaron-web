@@ -37,8 +37,8 @@ RModel.prototype.loadData = function(){
 RModel.prototype.loadDataFromPolygonMesh = function(){
   var modelVerticesCount = this.originalModel.getVerticesCount;
   var modelVertices = this.originalModel.getVertices();
-  var polygonsCount = model.getPolygonsCount();
-  var polygons = model.getPolygons();
+  var polygonsCount = this.originalModel.getPolygonsCount();
+  var polygons = this.originalModel.getPolygons();
   var polygon;
   var polygonVerticesCount;
   var polygonVertices;
@@ -236,6 +236,34 @@ RModel.prototype.getColor = function(){
 
 RModel.prototype.updateAspect = function(){
   this.aspect = gl.canvas.clientWidth/gl.canvas.clientHeight;
+}
+
+RModel.prototype.getColorMatrix = function(){
+  var polygonsCount = this.originalModel.getPolygonsCount();
+  var polygons = this.originalModel.getPolygons();
+  var polygon;
+  var polygonVerticesCount;
+  var color;
+  var colors = [];
+  
+  for(var i = 0; i < polygonsCount; i++){
+    polygon = polygons[i];
+    polygonVerticesCount = polygon.getVerticesCount();
+    
+    for(var j = 1; j < polygonVerticesCount-1; j++){
+
+      if(polygon.isSelected()){
+        color = colorConfig.getSelectedColor();
+      }else{
+        color = colorConfig.getBaseColor();
+      }
+
+      colors.push(color[0]); colors.push(color[1]); colors.push(color[2]);
+      colors.push(color[0]); colors.push(color[1]); colors.push(color[2]);
+      colors.push(color[0]); colors.push(color[1]); colors.push(color[2]);
+    }
+  }
+  return new Float32Array(colors);;
 }
 
 RModel.prototype.getTriangles = function(){

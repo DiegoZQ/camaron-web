@@ -11,13 +11,14 @@ DirectFaceRenderer.prototype.init = function(){
 	gl.useProgram(this.program);
 	this.positionAttributeLocation = gl.getAttribLocation(this.program, "a_position");
 	this.normalAttributeLocation = gl.getAttribLocation(this.program, "a_normal");
+	this.colorAttributeLocation = gl.getAttribLocation(this.program, "a_color");
 	this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 	this.modelLocation = gl.getUniformLocation(this.program, "u_world");
-	this.colorLocation = gl.getUniformLocation(this.program, "u_color");
 	this.reverseLightDirectionLocation = gl.getUniformLocation(this.program, "u_reverseLightDirection");
 	
 	this.positionBuffer = gl.createBuffer();
 	this.normalBuffer = gl.createBuffer();
+	this.colorBuffer = gl.createBuffer();
 	this.vao = gl.createVertexArray();
 
 	gl.bindVertexArray(this.vao);
@@ -31,6 +32,11 @@ DirectFaceRenderer.prototype.init = function(){
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getTrianglesNormals(), gl.STATIC_DRAW);
 	gl.vertexAttribPointer(this.normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+	gl.enableVertexAttribArray(this.colorAttributeLocation);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getColorMatrix(), gl.STATIC_DRAW);
+	gl.vertexAttribPointer(this.colorAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 }
 
 DirectFaceRenderer.prototype.draw = function(){
@@ -41,15 +47,19 @@ DirectFaceRenderer.prototype.draw = function(){
 
 	gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.getMVP());
 	gl.uniformMatrix4fv(this.modelLocation, false, this.rModel.getModelMatrix());
-	gl.uniform4fv(this.colorLocation, rModel.getColor());
-	
-	gl.bindVertexArray(this.vao);
 
     gl.cullFace(gl.BACK);
     gl.uniform3fv(this.reverseLightDirectionLocation, lightDirection);
-	gl.drawArrays(gl.TRIANGLES, 0, rModel.getTrianglesCount()*3);
+	gl.drawArrays(gl.TRIANGLES, 0, this.rModel.getTrianglesCount()*3);
 
 	gl.cullFace(gl.FRONT);
 	gl.uniform3fv(this.reverseLightDirectionLocation, vec3.negate(lightDirection, lightDirection));
-	gl.drawArrays(gl.TRIANGLES, 0, rModel.getTrianglesCount()*3);
+	gl.drawArrays(gl.TRIANGLES, 0, this.rModel.getTrianglesCount()*3);
+}
+
+DirectFaceRenderer.prototype.updateColor = function(){
+	gl.enableVertexAttribArray(this.colorAttributeLocation);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getColorMatrix(), gl.STATIC_DRAW);
+	gl.vertexAttribPointer(this.colorAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 }
