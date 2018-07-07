@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>btn-intercept</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="btn-intercept" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M19,31 L9,31 L9,9 L31,9 L31,19 L41,19 L41,41 L19,41 L19,31 Z" id="Fill-7-Copy" stroke="#C8C8C8" stroke-width="2"></path>
+        <rect class="fill" id="Rectangle-10" stroke="#C8C8C8" stroke-width="2" fill="#FFFFFF" x="19" y="19" width="12" height="12"></rect>
+    </g>
+</svg>

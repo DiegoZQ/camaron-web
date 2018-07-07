@@ -52,9 +52,14 @@ Rotator.prototype.getRotationMatrix = function(){
   return temp;
 }
 
-Rotator.prototype.reset = function(){
+Rotator.prototype.rescale = function(){
   this.width = gl.canvas.clientWidth;
   this.height = gl.canvas.clientHeight;
   this.r = Math.min(this.width, this.height)/2;
+}
+
+Rotator.prototype.reset = function(){
+  this.rescale();
   this.q = quat.create();
 }
+

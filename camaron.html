@@ -1,129 +1,490 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8"/>
-  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  		<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-  		<link type="text/css" href="css/camaron.css" rel="stylesheet">
+<!doctype html>
+<head>
+    <meta charset="UTF-8">
+    <title>Camaron</title>
+    
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- estilos -->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/anim.css">
+</head>
 
-  		<!--Let browser know website is optimized for mobile-->
-  		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	</head>
-
-	<body>
-    <div class="container">
-      <div class="row valign-wrapper">
-        <div class="col s3">
-          <div class="file-field input-field">
-            <div class="btn-small">
-              <span><i class="material-icons">file_upload</i></span>
-              <input type="file" id="model_file" />
+<body onresize="rescaleView()">
+    <header>
+        <div class="autogrid">
+            <div class="autogrid">
+                <a id="import_b" class="tooltiped" data-tooltip="Import Model">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_import" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon id="Fill-1" fill="#0F9DDD" transform="translate(23.250500, 16.889000) scale(1, -1) translate(-23.250500, -16.889000) " points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
+                        <path d="M33.9530607,15 L25.5745235,15 L25.5745235,17.1066911 L32.9061214,17.1066911 L32.9061214,33.8943227 L13.0928709,33.8943227 L13.0928709,17.1066911 L21.0119238,17.1066911 L21.0119238,15 L12.0459316,15 C11.4685532,15 11,15.4714203 11,16.0533456 L11,34.9466544 C11,35.5295935 11.4685532,36 12.0459316,36 L33.9530607,36 C34.5304392,36 35,35.5295935 35,34.9466544 L35,16.0533456 C35,15.4714203 34.5304392,15 33.9530607,15" id="Fill-1" fill="#0F9DDD"></path>
+                    </g>
+                    </svg>
+                </a>
+                <a class="tooltiped" data-tooltip="Export model">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_export" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon id="Fill-1" fill="#0F9DDD" points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
+                        <path d="M33.9530607,15 L25.5745235,15 L25.5745235,17.1066911 L32.9061214,17.1066911 L32.9061214,33.8943227 L13.0928709,33.8943227 L13.0928709,17.1066911 L21.0119238,17.1066911 L21.0119238,15 L12.0459316,15 C11.4685532,15 11,15.4714203 11,16.0533456 L11,34.9466544 C11,35.5295935 11.4685532,36 12.0459316,36 L33.9530607,36 C34.5304392,36 35,35.5295935 35,34.9466544 L35,16.0533456 C35,15.4714203 34.5304392,15 33.9530607,15" id="Fill-1" fill="#0F9DDD"></path>
+                    </g>
+                    </svg>
+                </a>
+                <a class="tooltiped" data-tooltip="Export selection">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_import_selection" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon id="Fill-1" fill="#0F9DDD" transform="translate(23.250500, 16.889000) scale(1, -1) translate(-23.250500, -16.889000) " points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
+                        <path d="M15.8568486,36 L19.3048404,36 L19.3048404,33.8987567 L15.8568486,33.8987567 L15.8568486,36 Z M21.2821833,36 L24.7301751,36 L24.7301751,33.8987567 L21.2821833,33.8987567 L21.2821833,36 Z M26.707518,36 L26.707518,33.8987567 L30.1555098,33.8987567 L30.1555098,36 L26.707518,36 Z M33.961895,36 L32.1328527,36 L32.1328527,33.8987567 L32.9237899,33.8987567 L32.9237899,33.1030195 L35,33.1030195 L35,34.9431616 C35,35.5275311 34.5427394,36 33.961895,36 Z M13.8795057,36 L12.0504634,36 C11.4696189,36 11,35.5275311 11,34.9431616 L11,33.1030195 L13.0885685,33.1030195 L13.0885685,33.8987567 L13.8795057,33.8987567 L13.8795057,36 Z M11.0123584,24.3250444 L13.1009269,24.3250444 L13.1009269,20.2344583 L11.0123584,20.2344583 L11.0123584,24.3250444 Z M11.0123584,30.7655417 L13.1009269,30.7655417 L13.1009269,26.6749556 L11.0123584,26.6749556 L11.0123584,30.7655417 Z M32.9114315,24.3250444 L35,24.3250444 L35,20.2344583 L32.9114315,20.2344583 L32.9114315,24.3250444 Z M32.9114315,30.7655417 L32.9114315,26.6749556 L35,26.6749556 L35,30.7655417 L32.9114315,30.7655417 Z M35,17.8969805 L32.9114315,17.8969805 L32.9114315,17.1012433 L32.1204943,17.1012433 L32.1204943,15 L33.9495366,15 C34.5303811,15 35,15.4724689 35,16.0568384 L35,17.8969805 Z M15.8568486,17.1012433 L19.3048404,17.1012433 L19.3048404,15 L15.8568486,15 L15.8568486,17.1012433 Z M26.707518,17.1012433 L26.707518,15 L30.1555098,15 L30.1555098,17.1012433 L26.707518,17.1012433 Z M13.1009269,17.8969805 L11.0123584,17.8969805 L11.0123584,16.0568384 C11.0123584,15.4724689 11.4819773,15 12.0628218,15 L13.8918641,15 L13.8918641,17.1012433 L13.1009269,17.1012433 L13.1009269,17.8969805 Z" id="Fill-9" fill="#1B9CD8"></path>
+                    </g>
+                    </svg>
+                </a>
             </div>
-            <div class="file-path-wrapper">
-              <input class="file-path validate" type="text">
+            <div class="autogrid">
+                <a id="rotate_b" class="tooltiped active" data-tooltip="Rotate">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_rotate" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M24.3125,12.4375 C26.9375131,12.770835 29.1562409,13.93749 30.96875,15.9375 C32.7812591,17.93751 33.6875,20.2916531 33.6875,23 C33.6875,25.7083469 32.7812591,28.06249 30.96875,30.0625 C29.1562409,32.06251 26.9375131,33.229165 24.3125,33.5625 L24.3125,30.875 C26.2291763,30.541665 27.8229103,29.6354241 29.09375,28.15625 C30.3645897,26.6770759 31,24.9583431 31,23 C31,21.0416569 30.3645897,19.3229241 29.09375,17.84375 C27.8229103,16.3645759 26.2291763,15.458335 24.3125,15.125 L24.3125,20.3125 L18.25,14.375 L24.3125,8.3125 L24.3125,12.4375 Z M16.4375,31.4375 L18.375,29.5 C19.3333381,30.2083369 20.4374938,30.6666656 21.6875,30.875 L21.6875,33.5625 C19.68749,33.3124988 17.9375075,32.6041725 16.4375,31.4375 Z M15.125,24.3125 C15.3333344,25.5208394 15.77083,26.624995 16.4375,27.625 L14.5625,29.5 C13.3958275,27.9583256 12.6875013,26.2291763 12.4375,24.3125 L15.125,24.3125 Z M16.5,18.375 C15.7499963,19.4583387 15.2916675,20.5624944 15.125,21.6875 L12.4375,21.6875 C12.6875013,19.8124906 13.4166606,18.0833413 14.625,16.5 L16.5,18.375 Z" id="border_left" fill="#0F9DDD"></path>
+                    </g>
+                    </svg>
+                </a>
+                <a id="move_b" class="tooltiped" data-tooltip="Move">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_move" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M22.1396566,8 L17.2273869,14.7979481 L20.4679648,14.7979481 L20.4679648,19.7146147 L23.811139,19.7146147 L23.811139,14.7979481 L27.0519263,14.7979481 L22.1396566,8 Z M30.2022613,21.3285176 L25.2855946,21.3285176 L25.2855946,24.6716918 L30.2022613,24.6716918 L30.2022613,27.9122697 L37,23 L30.2022613,18.0877303 L30.2022613,21.3285176 Z M7.13965662,23 L13.9376047,27.9122697 L13.9376047,24.6716918 L18.8542714,24.6716918 L18.8542714,21.3285176 L13.9376047,21.3285176 L13.9376047,18.0877303 L7.13965662,23 Z M20.4679648,26.2853853 L20.4679648,31.2020519 L17.2273869,31.2020519 L22.1396566,38 L27.0519263,31.2020519 L23.811139,31.2020519 L23.811139,26.2853853 L20.4679648,26.2853853 Z" id="Page-1" fill="#1F9BD6"></path>
+                    </g>
+                    </svg>
+                </a>
             </div>
-          </div>
+            <div class="autogrid">
+                <a id="face_b" class="tooltiped btn-faces active" data-tooltip="Render Faces">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_faces" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon id="Fill-1" fill="#1E9CD8" points="7.08253308 31.3916684 21.5333658 39.6607194 21.5805141 23.8304397 7.00002357 15.2130951"></polygon>
+                        <polygon id="Fill-2" fill="#5BC3F0" points="23.3488696 23.8978514 23.3017213 39.7393664 37.7642232 31.45908 37.9174551 15.2130951"></polygon>
+                        <polygon id="Fill-3" fill="#157FC1" points="22.5353141 6.11229659 7.74265627 13.6398194 22.4056563 22.4031102 37.0216259 13.7521722"></polygon>
+                    </g>
+                    </svg>
+                </a>
+                <a id="vertex_b" class="tooltiped btn-vertex" data-tooltip="Render Vertex">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <defs>
+                        <linearGradient x1="92.6757478%" y1="36.4122243%" x2="5.35068715%" y2="64.1111673%" id="linearGradient-1">
+                            <stop stop-color="#ADD8E2" offset="0%"></stop>
+                            <stop stop-color="#1E9CD8" offset="99.8%"></stop>
+                        </linearGradient>
+                        <linearGradient x1="3.96870968%" y1="39.4134677%" x2="96.6583871%" y2="60.7307833%" id="linearGradient-2">
+                            <stop stop-color="#ADD8E2" offset="0%"></stop>
+                            <stop stop-color="#1E9CD8" offset="99.8%"></stop>
+                        </linearGradient>
+                        <linearGradient x1="50%" y1="-3.44827586%" x2="50%" y2="96.55%" id="linearGradient-3">
+                            <stop stop-color="#1E9CD8" offset="0.2012915%"></stop>
+                            <stop stop-color="#ADD8E2" offset="100%"></stop>
+                        </linearGradient>
+                        <linearGradient x1="92.6757478%" y1="36.4122243%" x2="5.35068715%" y2="64.1111673%" id="linearGradient-1hover">
+                            <stop stop-color="#ffe0e7" offset="0%"></stop>
+                            <stop stop-color="#ff7091" offset="99.8%"></stop>
+                        </linearGradient>
+                        <linearGradient x1="3.96870968%" y1="39.4134677%" x2="96.6583871%" y2="60.7307833%" id="linearGradient-2hover">
+                            <stop stop-color="#ffe0e7" offset="0%"></stop>
+                            <stop stop-color="#ff7091" offset="99.8%"></stop>
+                        </linearGradient>
+                        <linearGradient x1="50%" y1="-3.44827586%" x2="50%" y2="96.55%" id="linearGradient-3hover">
+                            <stop stop-color="#ff7091" offset="0.2012915%"></stop>
+                            <stop stop-color="#ffe0e7" offset="100%"></stop>
+                        </linearGradient>
+                    </defs>
+                    <g id="icon_vertex" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon id="XMLID_4_" fill="url(#linearGradient-1)" fill-rule="nonzero" points="7 15.1309091 21.5806084 23.7770909 21.5334601 39.6603636 7.08250951 31.3636364"></polygon>
+                        <polygon id="XMLID_3_" fill="url(#linearGradient-2)" fill-rule="nonzero" points="23.3486692 23.8447273 37.9174905 15.1309091 37.7642586 31.4312727 23.3015209 39.7392727"></polygon>
+                        <polygon id="XMLID_2_" fill="url(#linearGradient-3)" fill-rule="nonzero" points="7.74258555 13.5527273 22.5353612 6 37.021673 13.6654545 22.4057034 22.3454545"></polygon>
+                    </g>
+                    </svg>
+                </a>
+                <a id="flat_b"class="tooltiped" data-tooltip="Render Flat">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_flat" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M7.08250951,31.2793718 L21.5333422,39.5484228 L21.5804905,23.7181432 L7,15.1007986 L7.08250951,31.2793718 Z M22.5352905,6 L37.0216023,13.6398756 L22.4056327,22.2908137 L7.7426327,13.5275228 L22.5352905,6 Z M23.348846,23.7855548 L37.9174316,15.1007986 L37.7641996,31.3467834 L23.3016977,39.6270698 L23.348846,23.7855548 Z" id="Fill-3" fill="#1E9CD8"></path>
+                    </g>
+                    </svg>
+                </a>
+                <a id="none_b" class="tooltiped" data-tooltip="Render none">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_none" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M33.9233869,12.4374717 L30.3372299,10.5180468 L30.9644708,9.44937067 L34.5506277,11.3687956 L33.9233869,12.4374717 Z M37.9477299,15.7666719 L36.6649635,15.7555432 L36.6782007,14.357761 L36.2244015,13.6691883 L35.2713212,13.1589983 L35.898562,12.0903222 L36.9940839,12.6766841 C37.0874234,12.726709 37.1661679,12.798235 37.2231898,12.8847793 L37.8641204,13.8572951 C37.9296277,13.9565888 37.9637956,14.0717651 37.9626642,14.1891023 L37.9477299,15.7666719 Z M37.896365,21.168073 L36.6135985,21.1569443 L36.6510474,17.231226 L37.9338139,17.2423547 L37.896365,21.168073 Z M37.8448869,26.5694741 L36.5622336,26.5583454 L36.5996825,22.6326271 L37.8824489,22.6437558 L37.8448869,26.5694741 Z M24.0551704,7.15552553 L22.5448821,6.34723857 L21.022488,7.13434865 L20.4117653,6.05702887 L22.2449515,5.10925542 C22.4383055,5.00920546 22.6719369,5.01071809 22.8639332,5.11357723 L24.6824113,6.08684938 L24.0551704,7.15552553 Z M35.7118719,31.5786167 L35.0527259,30.5276599 L36.5325799,29.6811249 L36.5483062,28.0338662 L37.8309595,28.0451029 L37.8119522,30.0358377 C37.8100288,30.2491191 37.691912,30.4460857 37.5002551,30.5556437 L35.7118719,31.5786167 Z M14.0491285,34.293147 L10.5118474,32.2703227 L11.1709934,31.219366 L14.7081613,33.2420823 L14.0491285,34.293147 Z M30.8385701,34.3658615 L30.1795372,33.3147967 L33.7167051,31.2918644 L34.375738,32.3428211 L30.8385701,34.3658615 Z M18.9224642,37.0800677 L15.3852964,35.0571354 L16.0443292,34.0061787 L19.5814971,36.029003 L18.9224642,37.0800677 Z M25.9656869,37.1531064 L25.3065409,36.1021496 L28.8434825,34.0791093 L29.5026285,35.1299579 L25.9656869,37.1531064 Z M23.0659423,38.7101473 C23.0527051,38.7101473 23.0394679,38.7098232 23.0262307,38.7089588 L21.7818182,38.6352719 C21.6793146,38.6292214 21.5799788,38.599725 21.4919569,38.5494839 L20.2586321,37.8440561 L20.9175518,36.7930994 L22.0170336,37.421707 L22.9070956,37.4744331 L23.970373,36.8662461 L24.6296321,37.9172028 L23.3955153,38.6230628 C23.2958401,38.6802188 23.1817964,38.7101473 23.0659423,38.7101473 Z M9.17582664,31.5063452 L7.38733029,30.4836963 C7.19476825,30.3735981 7.07642518,30.175335 7.07540693,29.9608651 L7.06601642,27.9701302 L8.34878285,27.9646199 L8.35658942,29.6100419 L9.83485949,30.4552804 L9.17582664,31.5063452 Z M16.0242584,9.71869521 L15.4135358,8.64137543 L19.0406489,6.76592495 L19.6514847,7.84324473 L16.0242584,9.71869521 Z M11.0259044,12.303031 L10.4151818,11.2258192 L14.042408,9.35036875 L14.6531307,10.4276885 L11.0259044,12.303031 Z M7.00699197,15.6253162 L6.99997737,14.1863687 C6.99963796,14.1016612 7.01762701,14.0178181 7.05292628,13.9400254 L7.5431562,12.8594643 C7.60029124,12.7335915 7.69996642,12.6296519 7.82634234,12.5642845 L9.04405401,11.9347045 L9.65488978,13.0119162 L8.63211606,13.540798 L8.28353577,14.3092163 L8.28975839,15.6196978 L7.00699197,15.6253162 Z M7.03278759,21.0532964 L7.01400657,17.1142886 L8.29688613,17.1086702 L8.31566715,21.0476781 L7.03278759,21.0532964 Z M7.05880949,26.4812767 L7.03991533,22.5421608 L8.32279489,22.5365424 L8.34168905,26.4756583 L7.05880949,26.4812767 Z M28.9892956,9.79652024 L25.4031387,7.87709532 L26.0303796,6.80841917 L29.6165365,8.72784409 L28.9892956,9.79652024 Z" id="Fill-4" fill="#1D9CD7"></path>
+                    </g>
+                    </svg>
+                </a>
+            </div>
+            <div class="autogrid">
+                <a class="open-menu">
+                    <i class="material-icons tooltiped" data-tooltip="Show">keyboard_arrow_down</i>
+                    <ul class="submenu">
+                        <li class="active">
+                            <label class="checkmenu">
+                                <input type="checkbox" name="secondary_renderer" value="WireFrame" onchange="setSecondaryRenderers(); draw();">
+                                <div class="flex label">
+                                    <img src="img/icon-wireframe.svg"/>
+                                    <span>Wireframe</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="checkmenu">
+                                <input type="checkbox" name="secondary_renderer" value="VertexCloud" oonchange="setSecondaryRenderers(); draw();">
+                                <div class="flex label">
+                                    <img src="img/icon-vertex-cloud.svg"/>
+                                    <span>Vertex cloud</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="checkmenu">
+                                <input type="checkbox" name="render">
+                                <div class="flex label">
+                                    <img src="img/icon-face-normals.svg"/>
+                                    <span>Face normals</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="checkmenu">
+                                <input type="checkbox" name="render">
+                                <div class="flex label">
+                                    <img src="img/icon-vertex-normals.svg"/>
+                                    <span>Vertex normals</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="checkmenu">
+                                <input type="checkbox" name="render">
+                                <div class="flex label">
+                                    <img src="img/icon-face-id.svg"/>
+                                    <span>Face IDs</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="checkmenu">
+                                <input type="checkbox" name="render">
+                                <div class="flex label">
+                                    <img src="img/icon-vertex-id.svg"/>
+                                    <span>Vertex IDs</span>
+                                </div>
+                            </label>
+                        </li>  
+                    </ul>
+                </a>
+            </div>
+            <div class="autogrid">
+                <a class="tooltiped modal-trigger" data-tooltip="Set Colors" data-modal="modal-colors">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_colors" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M15.7,9 L30.6,23.7111846 C31.575,24.6738292 31.575,26.237124 30.6,27.1997686 L21.4332812,36.2502479 C20.95,36.7357355 20.3082812,36.974314 19.6666406,36.974314 C19.025,36.974314 18.3833594,36.7356584 17.9,36.2502479 L8.73335937,27.1997686 C7.75835937,26.237124 7.75835937,24.6738292 8.73335937,23.7111846 L17.3082812,15.2448485 L13.3416406,11.3284738 L15.7,9 Z M11.675,25.455438 L27.6582812,25.455438 L19.6666406,17.5732452 L11.675,25.455438 Z M34.6666406,27.9237576 C34.6666406,27.9237576 38,31.4863912 38,33.6831956 C38,35.5014986 36.5083594,36.974314 34.6666406,36.974314 C32.8249219,36.974314 31.3332812,35.5014986 31.3332812,33.6831956 C31.3332812,31.4863912 34.6666406,27.9237576 34.6666406,27.9237576 Z" id="Shape" fill="#0F9DDD" fill-rule="nonzero"></path>
+                    </g>
+                    </svg>
+                </a>
+                <a id="view" class="tooltiped v1" data-tooltip="Change View">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_viewmode" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M26.2573987,35.907336 L7.56479615,35.907336 C7.25280897,35.907336 7.00003974,35.6545668 7.00003974,35.3425796 L7.00003974,17.6932463 C7.00003974,17.3812591 7.25280897,17.1284899 7.56479615,17.1284899 L26.2573987,17.1284899 C26.5691872,17.1284899 26.8221551,17.3812591 26.8221551,17.6932463 L26.8221551,35.3425796 C26.8221551,35.6545668 26.5691872,35.907336 26.2573987,35.907336 Z M10.1786923,32.9265668 L23.7419872,32.9265668 L23.7419872,23.9842591 L10.1786923,23.9842591 L10.1786923,32.9265668 Z M20.5011955,14.8968078 L18.3912083,14.9138976 C18.1223429,14.9160835 17.9023622,14.7000771 17.8997788,14.4312117 L17.8600353,10.5160706 C17.8572532,10.2452181 18.0758429,10.024045 18.3468942,10.0236476 L37.4601827,10.0000001 C37.7304391,9.99980142 37.9494263,10.2193848 37.9484327,10.4894424 L37.8776891,28.4155899 C37.8766955,28.684654 37.6579071,28.9018527 37.3888429,28.9012565 L29.3451378,28.8790001 C29.0764712,28.8782053 28.858875,28.6602117 28.858875,28.391545 L28.858875,26.6038783 C28.858875,26.3362053 29.0748814,26.1186091 29.3423558,26.1164232 L34.3848237,26.0748912 C34.6532917,26.0725065 34.8692981,25.8539168 34.8683045,25.5854489 L34.8224006,13.4916732 C34.8214071,13.2228078 34.6028173,13.0054104 34.3339519,13.0060065 L21.4713365,13.0290578 C21.2024712,13.0294553 20.9846763,13.2476476 20.9846763,13.516513 L20.9846763,14.4093527 C20.9846763,14.6770258 20.7688686,14.8946219 20.5011955,14.8968078 Z" id="Fill-1" fill="#0F9DDD"></path>
+                    </g>
+                    </svg>
+                </a>
+                <a id="reset_view" class="tooltiped" data-tooltip="Reset View" onclick="resetView()">
+                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="icon_reset" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path d="M30.0625,15.4375 L33.1875,12.3125 L33.1875,21.6875 L23.8125,21.6875 L28.125,17.375 C26.5416587,15.7916587 24.6666775,15 22.5,15 C20.2916556,15 18.4062578,15.7812422 16.84375,17.34375 C15.2812422,18.9062578 14.5,20.7916556 14.5,23 C14.5,25.2083444 15.2812422,27.0937422 16.84375,28.65625 C18.4062578,30.2187578 20.2916556,31 22.5,31 C24.2500087,31 25.8124931,30.5104216 27.1875,29.53125 C28.5625069,28.5520784 29.5208306,27.2708413 30.0625,25.6875 L32.8125,25.6875 C32.2291637,28.020845 30.9791762,29.9374925 29.0625,31.4375 C27.1458237,32.9375075 24.9583456,33.6875 22.5,33.6875 C19.5833188,33.6875 17.0833438,32.6458437 15,30.5625 C12.9166562,28.4791562 11.875,25.9583481 11.875,23 C11.875,20.0416519 12.9166562,17.5208437 15,15.4375 C17.0833438,13.3541562 19.5833188,12.3125 22.5,12.3125 C25.4583481,12.3125 27.9791563,13.3541562 30.0625,15.4375 Z" id="border_left" fill="#0F9DDD"></path>
+                    </g>
+                    </svg>
+                </a>
+            </div>
         </div>
-        <div class="col s1">
-          <p>
-            <label>
-              <input name="main_renderer" value="None" onchange="setMainRenderer(); draw();" type="radio" />
-              <span>None</span>
-            </label>
-          </p>
-          <p>
-            <label>
-              <input name="main_renderer" value="Flat" onchange="setMainRenderer(); draw();" type="radio" />
-              <span>Flat</span>
-            </label>
-          </p>
+        <div class="logo flex center">
+            <h1>Camaron</h1>
         </div>
-        <div class="col s2">
-          <p>
-            <label>
-              <input name="main_renderer" value="Face" onchange="setMainRenderer(); draw();" type="radio" checked />
-              <span>Face</span>
-            </label>
-          </p>
-          <p>
-            <label>
-              <input name="main_renderer" value="Vertex" onchange="setMainRenderer(); draw();" type="radio" />
-              <span>Vertex</span>
-            </label>
-          </p>
+    </header>
+    <section id="main-view" class="view0">
+        <div class="model-view">
+            <canvas id="glCanvas"></canvas>
+            <div class="model-opt">
+                <div class="tooltiped" data-tooltip="Change perspective">
+                    <a id="view_b" class="view-opt">
+                        <div class="scene pers">
+                            <div class="cube">
+                                <div class="face top"></div>
+                                <div class="face left"></div>
+                                <div class="face right"></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="zoom">
+                    <i class="material-icons">zoom_in</i>
+                    <input type="text" value="1.00">
+                </div>
+            </div>
+            <div class="model-stadistics">
+                <div class="autogrid center">
+                    <div class="coord">
+                        <span>Y: 23 - 9009</span>
+                        <span>X: 23 - 9009</span>
+                        <span>Z: 23 - 9009</span>
+                    </div>
+                    <div class="stadistics">
+                        <span>Vertex: 38.390</span>
+                        <span>•</span>
+                        <span>Planes: 67.820</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col s2">
-          <p>
-            <label>
-              <input name="secondary_renderer" value="None" onchange="setSecondaryRenderers(); draw();" type="radio" checked />
-              <span>None</span>
-            </label>
-          </p>
-          <p>
-            <label>
-              <input name="secondary_renderer" value="WireFrame" onchange="setSecondaryRenderers(); draw();" type="radio" />
-              <span>WireFrame</span>
-            </label>
-          </p>
+        <div class="card selections">
+            <div class="selection-tabs">
+                <div class="tabs tab1">
+                    <a href="#tab-selection" class="tab active"><h4>New Selection</h4></a>
+                    <a href="#tab-history" class="tab"><h4>Active selection</h4></a>
+                </div>
+                <div class="tabs-body">
+                    <div id="tab-selection" class="tab-content active">
+                        <div id="selection-type" class="select drop-down">
+                            <select>
+                                <option value="angle" data-img="img/img-angle.svg">By angle</option>
+                                <option value="id" data-img="img/img-id.svg">By ID</option>r
+                            </select>
+                        </div>
+                        <div class="angle-box select-box active">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <input type="radio" name="angle-opt" checked>
+                                    <div class="input-radio"></div>
+                                    <span>Angle</span>
+                                </label>
+                                <input type="text" placeholder="0">
+                            </div>
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <input type="radio" name="angle-opt">
+                                    <div class="input-radio"></div>
+                                    <span>Range</span>
+                                </label>
+                                <div class="flex v-center">
+                                    <input type="text" placeholder="0" disabled>
+                                    <i class="material-icons">remove</i>
+                                    <input type="text" placeholder="0" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="id-box select-box">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <input type="radio" name="id-opt" checked>
+                                    <div class="input-radio"></div>
+                                    <span>Unique ID</span>
+                                </label>
+                                <input type="text" placeholder="0">
+                            </div>
+                            <div id="attach">
+                                <div class="flex v-center">
+                                    <label class="radio">
+                                        <input type="radio" name="id-opt">
+                                        <div class="input-radio"></div>
+                                        <span>Attach or paste</span>
+                                    </label>
+                                    <button class="btn min" disabled>Attach</button>
+                                </div>
+                                <div class="attached-list">
+                                    <textarea disabled placeholder="Ej: 34"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selectionmode-box">
+                            <h4>Selection mode:</h4>
+                            <div class="flex evenly">
+                                <label class="radio select-mode tooltiped" data-tooltip="New selection">
+                                    <input type="radio" name="mode-opt" checked>
+                                    <div class="input-radio">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50"><desc>  Created with Sketch.</desc><g fill="none"><path class="fill" d="M12 38L12 12 38 12 38 38 12 38Z" style="fill:#FFF;stroke-width:2;stroke:#C8C8C8"/></g></svg>
+                                    </div>
+                                </label>
+                                <label class="radio select-mode tooltiped" data-tooltip="Add">
+                                    <input type="radio" name="mode-opt">
+                                    <div class="input-radio">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50"><desc>  Created with Sketch.</desc><g fill="none"><path class="fill" d="M31 19L41 19 41 41 19 41 19 31 9 31 9 9 31 9 31 19Z" style="fill:#FFF;stroke-width:2;stroke:#C8C8C8"/></g></svg>
+                                    </div>
+                                </label>
+                                <label class="radio select-mode tooltiped" data-tooltip="Substract">
+                                    <input type="radio" name="mode-opt">
+                                    <div class="input-radio">
+                                        <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        <g id="btn-substract" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <path class="fill" d="M21,21 L21,31 L9,31 L9,9 L31,9 L31,21 L21,21 Z" id="Fill-7" stroke="#C8C8C8" stroke-width="2" fill="#FFFFFF"></path>
+                                            <path d="M21,39 L39,39 L39,21 L21,21 L21,39 Z" id="Path" stroke="#C8C8C8" stroke-width="2"></path>
+                                        </g>
+                                        </svg>
+                                    </div>
+                                </label>
+                                <label class="radio select-mode tooltiped" data-tooltip="Intersect">
+                                    <input type="radio" name="mode-opt">
+                                    <div class="input-radio">
+                                            <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <g id="btn-intercept" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <path d="M19,31 L9,31 L9,9 L31,9 L31,19 L41,19 L41,41 L19,41 L19,31 Z" id="Fill-7-Copy" stroke="#C8C8C8" stroke-width="2"></path>
+                                                <rect class="fill" id="Rectangle-10" stroke="#C8C8C8" stroke-width="2" fill="#FFFFFF" x="19" y="19" width="12" height="12"></rect>
+                                            </g>
+                                            </svg>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex center">
+                            <a class="btn">Apply</a>
+                        </div>
+                    </div>
+                    <div id="tab-history" class="tab-content">
+                        <ul>
+                            <li>
+                                <img src="img/btn-add.svg"/>
+                                <div class="grow">
+                                    <span>By</span>
+                                    <span>Angle 60º</span>
+                                </div>
+                            </li>
+                            <li>
+                                <img src="img/btn-substract.svg"/>
+                                <div class="grow">
+                                    <span>By</span>
+                                    <span>Angle 60º</span>
+                                </div>
+                                <i class="material-icons">close</i>
+                            </li>
+                            <li>
+                                <img src="img/btn-intercept.svg"/>
+                                <div class="grow">
+                                    <span>By</span>
+                                    <span>Angle 60º</span>
+                                </div>
+                                <i class="material-icons">close</i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col s2">
-          <p>
-            <label>
-              <input name="view_type" value="perspective" onchange="changeViewType(); draw();" type="radio" checked />
-              <span>Perspective</span>
-            </label>
-          </p>
-          <p>
-            <label>
-              <input name="view_type" value="ortho" onchange="changeViewType(); draw();" type="radio" />
-              <span>Orthogonal</span>
-            </label>
-          </p>
+        <div class="card results">
+            <h4>Evaluation Results</h4>
+            <div class="info">
+                <div class="side-info">
+                    <span>Información</span>
+                </div>
+                <div class="graphics">
+                    <span>Gráficos</span>
+                </div>
+            </div>
         </div>
-        <div class="col s2">
-          <p>
-            <label>
-              <input name="interaction" value="rotate" onchange="updateEventHandlers();" type="radio" checked />
-              <span>Rotate</span>
-            </label>
-          </p>
-          <p>
-            <label>
-              <input name="interaction" value="move" onchange="updateEventHandlers();" type="radio" />
-              <span>Move</span>
-            </label>
-          </p>
-        </div>
-      </div>
-      
-      <canvas id="glCanvas"></canvas>
 
-      <div class="row valign-wrapper">
-        <div class="col s2">
-          <p>Vertices: <span id="vertices_span">0</span></p>
+        <div class="card evaluate">
+            <h4>Evaluate model</h4>
+            <div id="evaluation-type" class="select drop-down">
+                <select>
+                    <option value="ev-dihedral" data-img="img/icon-ev-dihedral.svg">Dihedral Angles</option>
+                    <option value="ev-angle" data-img="img/icon-ev-angles.svg">Internal Angles</option>
+                    <option value="ev-area" data-img="img/icon-ev-area.svg">Polygons Area</option>
+                    <option value="ev-edges" data-img="img/icon-ev-edges.svg">Polygons Edges Number</option>
+                </select>
+            </div>
+            <div class="grid g2 mgbot">
+                <label class="radio">
+                    <input type="radio" name="ev-option" checked>
+                    <div class="input-radio"></div>
+                    <span>Over selection</span>
+                </label>
+                <label class="radio">
+                    <input type="radio" name="ev-option">
+                    <div class="input-radio"></div>
+                    <span>Over model</span>
+                </label>
+            </div>
+            <div class="grid g2 mgbot">
+                <button class="btn min">Evaluate</button>
+                <button class="btn min" disabled>Export to Pdf</button>
+            </div>
         </div>
-        <div class="col s2">
-          <p>Polygons: <span id="polygons_span">0</span></p>
+
+        <div hidden>
+            <input id="import_e" hidden type="file" id="model_file" />
+
+            <input id="rotate_e" hidden name="interaction" value="rotate" onchange="updateEventHandlers();" type="radio" checked />
+            <input  id="move_e" hidden name="interaction" value="move" onchange="updateEventHandlers();" type="radio" />
+            
+            <input id="face_e" hidden name="main_renderer" value="Face" onchange="setMainRenderer(); draw();" type="radio" checked />
+            <input id="vertex_e" hidden name="main_renderer" value="Vertex" onchange="setMainRenderer(); draw();" type="radio" />
+            <input id="flat_e" hidden name="main_renderer" value="Flat" onchange="setMainRenderer(); draw();" type="radio" />
+            <input id="none_e" hidden name="main_renderer" value="None" onchange="setMainRenderer(); draw();" type="radio" />
+
+            <input id="view_e" hidden name="view_type" value="perspective" onchange="changeViewType(); draw();" type="checkbox" checked />
         </div>
-        <div class="col s7"></div>
-        <div class="col s1">
-          <button id="reset_view" class="btn waves-effect waves-light" type="button" onclick="resetView()" ><i class="material-icons">refresh</i></button>
+    </section>
+    <div id="modal-colors" class="modal">
+        <div class="flex center">
+            <div class="modal-container">
+                <div class="close modal-close"><i class="material-icons">close</i></div>
+                <div class="modal-header">
+                    <h4>Interface colors</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="grid g2 flex-top">
+                        <ul class="ui-list">
+                            <li class="active">
+                                <span>Background</span>
+                                <div class="color-indicator" style="background-color:#FFA0B6;"></div>
+                            </li>
+                            <li>
+                                <span>Main render</span>
+                                <div class="color-indicator" style="background-color:#666;"></div>
+                            </li>
+                            <li>
+                                <span>Wireframe</span>
+                                <div class="color-indicator" style="background-color:#bba0ef;"></div>
+                            </li>
+                            <li>
+                                <span>Face normals</span>
+                                <div class="color-indicator" style="background-color:#a0fff4;"></div>
+                            </li>
+                            <li>
+                                <span>Vertex normals</span>
+                                <div class="color-indicator" style="background-color:#ffd7a0;"></div>
+                            </li>
+                            <li>
+                                <span>Face ID</span>
+                                <div class="color-indicator" style="background-color:#a0c5ff;"></div>
+                            </li>
+                            <li>
+                                <span>Vertes ID</span>
+                                <div class="color-indicator" style="background-color:#fff;"></div>
+                            </li>
+                        </ul>
+                        <div class="picker"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-
-  	<!--JavaScript at end of body for optimized loading-->
-  	<script type="text/javascript" src="js/external/materialize.min.js"></script>
-  	<script type="text/javascript" src="js/external/webgl-utils.js"></script>
-  	<script type="text/javascript" src="js/external/gl-matrix.js"></script>
+        <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/external/webgl-utils.js"></script>
+    <script type="text/javascript" src="js/external/gl-matrix.js"></script>
     <script type="text/javascript" src="js/camaron-config.js"></script>
     <script type="text/javascript" src="js/ui/translator.js"></script>
     <script type="text/javascript" src="js/ui/rotator.js"></script>
     <script type="text/javascript" src="js/ui/scalator.js"></script>
     <script type="text/javascript" src="js/model/element.js"></script>
     <script type="text/javascript" src="js/model/model.js"></script>
-  	<script type="text/javascript" src="js/model/rmodel.js"></script>
-  	<script type="text/javascript" src="js/fileloader/loader-base.js"></script>
+    <script type="text/javascript" src="js/model/rmodel.js"></script>
+    <script type="text/javascript" src="js/fileloader/loader-base.js"></script>
     <script type="text/javascript" src="js/fileloader/off-loader.js"></script>
     <script type="text/javascript" src="js/rendering/shaders.js"></script>
     <script type="text/javascript" src="js/rendering/renderer-base.js"></script>
@@ -131,6 +492,7 @@
     <script type="text/javascript" src="js/rendering/main-renderers/directvertex.js"></script>
     <script type="text/javascript" src="js/rendering/main-renderers/flat.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/wire.js"></script>
-  	<script type="text/javascript" src="js/camaron.js"></script>
-	</body>
+    <script type="text/javascript" src="js/camaron.js"></script>
+    <script src="js/sitio.js"></script>
+</body>
 </html>

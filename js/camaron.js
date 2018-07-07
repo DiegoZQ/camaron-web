@@ -11,10 +11,86 @@ var dragging = false;
 
 var colorConfig = new ColorConfig();
 
-var file = document.getElementById('model_file');
 var canvas = document.getElementById("glCanvas");
 var gl = canvas.getContext("webgl2");
 if (!gl) {alert("No WebGL");}
+
+// file
+var file = document.getElementById('import_e');
+var file_button = document.getElementById('import_b');
+
+file_button.onclick = function(){
+  file.click();
+}
+
+// file
+var view = document.getElementById('view_e');
+var view_button = document.getElementById('view_b');
+
+view_button.onclick = function(){
+  view.click();
+}
+
+// movement
+var move = document.getElementById('move_e');
+var move_button = document.getElementById('move_b');
+var rotate = document.getElementById('rotate_e');
+var rotate_button = document.getElementById('rotate_b');
+
+move_button.onclick = function(){
+  move.click();
+  move_button.classList.add("active");
+  rotate_button.classList.remove("active");
+}
+
+rotate_button.onclick = function(){
+  rotate.click();
+  rotate_button.classList.add("active");
+  move_button.classList.remove("active");
+}
+
+// main renderers
+
+var face = document.getElementById('face_e');
+var face_button = document.getElementById('face_b');
+var vertex = document.getElementById('vertex_e');
+var vertex_button = document.getElementById('vertex_b');
+var flat = document.getElementById('flat_e');
+var flat_button = document.getElementById('flat_b');
+var none = document.getElementById('none_e');
+var none_button = document.getElementById('none_b');
+
+face_button.onclick = function(){
+  face.click();
+  face_button.classList.add("active");
+  vertex_button.classList.remove("active");
+  flat_button.classList.remove("active");
+  none_button.classList.remove("active");
+}
+
+vertex_button.onclick = function(){
+  vertex.click();
+  face_button.classList.remove("active");
+  vertex_button.classList.add("active");
+  flat_button.classList.remove("active");
+  none_button.classList.remove("active");
+}
+
+flat_button.onclick = function(){
+  flat.click();
+  face_button.classList.remove("active");
+  vertex_button.classList.remove("active");
+  flat_button.classList.add("active");
+  none_button.classList.remove("active");
+}
+
+none_button.onclick = function(){
+  none.click();
+  face_button.classList.remove("active");
+  vertex_button.classList.remove("active");
+  flat_button.classList.remove("active");
+  none_button.classList.add("active");
+}
 
 file.onchange = function(){
   if(file.files.length){
@@ -30,7 +106,7 @@ file.onchange = function(){
        setRenderers();
        rotator = new Rotator();
        translator = new Translator();
-       updateInfo();
+       //updateInfo();
        draw();
        updateEventHandlers();
       }
@@ -39,12 +115,12 @@ file.onchange = function(){
   }
 }
 
-function updateInfo(){
-  var verticesSpan = document.getElementById("vertices_span");
-  var polygonsSpan = document.getElementById("polygons_span");
-  verticesSpan.innerHTML = model.getVerticesCount();
-  polygonsSpan.innerHTML = model.getPolygonsCount();
-}
+//function updateInfo(){
+//  var verticesSpan = document.getElementById("vertices_span");
+//  var polygonsSpan = document.getElementById("polygons_span");
+//  verticesSpan.innerHTML = model.getVerticesCount();
+//  polygonsSpan.innerHTML = model.getPolygonsCount();
+//}
 
 function setMainRenderer(){
   if(rModel == undefined){
@@ -100,13 +176,11 @@ function changeViewType(){
     return;
   }
   var viewType = document.getElementsByName("view_type");
-
-  for(var i = 0; i < viewType.length; i++){
-    if(viewType[i].checked){
-      var name = viewType[i].value;
-      rModel.setViewType(name);
-    }
-  }  
+  if(viewType[0].checked){
+    rModel.setViewType("perspective");
+  }else{
+    rModel.setViewType("ortho");
+  }
 }
 
 function resetView(){
@@ -116,6 +190,16 @@ function resetView(){
   rotator.reset();
   translator.reset();
   rModel.reset();
+  draw();
+}
+
+function rescaleView(){
+  if(rotator == undefined || translator == undefined)
+    return;
+
+  rotator.rescale();
+  translator.rescale();
+  rModel.rescale();
   draw();
 }
 

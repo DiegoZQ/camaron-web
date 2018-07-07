@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>btn-substract</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="btn-substract" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path class="fill" d="M21,21 L21,31 L9,31 L9,9 L31,9 L31,21 L21,21 Z" id="Fill-7" stroke="#C8C8C8" stroke-width="2" fill="#FFFFFF"></path>
+        <path d="M21,39 L39,39 L39,21 L21,21 L21,39 Z" id="Path" stroke="#C8C8C8" stroke-width="2"></path>
+    </g>
+</svg>

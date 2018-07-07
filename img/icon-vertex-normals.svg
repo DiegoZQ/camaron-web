@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="37px" height="37px" viewBox="0 0 37 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-vertex-normals</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon-vertex-normals" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon id="Fill-1" fill="#1E9CD8" points="8 20.8170222 29.7664974 33 30.8461538 31.1708488 12.5575811 20.9343308 30.5972611 12.0359947 29.6182014 10.1538462"></polygon>
+        <path d="M11.6882353,17.8653333 C12.8072962,18.3562371 13.5889139,19.4739417 13.5889139,20.7742727 C13.5889139,22.5278335 12.1674748,23.9492726 10.413914,23.9492726 C8.66035315,23.9492726 7.23891403,22.5278335 7.23891403,20.7742727 C7.23891403,19.4073826 8.10259583,18.2422933 9.31402715,17.794937 L9.31402715,3.01953648 L8,3.01953648 L10.4936652,0.0235438508 L13.0022624,3.01953648 L11.6882353,3.01953648 L11.6882353,17.8653333 Z" id="Fill-4" fill="#F59EB5"></path>
+    </g>
+</svg>

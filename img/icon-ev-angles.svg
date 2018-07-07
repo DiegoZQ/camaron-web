@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-ev-angles</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon-ev-angles" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M7.27063495,10.2300289 L3.78761381,12.245929 L6.97008517,14.1131539 C7.71206634,13.4999219 8.19966474,12.9719112 8.19966474,11.7832141 C8.19966474,11.1238909 7.68963328,10.5720504 7.27063495,10.2300289 Z M9.139148,9.14857251 C9.68267535,9.74039337 10.2603615,10.5488295 10.4977355,11.4659083 C10.8304901,12.75137 10.0766407,13.896603 8.94628842,15.2726352 L12.5648421,17.3957191 L21.2283949,12.2552135 L12.5,7.20338139 L9.139148,9.14857251 Z M12.5,5 L25,12.2347607 L12.5702232,19.6099997 L0,12.2347607 L12.5,5 Z" id="Fill-1" fill="#7B7BDD"></path>
+    </g>
+</svg>

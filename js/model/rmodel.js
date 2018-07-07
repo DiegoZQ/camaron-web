@@ -146,13 +146,17 @@ RModel.prototype.setScale = function(scaleDelta){
   this.recalculateMVP = true;
 }
 
+RModel.prototype.rescale = function(){
+  this.updateAspect();
+  this.recalculateMV = true;
+  this.recalculateMVP = true;
+}
+
 RModel.prototype.reset = function(){
   this.translation = vec3.fromValues(0, 0, 0);
   this.rotationMatrix = mat4.create();
   this.scale = vec3.fromValues(1, 1, 1);
-  this.updateAspect();
-  this.recalculateMV = true;
-  this.recalculateMVP = true;
+  this.rescale();
 }
 
 // Matrix Getters

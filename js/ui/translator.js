@@ -30,8 +30,12 @@ Translator.prototype.getMovementVector = function(){
   return this.v;
 }
 
-Translator.prototype.reset = function(){
+Translator.prototype.rescale = function(){
   this.width = gl.canvas.clientWidth;
   this.height = gl.canvas.clientHeight;
+}
+
+Translator.prototype.reset = function(){
+  this.rescale();
   this.v = vec3.create();
 }
