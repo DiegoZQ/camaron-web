@@ -2,7 +2,7 @@
 $( document ).ready(function() {
     // Cambiar entre 3 clases para las vistas del home
 	$("#view").click(function() {
-        var classview = ['view1','view0','view2','view3'];
+        var classview = ['view1','view2','view3','view0'];
         var btnClass = ['tooltiped v1','tooltiped v2','tooltiped v3'];
         $('#main-view').each(function(){
             this.className = classview[($.inArray(this.className, classview)+1)%classview.length];
