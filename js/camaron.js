@@ -7,11 +7,15 @@ var secondaryRenderers = [];
 
 var rotator;
 var translator;
+var scalator;
 var dragging = false;
 
 var colorConfig = new ColorConfig();
 
+var scaleInfo = document.getElementById("scale_info");
+
 var canvas = document.getElementById("glCanvas");
+var modelView = document.getElementById("model-view");
 var gl = canvas.getContext("webgl2");
 if (!gl) {alert("No WebGL");}
 
@@ -106,7 +110,9 @@ file.onchange = function(){
        setRenderers();
        rotator = new Rotator();
        translator = new Translator();
-       //updateInfo();
+       scalator = new Scalator();
+       scaleInfo.value = scalator.getScaleFactor().toFixed(1);
+       updateInfo();
        draw();
        updateEventHandlers();
       }
@@ -115,12 +121,21 @@ file.onchange = function(){
   }
 }
 
-//function updateInfo(){
-//  var verticesSpan = document.getElementById("vertices_span");
-//  var polygonsSpan = document.getElementById("polygons_span");
-//  verticesSpan.innerHTML = model.getVerticesCount();
-//  polygonsSpan.innerHTML = model.getPolygonsCount();
-//}
+function updateInfo(){
+  var verticesInfo = document.getElementById("vertices_info");
+  var polygonsInfo = document.getElementById("polygons_info");
+  verticesInfo.innerHTML ="Vertices: " + model.getVerticesCount();
+  polygonsInfo.innerHTML = "Polygons: " + model.getPolygonsCount();
+
+  var widthInfo = document.getElementById("width_info");
+  var heightInfo = document.getElementById("height_info");
+  var depthInfo = document.getElementById("depth_info");
+
+  widthInfo.innerHTML ="Width: " + Math.round(rModel.modelWidth);
+  heightInfo.innerHTML = "Height: " + Math.round(rModel.modelHeight);
+  depthInfo.innerHTML = "Depth: " + Math.round(rModel.modelDepth);
+
+}
 
 function setMainRenderer(){
   if(rModel == undefined){
@@ -189,6 +204,8 @@ function resetView(){
 
   rotator.reset();
   translator.reset();
+  scalator.reset();
+  scaleInfo.value = scalator.getScaleFactor().toFixed(1);
   rModel.reset();
   draw();
 }
@@ -199,6 +216,7 @@ function rescaleView(){
 
   rotator.rescale();
   translator.rescale();
+  scalator.rescale();
   rModel.rescale();
   draw();
 }
@@ -299,9 +317,13 @@ canvas.onwheel = function(e){
   }
   e.preventDefault();
   if(e.deltaY < 0){
-    rModel.setScale(0.1);
+    scalator.scale(0.1)
   }else{
-    rModel.setScale(-0.1);
+    scalator.scale(-0.1);
   }
+  rModel.setScale(scalator.getScaleFactor());
+
+  scaleInfo.value = scalator.getScaleFactor().toFixed(1);
+
   draw();
 }

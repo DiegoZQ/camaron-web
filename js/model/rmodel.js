@@ -138,10 +138,10 @@ RModel.prototype.setTranslation = function(translationVector){
   this.recalculateMVP = true;
 }
 
-RModel.prototype.setScale = function(scaleDelta){
-  this.scale[0] += scaleDelta;
-  this.scale[1] += scaleDelta;
-  this.scale[2] += scaleDelta;
+RModel.prototype.setScale = function(scaleFactor){
+  this.scale[0] = scaleFactor;
+  this.scale[1] = scaleFactor;
+  this.scale[2] = scaleFactor;
   this.recalculateMV = true;
   this.recalculateMVP = true;
 }

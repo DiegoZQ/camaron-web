@@ -208,7 +208,7 @@
         </div>
     </header>
     <section id="main-view" class="view0">
-        <div class="model-view">
+        <div id="model-view" class="model-view">
             <canvas id="glCanvas"></canvas>
             <div class="model-opt">
                 <div class="tooltiped" data-tooltip="Change perspective">
@@ -224,20 +224,20 @@
                 </div>
                 <div class="zoom">
                     <i class="material-icons">zoom_in</i>
-                    <input type="text" value="1.00">
+                    <input readonly="" id="scale_info" type="text" value="1.0">
                 </div>
             </div>
             <div class="model-stadistics">
                 <div class="autogrid center">
                     <div class="coord">
-                        <span>Y: 23 - 9009</span>
-                        <span>X: 23 - 9009</span>
-                        <span>Z: 23 - 9009</span>
+                        <span id="width_info">Width:  - </span>
+                        <span id="height_info">Height:  - </span>
+                        <span id="depth_info">Depth:  - </span>
                     </div>
                     <div class="stadistics">
-                        <span>Vertex: 38.390</span>
+                        <span id="vertices_info">Vertices: -</span>
                         <span>•</span>
-                        <span>Planes: 67.820</span>
+                        <span id="polygons_info">Polygons: -</span>
                     </div>
                 </div>
             </div>
