@@ -1,5 +1,6 @@
-var SelectionStrategy = function(model){
+var SelectionStrategy = function(model, mode){
 	this.model = model;
+  this.mode = mode;
 }
 
 SelectionStrategy.prototype.selectElement = function(element){
@@ -71,6 +72,12 @@ SelectionStrategy.prototype.substract = function(){
   		this.selectElement(polygon)
   		polygon.setSelected(!polygon.isSelected());
   	}
+  }
+}
+
+SelectionStrategy.prototype.apply = function(){
+  if(this.mode == "clean"){
+    this.select();
   }
 }
 

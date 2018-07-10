@@ -246,12 +246,12 @@
             <div class="selection-tabs">
                 <div class="tabs tab1">
                     <a href="#tab-selection" class="tab active"><h4>New Selection</h4></a>
-                    <a href="#tab-history" class="tab"><h4>Active selection</h4></a>
+                    <a href="#tab-history" class="tab"><h4>Active selections</h4></a>
                 </div>
                 <div class="tabs-body">
                     <div id="tab-selection" class="tab-content active">
                         <div id="selection-type" class="select drop-down">
-                            <select>
+                            <select id="selection-method">
                                 <option value="angle" data-img="img/img-angle.svg">By angle</option>
                                 <option value="id" data-img="img/img-id.svg">By ID</option>r
                             </select>
@@ -281,16 +281,20 @@
                         <div class="id-box select-box">
                             <div class="flex v-center">
                                 <label class="radio">
-                                    <input type="radio" name="id-opt" checked>
+                                    <input type="radio" name="id-opt" value="range" checked>
                                     <div class="input-radio"></div>
-                                    <span>Unique ID</span>
+                                    <span>Range</span>
                                 </label>
-                                <input type="text" placeholder="0">
+                                <div class="flex v-center">
+                                    <input id='id_from' type="text" placeholder="0">
+                                    <i class="material-icons">remove</i>
+                                    <input id='id_to' type="text" placeholder="0">
+                                </div>
                             </div>
                             <div id="attach">
                                 <div class="flex v-center">
                                     <label class="radio">
-                                        <input type="radio" name="id-opt">
+                                        <input type="radio" name="id-opt" value="list">
                                         <div class="input-radio"></div>
                                         <span>Attach or paste</span>
                                     </label>
@@ -305,19 +309,19 @@
                             <h4>Selection mode:</h4>
                             <div class="flex evenly">
                                 <label class="radio select-mode tooltiped" data-tooltip="New selection">
-                                    <input type="radio" name="mode-opt" checked>
+                                    <input type="radio" name="mode-opt" value="clean" checked>
                                     <div class="input-radio">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50"><desc>  Created with Sketch.</desc><g fill="none"><path class="fill" d="M12 38L12 12 38 12 38 38 12 38Z" style="fill:#FFF;stroke-width:2;stroke:#C8C8C8"/></g></svg>
                                     </div>
                                 </label>
                                 <label class="radio select-mode tooltiped" data-tooltip="Add">
-                                    <input type="radio" name="mode-opt">
+                                    <input type="radio" name="mode-opt" value="add">
                                     <div class="input-radio">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50"><desc>  Created with Sketch.</desc><g fill="none"><path class="fill" d="M31 19L41 19 41 41 19 41 19 31 9 31 9 9 31 9 31 19Z" style="fill:#FFF;stroke-width:2;stroke:#C8C8C8"/></g></svg>
                                     </div>
                                 </label>
                                 <label class="radio select-mode tooltiped" data-tooltip="Substract">
-                                    <input type="radio" name="mode-opt">
+                                    <input type="radio" name="mode-opt" value="substract">
                                     <div class="input-radio">
                                         <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                         <g id="btn-substract" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -328,7 +332,7 @@
                                     </div>
                                 </label>
                                 <label class="radio select-mode tooltiped" data-tooltip="Intersect">
-                                    <input type="radio" name="mode-opt">
+                                    <input type="radio" name="mode-opt" value="intersect">
                                     <div class="input-radio">
                                             <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                             <g id="btn-intercept" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -341,7 +345,7 @@
                             </div>
                         </div>
                         <div class="flex center">
-                            <a class="btn">Apply</a>
+                            <a id="apply_btn" class="btn">Apply</a>
                         </div>
                     </div>
                     <div id="tab-history" class="tab-content">
@@ -492,6 +496,9 @@
     <script type="text/javascript" src="js/rendering/main-renderers/directvertex.js"></script>
     <script type="text/javascript" src="js/rendering/main-renderers/flat.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/wire.js"></script>
+    <script type="text/javascript" src="js/selection/selection-base.js"></script>
+    <script type="text/javascript" src="js/selection/angle-selection.js"></script>
+    <script type="text/javascript" src="js/selection/id-selection.js"></script>
     <script type="text/javascript" src="js/camaron.js"></script>
     <script src="js/sitio.js"></script>
 </body>

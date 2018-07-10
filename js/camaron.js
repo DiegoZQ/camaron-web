@@ -10,6 +10,8 @@ var translator;
 var scalator;
 var dragging = false;
 
+var applied_selections = [];
+
 var colorConfig = new ColorConfig();
 
 var scaleInfo = document.getElementById("scale_info");
@@ -19,7 +21,7 @@ var modelView = document.getElementById("model-view");
 var gl = canvas.getContext("webgl2");
 if (!gl) {alert("No WebGL");}
 
-// file
+// file buttons
 var file = document.getElementById('import_e');
 var file_button = document.getElementById('import_b');
 
@@ -27,7 +29,7 @@ file_button.onclick = function(){
   file.click();
 }
 
-// file
+// view button
 var view = document.getElementById('view_e');
 var view_button = document.getElementById('view_b');
 
@@ -35,7 +37,8 @@ view_button.onclick = function(){
   view.click();
 }
 
-// movement
+// movement buttons
+
 var move = document.getElementById('move_e');
 var move_button = document.getElementById('move_b');
 var rotate = document.getElementById('rotate_e');
@@ -53,7 +56,7 @@ rotate_button.onclick = function(){
   move_button.classList.remove("active");
 }
 
-// main renderers
+// main renderers buttons
 
 var face = document.getElementById('face_e');
 var face_button = document.getElementById('face_b');
@@ -96,6 +99,8 @@ none_button.onclick = function(){
   none_button.classList.add("active");
 }
 
+// Open File
+
 file.onchange = function(){
   if(file.files.length){
     var reader = new FileReader();
@@ -121,6 +126,8 @@ file.onchange = function(){
   }
 }
 
+// Info updater
+
 function updateInfo(){
   var verticesInfo = document.getElementById("vertices_info");
   var polygonsInfo = document.getElementById("polygons_info");
@@ -136,6 +143,8 @@ function updateInfo(){
   depthInfo.innerHTML = "Depth: " + Math.round(rModel.modelDepth);
 
 }
+
+// Renderer setters
 
 function setMainRenderer(){
   if(rModel == undefined){
@@ -186,6 +195,8 @@ function setRenderers(){
   setSecondaryRenderers();   
 }
 
+// ViewType Changer
+
 function changeViewType(){
   if(rModel == undefined){
     return;
@@ -197,6 +208,8 @@ function changeViewType(){
     rModel.setViewType("ortho");
   }
 }
+
+// Reset and Rescale
 
 function resetView(){
   if(rotator == undefined || translator == undefined)
@@ -221,6 +234,8 @@ function rescaleView(){
   draw();
 }
 
+// Main draw Function
+
 function draw(){
   webglUtils.resizeCanvasToDisplaySize(gl.canvas);
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -237,9 +252,13 @@ function draw(){
   }
 }
 
+// Random Helpers
+
 function degToRad(d) {
   return d * Math.PI / 180;
 }
+
+// Mouse Interactionr
 
 function rotate_mousedown(e){
   dragging = true;
@@ -327,3 +346,68 @@ canvas.onwheel = function(e){
 
   draw();
 }
+
+// SELECTIONS
+function apply_selections(){
+  for(var i = 0; i < applied_selections.length; i++){
+    applied_selections[i].apply();
+    mainRenderer.updateColor();
+    draw();
+  }
+}
+
+// Id Selector
+
+var applyButton = document.getElementById("apply_btn");
+
+applyButton.onclick = function(){
+  var selection;
+  var selectionMode;
+  var specificMethod;
+  var selectionMethod = document.getElementById("selection-method").value;
+  var selectionModeOptions = document.getElementsByName("mode-opt")
+  for(var i = 0; i < selectionModeOptions.length; i++){
+    if(selectionModeOptions[i].checked){
+      selectionMode = selectionModeOptions[i].value;
+      break;
+    }
+  }
+
+  if(selectionMethod == 'id'){
+    var idFrom;
+    var idTo;
+    var list;
+    var specificMethodOptions = document.getElementsByName("id-opt")
+    for(var i = 0; i < specificMethodOptions.length; i++){
+      if(specificMethodOptions[i].checked){
+        specificMethod = specificMethodOptions[i].value;
+        break;
+      }
+    }
+
+    if(specificMethod == 'range'){
+      idFrom = document.getElementById("id_from").value;
+      idTo = document.getElementById("id_to").value;
+      list = null;
+    }else{
+      idFrom = null;
+      idTo = null;
+      list = null;
+    }
+
+    selection = new IdSelectionStrategy(model, selectionMode, idFrom, idTo, list);
+
+    if(selection.mode == 'clean'){
+      applied_selections = [selection];
+    }else{
+      applied_selections.append(selection);
+    }
+
+  }
+
+  apply_selections();
+}
+
+
+
+

@@ -1,5 +1,5 @@
-var AngleSelectionStrategy = function(model, minAngle, maxAngle){
-	SelectionStrategy.call(this, model);
+var AngleSelectionStrategy = function(model, mode, minAngle, maxAngle){
+	SelectionStrategy.call(this, model, mode);
 	this.minAngle = minAngle;
 	this.maxAngle = maxAngle;
 }
