@@ -400,11 +400,9 @@ applyButton.onclick = function(){
     if(selection.mode == 'clean'){
       applied_selections = [selection];
     }else{
-      applied_selections.append(selection);
+      applied_selections.push(selection);
     }
-
   }
-
   apply_selections();
 }
 

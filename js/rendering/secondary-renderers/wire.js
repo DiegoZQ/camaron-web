@@ -1,6 +1,6 @@
 var WireRenderer = function(rModel){
 	Renderer.call(this, rModel);
-	this.program = webglUtils.createProgramFromSources(gl, [basicVertexShader, basicFragmentShader]);
+	this.program = webglUtils.createProgramFromSources(gl, [sCVertexShader, sCFragmentShader]);
 }
 
 WireRenderer.prototype = Object.create(Renderer.prototype);
@@ -29,7 +29,7 @@ WireRenderer.prototype.draw = function(){
 	gl.bindVertexArray(this.vao);
 	gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.getMVP());
 	gl.uniformMatrix4fv(this.modelLocation, false, this.rModel.getModelMatrix());
-	gl.uniform4fv(this.colorLocation, vec4.fromValues(0, 0, 0, 1));
+	gl.uniform4fv(this.colorLocation, colorConfig.getWireFrameColor());
 
 	gl.drawArrays(gl.LINES, 0, this.rModel.getEdgesCount()*2);
 }

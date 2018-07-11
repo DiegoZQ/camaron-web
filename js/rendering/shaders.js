@@ -68,3 +68,30 @@ void main() {
   outColor = v_color;
 }
 `;
+
+
+//SINGLE COLOR PROGRAM
+var sCVertexShader = `#version 300 es
+
+in vec4 a_position;
+
+uniform mat4 u_worldViewProjection;
+
+
+void main() {
+  gl_Position = u_worldViewProjection * a_position;
+}
+`;
+
+var sCFragmentShader = `#version 300 es
+
+precision mediump float;
+
+uniform vec4 u_color;
+
+out vec4 outColor;
+
+void main() {
+  outColor = u_color;
+}
+`;

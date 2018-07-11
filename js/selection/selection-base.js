@@ -78,6 +78,14 @@ SelectionStrategy.prototype.substract = function(){
 SelectionStrategy.prototype.apply = function(){
   if(this.mode == "clean"){
     this.select();
+  }else if(this.mode == "intersect"){
+    this.intersect();
+  }else if(this.mode == "add"){
+    this.join();
+  }else if(this.mode == "substract"){
+    this.substract();
+  }else{
+    console.log("Unsupported Mode")
   }
 }
 
