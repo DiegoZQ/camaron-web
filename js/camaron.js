@@ -258,6 +258,10 @@ function degToRad(d) {
   return d * Math.PI / 180;
 }
 
+function radToDeg(d) {
+  return d * 180 / Math.PI;
+}
+
 // Mouse Interactionr
 
 function rotate_mousedown(e){
@@ -397,12 +401,19 @@ applyButton.onclick = function(){
 
     selection = new IdSelectionStrategy(model, selectionMode, idFrom, idTo, list);
 
-    if(selection.mode == 'clean'){
-      applied_selections = [selection];
-    }else{
-      applied_selections.push(selection);
-    }
+  }else if(selectionMethod == 'angle'){
+    var angleFrom = document.getElementById("angle_from").value;
+    var angleTo = document.getElementById("angle_to").value;
+
+    selection = new AngleSelectionStrategy(model, selectionMode, angleFrom, angleTo)
   }
+
+  if(selection.mode == 'clean'){
+      applied_selections = [selection];
+  }else{
+    applied_selections.push(selection);
+  }
+
   apply_selections();
 }
 

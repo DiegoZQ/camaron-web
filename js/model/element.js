@@ -103,6 +103,25 @@ Polygon.prototype.getArea = function(){
   return this.area;
 }
 
+Polygon.prototype.getAngles = function(){
+  var sum = (this.vertices.length -2) * 180;
+  var angles = []
+  for(var i = 0; i<this.vertices.length; i++){
+    var vertex1 = this.vertices[i];
+    var vertex2 = this.vertices[(i+1)%this.vertices.length];
+    var vertex3 = this.vertices[(i+2)%this.vertices.length];
+
+    var vector1 = vec3.create();
+    var vector2 = vec3.create();
+
+    vec3.subtract(vector1, vertex1.getCoords(), vertex2.getCoords());
+    vec3.subtract(vector2, vertex2.getCoords(), vertex3.getCoords());
+
+    angles.push(Math.PI - vec3.angle(vector1, vector2));
+  }
+  return angles;
+}
+
 Polygon.prototype.isNeighbour = function(polygon){
   return neighbours.includes(polygon);
 }
