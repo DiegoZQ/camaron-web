@@ -1,5 +1,9 @@
 "use strict";
 
+/*--------------------------------------------------------------------------------------
+----------------------------------- COMMON VARIABLES -----------------------------------
+--------------------------------------------------------------------------------------*/
+
 var model;
 var rModel;
 var mainRenderer;
@@ -18,16 +22,51 @@ var scaleInfo = document.getElementById("scale_info");
 
 var canvas = document.getElementById("glCanvas");
 var modelView = document.getElementById("model-view");
+
+// Check if webGL is avalaible
 var gl = canvas.getContext("webgl2");
 if (!gl) {alert("No WebGL");}
 
-// file buttons
+/*--------------------------------------------------------------------------------------
+--------------------------------- OPEN FILE/DRAW MODEL ---------------------------------
+--------------------------------------------------------------------------------------*/
+
 var file = document.getElementById('import_e');
 var file_button = document.getElementById('import_b');
 
 file_button.onclick = function(){
   file.click();
 }
+
+file.onchange = function(){
+  if(file.files.length){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var fileArray = e.target.result.split('\n');
+      var loader = new OffLoadStrategy(fileArray);
+      if(loader.isValid()){
+       model = loader.load();
+       rModel = new RModel(model);
+       rModel.loadData();
+       changeViewType();
+       setMainRenderer();
+       setSecondaryRenderers();
+       rotator = new Rotator();
+       translator = new Translator();
+       scalator = new Scalator();
+       scaleInfo.value = scalator.getScaleFactor().toFixed(1);
+       updateInfo();
+       draw();
+       updateEventHandlers();
+      }
+    }
+    reader.readAsBinaryString(file.files[0]);
+  }
+}
+
+/*--------------------------------------------------------------------------------------
+--------------------------------- BUTTONS INTERACTIONS ---------------------------------
+--------------------------------------------------------------------------------------*/
 
 // view button
 var view = document.getElementById('view_e');
@@ -99,34 +138,16 @@ none_button.onclick = function(){
   none_button.classList.add("active");
 }
 
-// Open File
 
-file.onchange = function(){
-  if(file.files.length){
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var fileArray = e.target.result.split('\n');
-      var loader = new OffLoadStrategy(fileArray);
-      if(loader.isValid()){
-       model = loader.load();
-       rModel = new RModel(model);
-       rModel.loadData();
-       changeViewType();
-       setRenderers();
-       rotator = new Rotator();
-       translator = new Translator();
-       scalator = new Scalator();
-       scaleInfo.value = scalator.getScaleFactor().toFixed(1);
-       updateInfo();
-       draw();
-       updateEventHandlers();
-      }
-    }
-    reader.readAsBinaryString(file.files[0]);
-  }
-}
+/*--------------------------------------------------------------------------------------
+------------------------------------- VIEW HELPERS -------------------------------------
+----------------------------------------------------------------------------------------
 
-// Info updater
+These methods are used for setting and updating different aspects of the view or the model.
+These are often used by buttons on the same view, or by other methods.
+--------------------------------------------------------------------------------------*/
+
+// Updates the visible information of the model when is loaded.
 
 function updateInfo(){
   var verticesInfo = document.getElementById("vertices_info");
@@ -144,7 +165,7 @@ function updateInfo(){
 
 }
 
-// Renderer setters
+// Creates a main renderer and assigns it to the main renderer variable.
 
 function setMainRenderer(){
   if(rModel == undefined){
@@ -172,6 +193,9 @@ function setMainRenderer(){
   }
 }
 
+// Creates a list of  every secondary renderer selected created and 
+// adds it to the secondary renderers variable.
+
 function setSecondaryRenderers(){
   if(rModel == undefined){
     return;
@@ -190,12 +214,7 @@ function setSecondaryRenderers(){
   } 
 }
 
-function setRenderers(){
-  setMainRenderer();
-  setSecondaryRenderers();   
-}
-
-// ViewType Changer
+// Changes the viewtype between perspective and orthogonal.
 
 function changeViewType(){
   if(rModel == undefined){
@@ -209,7 +228,7 @@ function changeViewType(){
   }
 }
 
-// Reset and Rescale
+// Resets the model to its original position.
 
 function resetView(){
   if(rotator == undefined || translator == undefined)
@@ -223,6 +242,8 @@ function resetView(){
   draw();
 }
 
+// Rescales the model when the canvas changes size.
+
 function rescaleView(){
   if(rotator == undefined || translator == undefined)
     return;
@@ -234,35 +255,13 @@ function rescaleView(){
   draw();
 }
 
-// Main draw Function
+/*--------------------------------------------------------------------------------------
+---------------------------------- MOUSE INTERACTIONS ----------------------------------
+----------------------------------------------------------------------------------------
 
-function draw(){
-  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.clearColor(0, 0, 0, 0);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.enable(gl.DEPTH_TEST);
-  gl.enable(gl.CULL_FACE);
-  if(mainRenderer != null){
-    mainRenderer.draw();
-  }
-
-  for(var i = 0; i < secondaryRenderers.length; i++){
-    secondaryRenderers[i].draw();
-  }
-}
-
-// Random Helpers
-
-function degToRad(d) {
-  return d * Math.PI / 180;
-}
-
-function radToDeg(d) {
-  return d * 180 / Math.PI;
-}
-
-// Mouse Interactionr
+These functions are used for mouse operations such as moving, rotating and scalating.
+The binding of the functions with the canvas is included here.
+--------------------------------------------------------------------------------------*/
 
 function rotate_mousedown(e){
   dragging = true;
@@ -351,7 +350,16 @@ canvas.onwheel = function(e){
   draw();
 }
 
-// SELECTIONS
+/*--------------------------------------------------------------------------------------
+-------------------------------------- SELECTIONS --------------------------------------
+----------------------------------------------------------------------------------------
+
+These functions are for controlling whe a selection is applied.
+These should be eventually refactored for readability purposes. 
+--------------------------------------------------------------------------------------*/
+
+var applyButton = document.getElementById("apply_btn");
+
 function apply_selections(){
   for(var i = 0; i < applied_selections.length; i++){
     applied_selections[i].apply();
@@ -360,16 +368,13 @@ function apply_selections(){
   }
 }
 
-// Id Selector
-
-var applyButton = document.getElementById("apply_btn");
-
 applyButton.onclick = function(){
   var selection;
   var selectionMode;
   var specificMethod;
   var selectionMethod = document.getElementById("selection-method").value;
   var selectionModeOptions = document.getElementsByName("mode-opt")
+
   for(var i = 0; i < selectionModeOptions.length; i++){
     if(selectionModeOptions[i].checked){
       selectionMode = selectionModeOptions[i].value;
@@ -417,6 +422,40 @@ applyButton.onclick = function(){
   apply_selections();
 }
 
+/*--------------------------------------------------------------------------------------
+---------------------------------- MAIN DRAW FUNCTION ----------------------------------
+----------------------------------------------------------------------------------------
 
+This is the function that is called everytime the model suffers a change. Changes include
+moving the model, changing or adding a renderer or applying some selection.
+--------------------------------------------------------------------------------------*/
 
+function draw(){
+  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.CULL_FACE);
+  if(mainRenderer != null){
+    mainRenderer.draw();
+  }
 
+  for(var i = 0; i < secondaryRenderers.length; i++){
+    secondaryRenderers[i].draw();
+  }
+}
+
+/*--------------------------------------------------------------------------------------
+---------------------------------------- HELPERS ---------------------------------------
+----------------------------------------------------------------------------------------
+
+These are helper functions that were not in any of the previous categories.
+--------------------------------------------------------------------------------------*/
+function degToRad(d) {
+  return d * Math.PI / 180;
+}
+
+function radToDeg(d) {
+  return d * 180 / Math.PI;
+}
