@@ -19,3 +19,7 @@ AngleSelectionStrategy.prototype.selectElement = function(polygon){
 		}
 	}
 }
+
+AngleSelectionStrategy.prototype.getText = function(){
+	return "By Angle: " + this.minAngle + " - " + this.maxAngle;
+}

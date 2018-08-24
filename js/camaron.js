@@ -57,6 +57,7 @@ file.onchange = function(){
        scaleInfo.value = scalator.getScaleFactor().toFixed(1);
        updateInfo();
        draw();
+       enable_model_dependant();
        updateEventHandlers();
       }
     }
@@ -143,7 +144,7 @@ none_button.onclick = function(){
 ------------------------------------- VIEW HELPERS -------------------------------------
 ----------------------------------------------------------------------------------------
 
-These methods are used for setting and updating different aspects of the view or the model.
+These functions are used for setting and updating different aspects of the view or the model.
 These are often used by buttons on the same view, or by other methods.
 --------------------------------------------------------------------------------------*/
 
@@ -255,6 +256,35 @@ function rescaleView(){
   draw();
 }
 
+// Button binding  of reset button, because i dont know where else to put it.
+
+document.getElementById("reset_view").onclick =function() {
+  if(this.classList.contains("disabled")){
+    return;
+  }
+  resetView()
+};
+
+
+// Enables every disabled button with the model dependant class
+
+function enable_model_dependant(){
+  var elements = document.getElementsByClassName("model-d");
+  for(var i = 0; i < elements.length; i++){
+    elements[i].classList.remove("disabled");
+  }
+}
+
+// Enables every disabled button with the evaluation dependant class
+
+function enable_evaluation_dependant(){
+  var elements = document.getElementsByClassName("eval-d");
+  for(var i = 0; i < elements.length; i++){
+    elements[i].classList.remove("disabled");
+  
+  }
+}
+
 /*--------------------------------------------------------------------------------------
 ---------------------------------- MOUSE INTERACTIONS ----------------------------------
 ----------------------------------------------------------------------------------------
@@ -354,7 +384,7 @@ canvas.onwheel = function(e){
 -------------------------------------- SELECTIONS --------------------------------------
 ----------------------------------------------------------------------------------------
 
-These functions are for controlling whe a selection is applied.
+These functions are for controlling when a selection is applied.
 These should be eventually refactored for readability purposes. 
 --------------------------------------------------------------------------------------*/
 
@@ -363,8 +393,68 @@ var applyButton = document.getElementById("apply_btn");
 function apply_selections(){
   for(var i = 0; i < applied_selections.length; i++){
     applied_selections[i].apply();
-    mainRenderer.updateColor();
-    draw();
+  }
+  mainRenderer.updateColor();
+  draw();
+  update_active_selections();
+}
+
+
+function remove_selection(button){
+  var index = button.getAttribute("data-index");
+  var selection = applied_selections[index];
+
+  if(selection.getMode() == "clean"){
+    selection.clean();
+    applied_selections = [];
+  }else{
+    applied_selections.splice(index, 1);
+  }
+  apply_selections();
+}
+
+
+function update_active_selections(){
+  var selections_container = document.getElementById("selections-container");
+
+  while (selections_container.firstChild) {
+    selections_container.removeChild(selections_container.firstChild);
+  }
+
+  for(var i =0; i < applied_selections.length; i++){
+    var selection = applied_selections[i];
+
+    var selection_tab = document.createElement("li");
+    var img = document.createElement("img");
+    var div = document.createElement("div");
+    var span = document.createElement("span");
+    var text = document.createTextNode(selection.getText());
+    var remove = document.createElement("i");
+
+    if(selection.getMode() == "clean"){
+      img.setAttribute("src", "img/btn-normal.svg");
+    }else if(selection.getMode() == "intersect"){
+      img.setAttribute("src", "img/btn-intercept.svg");
+    }else if(selection.getMode() == "add"){
+      img.setAttribute("src", "img/btn-add.svg");
+    }else if(selection.getMode() == "substract"){
+      img.setAttribute("src", "img/btn-substract.svg");
+    }
+
+    div.setAttribute("class", "grow");
+    span.appendChild(text);
+    div.appendChild(span);
+
+    remove.setAttribute("class", "material-icons");
+    remove.appendChild(document.createTextNode("close"));
+    remove.setAttribute("data-index", i);
+    remove.setAttribute("onclick", "remove_selection(this)");
+
+    selection_tab.appendChild(img);
+    selection_tab.appendChild(div);
+    selection_tab.appendChild(remove);
+
+    selections_container.appendChild(selection_tab);
   }
 }
 

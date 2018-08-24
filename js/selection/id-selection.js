@@ -24,3 +24,10 @@ IdSelectionStrategy.prototype.selectElement = function(polygon){
 		}
 	}
 }
+
+IdSelectionStrategy.prototype.getText = function(){
+	if(this.minId != null){
+		return "By Id: " + this.minId + " - " + this.maxId;
+	}
+	return "By Id List";
+}

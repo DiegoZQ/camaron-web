@@ -75,6 +75,10 @@ SelectionStrategy.prototype.substract = function(){
   }
 }
 
+SelectionStrategy.prototype.getMode = function(){
+  return this.mode;
+}
+
 SelectionStrategy.prototype.apply = function(){
   if(this.mode == "clean"){
     this.select();

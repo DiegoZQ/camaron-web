@@ -2,6 +2,9 @@
 $( document ).ready(function() {
     // Cambiar entre 3 clases para las vistas del home
 	$("#view").click(function() {
+        if(this.classList.contains("disabled")){
+            return;
+        }
         var classview = ['view1','view2','view3','view0'];
         var btnClass = ['tooltiped v1','tooltiped v2','tooltiped v3'];
         $('#main-view').each(function(){
