@@ -33,6 +33,16 @@ if (!gl) {alert("No WebGL");}
 
 var file = document.getElementById('import_e');
 var file_button = document.getElementById('import_b');
+var modal_loading = $('#modal-loading');
+
+function open_loading_modal(){
+  modal_loading.fadeIn().addClass('active');
+  modal_loading.find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
+}
+
+function close_loading_modal(){
+  modal_loading.delay(150).fadeOut().removeClass('active');$('.modal-container').toggleClass('bottom-in bottom-out');
+}
 
 file_button.onclick = function(){
   file.click();
@@ -42,27 +52,31 @@ file.onchange = function(){
   if(file.files.length){
     var reader = new FileReader();
     reader.onload = function(e){
-      var fileArray = e.target.result.split('\n');
-      var loader = new OffLoadStrategy(fileArray);
-      if(loader.isValid()){
-       model = loader.load();
-       rModel = new RModel(model);
-       rModel.loadData();
-       changeViewType();
-       setMainRenderer();
-       setSecondaryRenderers();
-       rotator = new Rotator();
-       translator = new Translator();
-       scalator = new Scalator();
-       scaleInfo.value = scalator.getScaleFactor().toFixed(1);
-       updateInfo();
-       draw();
-       enable_model_dependant();
-       updateEventHandlers();
-      }
+      open_loading_modal();
+      setTimeout(function(){
+        var fileArray = e.target.result.split('\n');
+        var loader = new OffLoadStrategy(fileArray);
+        if(loader.isValid()){
+          model = loader.load();
+          rModel = new RModel(model);
+          rModel.loadData();
+          changeViewType();
+          setMainRenderer();
+          setSecondaryRenderers();
+          rotator = new Rotator();
+          translator = new Translator();
+          scalator = new Scalator();
+          scaleInfo.value = scalator.getScaleFactor().toFixed(1);
+          updateInfo();
+          draw();
+          enable_model_dependant();
+          updateEventHandlers();
+          close_loading_modal();
+        } 
+      }, 500); 
     }
     reader.readAsBinaryString(file.files[0]);
-  }
+  }  
 }
 
 /*--------------------------------------------------------------------------------------
