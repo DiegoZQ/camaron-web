@@ -13,6 +13,8 @@ var rotator;
 var translator;
 var scalator;
 var dragging = false;
+var rotating = false;
+var moving = false;
 
 var applied_selections = [];
 
@@ -33,26 +35,41 @@ if (!gl) {alert("No WebGL");}
 
 var file = document.getElementById('import_e');
 var file_button = document.getElementById('import_b');
+
+// The next variable and the following functions are the only piece of JQuery in here
+// (besides the entire sitio.js file). This was done by the designer and will be replaced
+// as soon as I have time with pure JavaScript.
+
 var modal_loading = $('#modal-loading');
+
+// Opens the loading modal.
 
 function open_loading_modal(){
   modal_loading.fadeIn().addClass('active');
   modal_loading.find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
 }
 
+// Closes the loading modal.
+
 function close_loading_modal(){
   modal_loading.delay(150).fadeOut().removeClass('active');$('.modal-container').toggleClass('bottom-in bottom-out');
 }
 
+// Binds the design button, with the actual input type file button.
+
 file_button.onclick = function(){
   file.click();
 }
+
+// The onchange event is triggered on the input when a file is selected.
+// Here is were everything gets initialized.
 
 file.onchange = function(){
   if(file.files.length){
     var reader = new FileReader();
     reader.onload = function(e){
       open_loading_modal();
+      // waiting half second for the modal to open
       setTimeout(function(){
         var fileArray = e.target.result.split('\n');
         var loader = new OffLoadStrategy(fileArray);
@@ -73,7 +90,7 @@ file.onchange = function(){
           updateEventHandlers();
           close_loading_modal();
         } 
-      }, 500); 
+      }, 250);
     }
     reader.readAsBinaryString(file.files[0]);
   }  
@@ -89,25 +106,6 @@ var view_button = document.getElementById('view_b');
 
 view_button.onclick = function(){
   view.click();
-}
-
-// movement buttons
-
-var move = document.getElementById('move_e');
-var move_button = document.getElementById('move_b');
-var rotate = document.getElementById('rotate_e');
-var rotate_button = document.getElementById('rotate_b');
-
-move_button.onclick = function(){
-  move.click();
-  move_button.classList.add("active");
-  rotate_button.classList.remove("active");
-}
-
-rotate_button.onclick = function(){
-  rotate.click();
-  rotate_button.classList.add("active");
-  move_button.classList.remove("active");
 }
 
 // main renderers buttons
@@ -307,18 +305,25 @@ These functions are used for mouse operations such as moving, rotating and scala
 The binding of the functions with the canvas is included here.
 --------------------------------------------------------------------------------------*/
 
-function rotate_mousedown(e){
-  dragging = true;
-  var rect = canvas.getBoundingClientRect();
-  rotator.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
+function mousedown(e){
+  if(e.button == 0){
+    rotating = true;
+    var rect = canvas.getBoundingClientRect();
+    rotator.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
+  }else if(e.button == 2){
+    moving = true;
+    var rect = canvas.getBoundingClientRect();
+    translator.setMovementStart(event.clientX - rect.left, event.clientY - rect.top)
+  }
 }
 
-function rotate_mouseup(e){
-  dragging = false;
+function mouseup(e){
+  rotating = false;
+  moving = false;
 }
 
-function rotate_mousemove(e){
-  if(dragging){
+function mousemove(e){
+  if(rotating){
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
@@ -327,20 +332,8 @@ function rotate_mousemove(e){
     rModel.setRotation(rotator.getRotationMatrix());
     draw();
   }
-}
 
-function move_mousedown(e){
-  dragging = true;
-  var rect = canvas.getBoundingClientRect();
-  translator.setMovementStart(event.clientX - rect.left, event.clientY - rect.top)
-}
-
-function move_mouseup(e){
-  dragging = false;
-}
-
-function move_mousemove(e){
-  if(dragging){
+  if(moving){
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
@@ -351,36 +344,7 @@ function move_mousemove(e){
   }
 }
 
-function updateEventHandlers(){
-  var mode = document.getElementsByName("interaction");
-  for(var i = 0; i < mode.length; i++){
-    if(mode[i].checked){
-      var name = mode[i].value;
-      if(name == "rotate"){
-        canvas.removeEventListener("mousedown", move_mousedown);
-        canvas.removeEventListener("mouseup", move_mouseup);
-        canvas.removeEventListener("mousemove", move_mousemove);
-
-        canvas.addEventListener("mousedown", rotate_mousedown);
-        canvas.addEventListener("mouseup", rotate_mouseup);
-        canvas.addEventListener("mousemove", rotate_mousemove);
-      }else{
-        canvas.removeEventListener("mousedown", rotate_mousedown);
-        canvas.removeEventListener("mouseup", rotate_mouseup);
-        canvas.removeEventListener("mousemove", rotate_mousemove); 
-
-        canvas.addEventListener("mousedown", move_mousedown);
-        canvas.addEventListener("mouseup", move_mouseup);
-        canvas.addEventListener("mousemove", move_mousemove);
-      }
-    }
-  } 
-}
-
-canvas.onwheel = function(e){
-  if(rModel == undefined){
-    return;
-  }
+function onwheel(e){
   e.preventDefault();
   if(e.deltaY < 0){
     scalator.scale(0.1)
@@ -392,6 +356,14 @@ canvas.onwheel = function(e){
   scaleInfo.value = scalator.getScaleFactor().toFixed(1);
 
   draw();
+}
+
+function updateEventHandlers(){
+  canvas.addEventListener("mousedown", mousedown);
+  canvas.addEventListener("mouseup", mouseup);
+  canvas.addEventListener("mousemove", mousemove);
+  canvas.addEventListener("wheel", onwheel);
+  canvas.addEventListener("contextmenu", function(e){e.preventDefault();})
 }
 
 /*--------------------------------------------------------------------------------------

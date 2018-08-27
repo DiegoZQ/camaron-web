@@ -1,3 +1,14 @@
+/*
+    This file was made entirely by the interface designer, and its the only part of the program that uses JQuery.
+    It's not necessary to understand what is going on here to understand how everything actually works.
+    In fact, i don't understand it myself (cause reading and analyzing it would be a waste of time).
+
+    So if you are here trying to understand something related with webGL or how the model works,
+    I'll save you some time and tell you this is not the place.
+
+    Also you may notice that almost every comment here, is actually in Spanish.
+*/
+
 // JavaScript Document
 $( document ).ready(function() {
     // Cambiar entre 3 clases para las vistas del home
@@ -13,6 +24,10 @@ $( document ).ready(function() {
         $('#view').each(function(){
             this.className = btnClass[($.inArray(this.className, btnClass)+1)%btnClass.length];
         });
+
+        // If you are here, you deserve to know that this is the only line of code actually added by me.
+        // The view button actually changes the canvas size, so I needed to rescale the model to fit the new size.
+        // This function is defined in camaron.js, so you can start from there if you want to see how it works.
         rescaleView();
     });
     
