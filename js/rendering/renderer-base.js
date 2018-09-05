@@ -5,3 +5,5 @@ var Renderer = function(rModel){
 Renderer.prototype.init = function(){}
 
 Renderer.prototype.draw = function(){}
+
+Renderer.prototype.updateColor = function(){}

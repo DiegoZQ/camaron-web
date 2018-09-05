@@ -23,9 +23,7 @@ var colorConfig = new ColorConfig();
 var scaleInfo = document.getElementById("scale_info");
 
 var canvas = document.getElementById("glCanvas");
-var modelView = document.getElementById("model-view");
 
-// Check if webGL is avalaible
 var gl = canvas.getContext("webgl2");
 if (!gl) {alert("No WebGL");}
 
@@ -90,7 +88,7 @@ file.onchange = function(){
           updateEventHandlers();
           close_loading_modal();
         } 
-      }, 250);
+      }, 400);
     }
     reader.readAsBinaryString(file.files[0]);
   }  

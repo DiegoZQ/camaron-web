@@ -41,23 +41,3 @@ PolygonMesh.prototype.getVertices = function(){
 PolygonMesh.prototype.getVerticesCount = function(){
   return this.verticesCount;
 }
-
-
-
-var VertexCloud = function(verticesCount){
-  Model.call(this);
-  this.modelType = 'VertexCloud';
-  this.verticesCount = verticesCount;
-  this.vertices = null;
-}
-
-VertexCloud.prototype = Object.create(Model.prototype);
-VertexCloud.prototype.constructor = VertexCloud;
-
-VertexCloud.prototype.getVerticesCount = function(){
-  return this.verticesCount;
-}
-
-VertexCloud.prototype.getVertices = function(){
-  return this.vertices;
-}

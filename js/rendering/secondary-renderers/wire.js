@@ -13,7 +13,6 @@ WireRenderer.prototype.init = function(){
 	this.colorLocation = gl.getUniformLocation(this.program, "u_color");
 	
 	this.positionBuffer = gl.createBuffer();
-	this.normalBuffer = gl.createBuffer();
 	this.vao = gl.createVertexArray();
 
 	gl.bindVertexArray(this.vao);

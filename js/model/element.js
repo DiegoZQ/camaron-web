@@ -37,6 +37,10 @@ Vertex.prototype.getNormal = function(){
   return this.normal;
 }
 
+Vertex.prototype.getPolygons = function(){
+  return this.polygons;
+}
+
 Vertex.prototype.calculateNormal = function(){
   this.normal = vec3.create();
   var polygon;
@@ -52,11 +56,6 @@ Vertex.prototype.calculateNormal = function(){
     vec3.normalize(this.normal, this.normal);
   }
 }
-
-Vertex.prototype.getPolygons = function(){
-  return this.polygons;
- }
-
 
 var Polygon = function(id){
   Element.call(this, id);
@@ -191,11 +190,4 @@ Triangle.prototype.setSides = function(){
     this.lmid = this.lmin;
     this.lmin = aux;
   }
-}
-
-Triangle.prototype.invertVerticesOrder = function(){
-  var temp = this.vertices[0];
-  this.vertices[0] = vertices[2];
-  this.vertices[2] = temp;
-  this.calculateNormal();
 }

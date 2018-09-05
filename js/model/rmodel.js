@@ -29,8 +29,6 @@ var RModel = function(model){
 RModel.prototype.loadData = function(){
   if(this.originalModel.modelType == "PolygonMesh"){
     this.loadDataFromPolygonMesh();
-  }else if(this.originalModel.modelType == "VertexCloud"){
-    this.loadDataFromVertexCloud();
   }
 }
 
@@ -113,10 +111,6 @@ RModel.prototype.loadDataFromPolygonMesh = function(){
   var up = vec3.fromValues(0, 1, 0);
   this.viewMatrix = mat4.create()
   mat4.lookAt(this.viewMatrix, camera, target, up);  
-}
-
-RModel.prototype.loadDataFromVertexCloud = function(){
-
 }
 
 // Movement
