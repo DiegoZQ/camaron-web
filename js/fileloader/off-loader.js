@@ -37,7 +37,7 @@ OffLoadStrategy.prototype.readHeader = function(){
     this.vertexStart = 1;
   } else {
     for(var i=1; i<this.fileArray.length-1; i++){
-      if(this.fileArray[i][0] != '#'){
+      if(this.fileArray[i] != '' && this.fileArray[i][0] != '#'){
         line = this.fileArray[i].replace(/\t/g, " ");
         line = line.split(' ').filter(Boolean);
         verticesCount = line[0];
@@ -64,7 +64,7 @@ OffLoadStrategy.prototype.readVertices = function(model){
   var id = 1; var x; var y; var z;
   var i = this.vertexStart;
   while(i < model.getVerticesCount()+this.vertexStart){
-    if(this.fileArray[i][0] != '#'){
+    if(this.fileArray[i] != '' && this.fileArray[i][0] != '#'){
       var line = this.fileArray[i].replace(/\t/g, " ");
       line = line.split(' ').filter(Boolean);
       x = parseFloat(line[0]); y = parseFloat(line[1]); z = parseFloat(line[2]);
@@ -101,7 +101,7 @@ OffLoadStrategy.prototype.readPolygons = function(model){
   var id = 1;
   var i = this.polygonStart;
   while(i < model.getPolygonsCount()+this.polygonStart){
-    if(this.fileArray[i][0] != '#'){
+    if(this.fileArray[i] != '' && this.fileArray[i][0] != '#'){
       var line = this.fileArray[i].replace(/\t/g, " ");
       line = line.split(' ').filter(Boolean);
       var sidesCount = parseInt(line[0]);
