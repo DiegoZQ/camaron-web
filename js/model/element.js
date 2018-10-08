@@ -60,8 +60,10 @@ Vertex.prototype.calculateNormal = function(){
 var Polygon = function(id){
   Element.call(this, id);
   this.vertices = [];
+  this.angles = null;
   this.area = null;
   this.normal = null;
+  this.geometricCenter = null;
   this.neighbours = [];
 }
 
@@ -80,8 +82,28 @@ Polygon.prototype.getNormal = function(){
   if(this.normal == null){
     this.calculateNormal();
   }
-
   return this.normal;
+}
+
+Polygon.prototype.getGeometricCenter = function(){
+  if(this.geometricCenter == null){
+    this.calculateGeometricCenter();
+  }
+  return this.geometricCenter;
+}
+
+Polygon.prototype.getArea = function(){
+  if(this.area == null){
+    this.calculateArea();
+  }
+  return this.area;
+}
+
+Polygon.prototype.getAngles = function(){
+  if(this.angles == null){
+    this.calculateAngles();
+  }
+  return this.angles;
 }
 
 Polygon.prototype.calculateNormal = function(){
@@ -94,17 +116,43 @@ Polygon.prototype.calculateNormal = function(){
   vec3.normalize(this.normal, this.normal);  
 }
 
-Polygon.prototype.getArea = function(){
-  if(this.area == null){
-    //TODO
-    return 1;
+Polygon.prototype.calculateGeometricCenter = function(){
+  this.geometricCenter = vec3.create();
+  var vertex;
+  for(var i=0; i< this.vertices.length; i++){
+    vertex = this.vertices[i].getCoords();
+    vec3.add(this.geometricCenter, this.geometricCenter, vertex);
   }
-  return this.area;
+
+  this.geometricCenter[0] = this.geometricCenter[0]/this.vertices.length;
+  this.geometricCenter[1] = this.geometricCenter[1]/this.vertices.length;
+  this.geometricCenter[2] = this.geometricCenter[2]/this.vertices.length;
 }
 
-Polygon.prototype.getAngles = function(){
+Polygon.prototype.calculateArea = function(){
+  var total = [0, 0, 0];
+  var result;
+  for(var i=0; i < this.vertices.length; i++){
+    v1 = this.vertices[i].getCoords();
+    if(i == this.vertices.length-1){
+      v2 = this.vertices[0].getCoords();
+    }else{
+      v2 = this.vertices[i+1].getCoords();
+    }
+    var prod = vec3.create();
+    vec3.cross(prod, v1, v2);
+
+    total[0] += prod[0];
+    total[1] += prod[1];
+    total[2] += prod[2];
+  }
+  result = vec3.dot(total, this.getNormal());
+  this.area = Math.abs(result/2);
+}
+
+Polygon.prototype.calculateAngles = function(){
+  this.angles = [];
   var sum = (this.vertices.length -2) * 180;
-  var angles = []
   for(var i = 0; i<this.vertices.length; i++){
     var vertex1 = this.vertices[i];
     var vertex2 = this.vertices[(i+1)%this.vertices.length];
@@ -116,10 +164,10 @@ Polygon.prototype.getAngles = function(){
     vec3.subtract(vector1, vertex1.getCoords(), vertex2.getCoords());
     vec3.subtract(vector2, vertex2.getCoords(), vertex3.getCoords());
 
-    angles.push(Math.PI - vec3.angle(vector1, vector2));
+    this.angles.push(Math.PI - vec3.angle(vector1, vector2));
   }
-  return angles;
 }
+
 
 Polygon.prototype.isNeighbour = function(polygon){
   return neighbours.includes(polygon);
@@ -172,7 +220,7 @@ Triangle.prototype.setSides = function(){
   var aux;
   this.lmin = vec3.distance(this.vertices[0].getCoords(), this.vertices[1].getCoords());
   this.lmid = vec3.distance(this.vertices[0].getCoords(), this.vertices[2].getCoords());
-  this.lmax = vec3.idstance(this.vertices[1].getCoords(), this.vertices[2].getCoords());
+  this.lmax = vec3.distance(this.vertices[1].getCoords(), this.vertices[2].getCoords());
   if(this.lmid < this.lmin){
     aux = this.lmid;
     this.lmid = this.lmin;

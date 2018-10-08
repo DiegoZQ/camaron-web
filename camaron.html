@@ -110,7 +110,7 @@
                         </li>
                         <li>
                             <label class="checkmenu">
-                                <input type="checkbox" name="secondary_renderer" value="VertexCloud" oonchange="setSecondaryRenderers(); draw();">
+                                <input type="checkbox" name="secondary_renderer" value="VertexCloud" onchange="setSecondaryRenderers(); draw();">
                                 <div class="flex label">
                                     <img src="img/icon-vertex-cloud.svg"/>
                                     <span>Vertex cloud</span>
@@ -119,7 +119,7 @@
                         </li>
                         <li>
                             <label class="checkmenu">
-                                <input type="checkbox" name="render">
+                                <input type="checkbox" name="secondary_renderer" value="FaceNormals" onchange="setSecondaryRenderers(); draw();">
                                 <div class="flex label">
                                     <img src="img/icon-face-normals.svg"/>
                                     <span>Face normals</span>
@@ -128,14 +128,14 @@
                         </li>
                         <li>
                             <label class="checkmenu">
-                                <input type="checkbox" name="render">
+                                <input type="checkbox" name="secondary_renderer" value="VertexNormals" onchange="setSecondaryRenderers(); draw();">
                                 <div class="flex label">
                                     <img src="img/icon-vertex-normals.svg"/>
                                     <span>Vertex normals</span>
                                 </div>
                             </label>
                         </li>
-                        <li>
+                        <li class="hidden">
                             <label class="checkmenu">
                                 <input type="checkbox" name="render">
                                 <div class="flex label">
@@ -144,7 +144,7 @@
                                 </div>
                             </label>
                         </li>
-                        <li>
+                        <li class="hidden">
                             <label class="checkmenu">
                                 <input type="checkbox" name="render">
                                 <div class="flex label">
@@ -236,8 +236,9 @@
                     <div id="tab-selection" class="tab-content active">
                         <div id="selection-type" class="select drop-down">
                             <select id="selection-method">
-                                <option value="angle" data-img="img/img-angle.svg">By angle</option>
-                                <option value="id" data-img="img/img-id.svg">By ID</option>r
+                                <option value="angle" data-img="img/icon-ev-angles.svg">By Internal Angles</option>
+                                <option value="area" data-img="img/icon-ev-area.svg">By Polygons Area</option>
+                                <option value="id" data-img="img/img-id.svg">By ID</option>
                             </select>
                         </div>
                         <div class="angle-box select-box active">
@@ -249,6 +250,18 @@
                                     <input id="angle_from" type="text" placeholder="0">
                                     <i class="material-icons">remove</i>
                                     <input id="angle_to" type="text" placeholder="180">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="area-box select-box">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <span>Range</span>
+                                </label>
+                                <div class="flex v-center">
+                                    <input id="area_from" type="text" placeholder="0">
+                                    <i class="material-icons">remove</i>
+                                    <input id="area_to" type="text" placeholder="-">
                                 </div>
                             </div>
                         </div>
@@ -332,37 +345,34 @@
         </div>
         <div class="card results">
             <h4>Evaluation Results</h4>
-            <div class="info">
-                <div class="side-info">
-                    <span>Información</span>
-                </div>
-                <div class="graphics">
-                    <span>Gráficos</span>
-                </div>
+            <div id="info" class="info"></div>
+            <div class="side-info">
+                <h3>More Info</h3>
             </div>
         </div>
 
         <div class="card evaluate">
             <h4>Evaluate model</h4>
             <div id="evaluation-type" class="select drop-down">
-                <select>
-                    <option value="ev-dihedral" data-img="img/icon-ev-dihedral.svg">Dihedral Angles</option>
-                    <option value="ev-angle" data-img="img/icon-ev-angles.svg">Internal Angles</option>
-                    <option value="ev-area" data-img="img/icon-ev-area.svg">Polygons Area</option>
-                    <option value="ev-edges" data-img="img/icon-ev-edges.svg">Polygons Edges Number</option>
+                <select id=evaluation-method>
+                    <option value="angle" data-img="img/icon-ev-angles.svg">Internal Angles</option>
+                    <option value="area" data-img="img/icon-ev-area.svg">Polygons Area</option>
+                    <option value="edges" data-img="img/icon-ev-edges.svg">Polygons Edges Number</option>
+                    <option value="dihedral" data-img="img/icon-ev-dihedral.svg">Dihedral Angles</option>
                 </select>
             </div>
             <div class="grid g2 mgbot">
-                <label class="radio">
-                    <input type="radio" name="ev-option" checked>
-                    <div class="input-radio"></div>
-                    <span>Over selection</span>
-                </label>
-                <label class="radio">
-                    <input type="radio" name="ev-option">
+                 <label class="radio">
+                    <input type="radio" name="ev-option" value="model" checked>
                     <div class="input-radio"></div>
                     <span>Over model</span>
                 </label>
+                <label class="radio">
+                    <input type="radio" name="ev-option" value="selection">
+                    <div class="input-radio"></div>
+                    <span>Over selection</span>
+                </label>
+               
             </div>
             <div class="flex center">
                 <a id="eval_btn" class="btn">Evaluate</a>
@@ -492,6 +502,7 @@
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript" src="js/external/webgl-utils.js"></script>
     <script type="text/javascript" src="js/external/gl-matrix.js"></script>
     <script type="text/javascript" src="js/camaron-config.js"></script>
@@ -509,9 +520,16 @@
     <script type="text/javascript" src="js/rendering/main-renderers/directvertex.js"></script>
     <script type="text/javascript" src="js/rendering/main-renderers/flat.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/wire.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/vertex-normals.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/face-normals.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/vertex-cloud.js"></script>
     <script type="text/javascript" src="js/selection/selection-base.js"></script>
     <script type="text/javascript" src="js/selection/angle-selection.js"></script>
+    <script type="text/javascript" src="js/selection/area-selection.js"></script>
     <script type="text/javascript" src="js/selection/id-selection.js"></script>
+    <script type="text/javascript" src="js/evaluation/evaluation-base.js"></script>
+    <script type="text/javascript" src="js/evaluation/angle-evaluation.js"></script>
+    <script type="text/javascript" src="js/evaluation/area-evaluation.js"></script>
     <script type="text/javascript" src="js/camaron.js"></script>
     <script src="js/sitio.js"></script>
 </body>

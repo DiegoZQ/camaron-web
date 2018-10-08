@@ -17,11 +17,13 @@ var rotating = false;
 var moving = false;
 
 var applied_selections = [];
+var evaluation_results = {}
 
 var colorConfig = new ColorConfig();
 
 var scaleInfo = document.getElementById("scale_info");
 
+var mainView = document.getElementById('main-view');
 var canvas = document.getElementById("glCanvas");
 
 var gl = canvas.getContext("webgl2");
@@ -53,6 +55,19 @@ function close_loading_modal(){
   modal_loading.delay(150).fadeOut().removeClass('active');$('.modal-container').toggleClass('bottom-in bottom-out');
 }
 
+// Selects loading strategy
+
+function select_loading_strategy(extension, fileArray){
+  if(extension == "off"){
+    return new OffLoadStrategy(fileArray);
+  }
+  else{
+    alert("Unsupported Format");
+    // TODO: make a null loader
+    return null;
+  }
+}
+
 // Binds the design button, with the actual input type file button.
 
 file_button.onclick = function(){
@@ -69,9 +84,17 @@ file.onchange = function(){
       open_loading_modal();
       // waiting half second for the modal to open
       setTimeout(function(){
+        // Before loading model, remove existing selections and evaluations
+        mainView.classList.remove("view2");
+        mainView.classList.add("view0");
+        disable_evaluation_dependant();
+        applied_selections = [];
+        update_active_selections();
+
+        // Model Loading
         var fileArray = e.target.result.split('\n');
-        var loader = new OffLoadStrategy(fileArray);
-        if(loader.isValid()){
+        var loader = select_loading_strategy(file.files[0].name.split('.')[1], fileArray);
+        if(loader != null && loader.isValid()){
           model = loader.load();
           rModel = new RModel(model);
           rModel.loadData();
@@ -81,13 +104,12 @@ file.onchange = function(){
           rotator = new Rotator();
           translator = new Translator();
           scalator = new Scalator();
-          scaleInfo.value = scalator.getScaleFactor().toFixed(1);
           updateInfo();
           draw();
           enable_model_dependant();
           updateEventHandlers();
-          close_loading_modal();
-        } 
+        }
+        close_loading_modal();
       }, 400);
     }
     reader.readAsBinaryString(file.files[0]);
@@ -173,7 +195,7 @@ function updateInfo(){
   widthInfo.innerHTML ="Width: " + Math.round(rModel.modelWidth);
   heightInfo.innerHTML = "Height: " + Math.round(rModel.modelHeight);
   depthInfo.innerHTML = "Depth: " + Math.round(rModel.modelDepth);
-
+  scaleInfo.value = scalator.getScaleFactor().toFixed(1);
 }
 
 // Creates a main renderer and assigns it to the main renderer variable.
@@ -212,15 +234,25 @@ function setSecondaryRenderers(){
     return;
   }
   var secondary = document.getElementsByName("secondary_renderer");
+  var secondaryRenderer;
   secondaryRenderers = [];
   for(var i = 0; i < secondary.length; i++){
     if(secondary[i].checked){
       var name = secondary[i].value;
       if(name == "WireFrame"){
-        var secondaryRenderer = new WireRenderer(rModel);
-        secondaryRenderer.init();
-        secondaryRenderers.push(secondaryRenderer);
+        secondaryRenderer = new WireRenderer(rModel);
       }
+      if(name == "VertexNormals"){
+        secondaryRenderer = new VNormalsRenderer(rModel);
+      }
+      if(name == "FaceNormals"){
+        secondaryRenderer = new FNormalsRenderer(rModel);  
+      }
+      if(name == "VertexCloud"){
+        secondaryRenderer = new VCloudRenderer(rModel);  
+      }
+      secondaryRenderer.init();
+      secondaryRenderers.push(secondaryRenderer);
     }
   } 
 }
@@ -291,6 +323,14 @@ function enable_evaluation_dependant(){
   var elements = document.getElementsByClassName("eval-d");
   for(var i = 0; i < elements.length; i++){
     elements[i].classList.remove("disabled");
+  
+  }
+}
+
+function disable_evaluation_dependant(){
+  var elements = document.getElementsByClassName("eval-d");
+  for(var i = 0; i < elements.length; i++){
+    elements[i].classList.add("disabled");
   
   }
 }
@@ -483,8 +523,13 @@ applyButton.onclick = function(){
   }else if(selectionMethod == 'angle'){
     var angleFrom = document.getElementById("angle_from").value;
     var angleTo = document.getElementById("angle_to").value;
+    selection = new AngleSelectionStrategy(model, selectionMode, angleFrom, angleTo);
 
-    selection = new AngleSelectionStrategy(model, selectionMode, angleFrom, angleTo)
+  }else if(selectionMethod == 'area'){
+    var areaFrom = document.getElementById("area_from").value;
+    var areaTo = document.getElementById("area_to").value;
+    selection = new AreaSelectionStrategy(model, selectionMode, areaFrom, areaTo);
+
   }
 
   if(selection.mode == 'clean'){
@@ -496,6 +541,67 @@ applyButton.onclick = function(){
   apply_selections();
 }
 
+
+/*--------------------------------------------------------------------------------------
+------------------------------------- EVALUATIONS --------------------------------------
+----------------------------------------------------------------------------------------
+
+These functions are for controlling when a evaluation is applied.
+These should be eventually refactored for readability purposes. 
+--------------------------------------------------------------------------------------*/
+
+var evalButton = document.getElementById("eval_btn");
+
+function show_evaluation_results(){
+  mainView.classList.remove("view0");
+  mainView.classList.add("view2");
+  rescaleView();
+  document.getElementById('info').innerHTML = '';
+  var trace = {
+    x: evaluation_results['list'],
+    type:'histogram',
+    marker: {
+      color: "rgba(140, 155,244, 1)"
+    },
+    xbins:{start:0, end: evaluation_results['max']+1, size:evaluation_results['max']/20}
+  };
+  var data = [trace];
+  var layout = {
+    bargap:0.05,
+    title: evaluation_results['title'],
+    xaxis: {title: evaluation_results['x_axis']}, 
+  }
+  Plotly.newPlot('info', data, layout);
+}
+
+evalButton.onclick = function(){
+  var evaluation;
+  var evaluationMode;
+  var evaluationMethod = document.getElementById("evaluation-method").value;
+  var evaluationModeOptions = document.getElementsByName("ev-option")
+
+  for(var i = 0; i < evaluationModeOptions.length; i++){
+    if(evaluationModeOptions[i].checked){
+      evaluationMode = evaluationModeOptions[i].value;
+      break;
+    }
+  }
+
+  if(evaluationMethod == 'angle'){
+    evaluation = new AngleEvaluationStrategy(model, evaluationMode);
+  }else if(evaluationMethod == 'area'){
+    evaluation = new AreaEvaluationStrategy(model, evaluationMode);
+  }else{
+    alert("not implemented... yet");
+    return;
+  }
+
+  evaluation_results = evaluation.evaluate();
+  show_evaluation_results();
+  enable_evaluation_dependant();
+}
+
+
 /*--------------------------------------------------------------------------------------
 ---------------------------------- MAIN DRAW FUNCTION ----------------------------------
 ----------------------------------------------------------------------------------------
@@ -505,7 +611,7 @@ moving the model, changing or adding a renderer or applying some selection.
 --------------------------------------------------------------------------------------*/
 
 function draw(){
-  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+  resizeCanvas(gl.canvas);
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -532,4 +638,16 @@ function degToRad(d) {
 
 function radToDeg(d) {
   return d * 180 / Math.PI;
+}
+
+function resizeCanvas(canvas) {
+  var width  = canvas.clientWidth*2;
+  var height = canvas.clientHeight*2;
+  if(width > height){
+    canvas.width  = width;
+    canvas.height = width/2;
+  }else{
+    canvas.width  = height*2;
+    canvas.height = height;
+  }
 }

@@ -7,7 +7,8 @@ var RModel = function(model){
   this.modelDepth = Math.abs(this.bounds[5] - this.bounds[2]);
   this.triangles = []; this.edges = []; this.vertices = [];
   this.trianglesNormals = []; this.verticesNormals = [];
-  this.trianglesCount = 0; this.edgesCount = 0; this.verticesCount = 0;
+  this.vertexNormalsLines = []; this.faceNormalsLines = [];
+  this.polygonsCount = 0; this.trianglesCount = 0; this.edgesCount = 0; this.verticesCount = 0;
   
   this.viewType = "perspective";
   this.aspect = gl.canvas.clientWidth/gl.canvas.clientHeight;
@@ -33,7 +34,7 @@ RModel.prototype.loadData = function(){
 }
 
 RModel.prototype.loadDataFromPolygonMesh = function(){
-  var modelVerticesCount = this.originalModel.getVerticesCount;
+  var modelVerticesCount = this.originalModel.getVerticesCount();
   var modelVertices = this.originalModel.getVertices();
   var polygonsCount = this.originalModel.getPolygonsCount();
   var polygons = this.originalModel.getPolygons();
@@ -41,6 +42,7 @@ RModel.prototype.loadDataFromPolygonMesh = function(){
   var polygonVerticesCount;
   var polygonVertices;
   var normal;
+  var center;
   var vertex1; var vertexNormal1;
   var vertex2; var vertexNormal2;
   var vertex3; var vertexNormal3;
@@ -83,15 +85,29 @@ RModel.prototype.loadDataFromPolygonMesh = function(){
       this.edgesCount++;
     }
 
-    for(var k = 0; k < modelVerticesCount; k++){
-      vertex1 = modelVertices[k];
-      normal = vertex1.getNormal();
+    center = polygon.getGeometricCenter();
+    vec3.scale(normal, normal, this.modelHeight/50);
+    vec3.add(normal, center, normal);
+    this.faceNormalsLines.push(center[0]); this.faceNormalsLines.push(center[1]); this.faceNormalsLines.push(center[2]);
+    this.faceNormalsLines.push(normal[0]); this.faceNormalsLines.push(normal[1]); this.faceNormalsLines.push(normal[2]);
 
-      this.vertices.push(vertex1.getCoords()[0]); this.vertices.push(vertex1.getCoords()[1]); this.vertices.push(vertex1.getCoords()[2]);
-      
-      this.verticesCount++;
-    }
+    this.polygonsCount++;
   }
+
+  for(var k = 0; k < modelVerticesCount; k++){
+    vertex1 = modelVertices[k];
+    normal = vertex1.getNormal();
+
+    this.vertices.push(vertex1.getCoords()[0]); this.vertices.push(vertex1.getCoords()[1]); this.vertices.push(vertex1.getCoords()[2]);
+
+    vec3.scale(normal, normal, this.modelHeight/50);
+    vec3.add(normal, vertex1.getCoords(), normal);
+    this.vertexNormalsLines.push(vertex1.getCoords()[0]); this.vertexNormalsLines.push(vertex1.getCoords()[1]); this.vertexNormalsLines.push(vertex1.getCoords()[2]);
+    this.vertexNormalsLines.push(normal[0]); this.vertexNormalsLines.push(normal[1]); this.vertexNormalsLines.push(normal[2]);
+      
+    this.verticesCount++;
+  }
+    
 
   // Transform Arrays in Float32A Arrays
   this.triangles = new Float32Array(this.triangles);
@@ -99,6 +115,8 @@ RModel.prototype.loadDataFromPolygonMesh = function(){
   this.vertices = new Float32Array(this.vertices);
   this.trianglesNormals = new Float32Array(this.trianglesNormals);
   this.verticesNormals = new Float32Array(this.verticesNormals);
+  this.vertexNormalsLines = new Float32Array(this.vertexNormalsLines);
+  this.faceNormalsLines = new Float32Array(this.faceNormalsLines);
 
   // Set Model Matrix
   var translation = vec3.fromValues(-this.center[0], -this.center[1], -this.center[2]);
@@ -282,6 +300,18 @@ RModel.prototype.getTrianglesNormals = function(){
 
 RModel.prototype.getVerticesNormals = function(){
   return this.verticesNormals;
+}
+
+RModel.prototype.getVertexNormalsLines = function(){
+  return this.vertexNormalsLines;
+}
+
+RModel.prototype.getFaceNormalsLines = function(){
+  return this.faceNormalsLines;
+}
+
+RModel.prototype.getPolygonsCount = function(){
+  return this.polygonsCount;
 }
 
 RModel.prototype.getTrianglesCount = function(){

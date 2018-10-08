@@ -16,7 +16,7 @@ $( document ).ready(function() {
         if(this.classList.contains("disabled")){
             return;
         }
-        var classview = ['view1','view2','view3','view0'];
+        var classview = ['view2', 'view0'];
         var btnClass = ['tooltiped v1','tooltiped v2','tooltiped v3'];
         $('#main-view').each(function(){
             this.className = classview[($.inArray(this.className, classview)+1)%classview.length];
@@ -99,6 +99,10 @@ $( document ).ready(function() {
         if ($('#selection-type select').val() === 'angle') {
             $('.select-box').removeClass('active').hide();
             $('.select-box.angle-box').fadeIn().addClass('active');
+            }
+        else if ($('#selection-type select').val() === 'area') {
+            $('.select-box').removeClass('active').hide();
+            $('.select-box.area-box').fadeIn().addClass('active');
             }
         else if ($('#selection-type select').val() === 'id') {
             $('.select-box').removeClass('active').hide();
