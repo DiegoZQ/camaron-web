@@ -1,12 +1,12 @@
-var WireRenderer = function(rModel){
+var VCloudRenderer = function(rModel){
 	Renderer.call(this, rModel);
-	this.program = webglUtils.createProgramFromSources(gl, [sCVertexShader, sCFragmentShader]);
+	this.program = webglUtils.createProgramFromSources(gl, [pointVertexShader, pointFragmentShader]);
 }
 
-WireRenderer.prototype = Object.create(Renderer.prototype);
-WireRenderer.prototype.constructor = WireRenderer;
+VCloudRenderer.prototype = Object.create(Renderer.prototype);
+VCloudRenderer.prototype.constructor = VCloudRenderer;
 
-WireRenderer.prototype.init = function(){
+VCloudRenderer.prototype.init = function(){
 	gl.useProgram(this.program);
 	this.positionAttributeLocation = gl.getAttribLocation(this.program, "a_position");
 	this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
@@ -19,16 +19,16 @@ WireRenderer.prototype.init = function(){
 
 	gl.enableVertexAttribArray(this.positionAttributeLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getEdges(), gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getVertices(), gl.STATIC_DRAW);
 	gl.vertexAttribPointer(this.positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 }
 
-WireRenderer.prototype.draw = function(){
+VCloudRenderer.prototype.draw = function(){
 	gl.useProgram(this.program);
 	gl.bindVertexArray(this.vao);
 	gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.getMVP());
 	gl.uniformMatrix4fv(this.modelLocation, false, this.rModel.getModelMatrix());
-	gl.uniform4fv(this.colorLocation, colorConfig.getWireFrameColor());
+	gl.uniform4fv(this.colorLocation, colorConfig.getVertexCloudColor());
 
-	gl.drawArrays(gl.LINES, 0, this.rModel.getEdgesCount()*2);
+	gl.drawArrays(gl.POINTS, 0, this.rModel.getVerticesCount());
 }

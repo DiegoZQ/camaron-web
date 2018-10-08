@@ -95,3 +95,31 @@ void main() {
   outColor = u_color;
 }
 `;
+
+
+//POINT PROGRAM
+var pointVertexShader = `#version 300 es
+
+in vec4 a_position;
+
+uniform mat4 u_worldViewProjection;
+
+
+void main() {
+  gl_Position = u_worldViewProjection * a_position;
+  gl_PointSize = 5.0;
+}
+`;
+
+var pointFragmentShader = `#version 300 es
+
+precision mediump float;
+
+uniform vec4 u_color;
+
+out vec4 outColor;
+
+void main() {
+  outColor = u_color;
+}
+`;
