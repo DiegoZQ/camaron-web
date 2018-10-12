@@ -1,3 +1,5 @@
+"use strict";
+
 var Scalator = function(){
   this.width = gl.canvas.clientWidth;
   this.height = gl.canvas.clientHeight;

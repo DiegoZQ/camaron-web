@@ -1,3 +1,5 @@
+"use strict";
+
 var Rotator = function(){
   this.width = gl.canvas.clientWidth;
   this.height = gl.canvas.clientHeight;

@@ -1,3 +1,5 @@
+"use strict";
+
 var OffLoadStrategy = function(fileArray){
   ModelLoadStrategy.call(this);
   this.fileArray = fileArray;
@@ -10,7 +12,7 @@ OffLoadStrategy.prototype.constructor = OffLoadStrategy;
 
 OffLoadStrategy.prototype.isValid = function(){
   var valid = false;
-  if(this.fileArray[0].split(' ').filter(Boolean)[0].trim() == 'OFF'){
+  if(this.fileArray[0].split(' ').filter(Boolean)[0].trim() == 'OFF' || this.fileArray[0].split(' ').filter(Boolean)[0].trim() == 'COFF'){
     valid=true;
   }
   return valid;
@@ -20,8 +22,7 @@ OffLoadStrategy.prototype.load = function(){
   var model = this.readHeader();
   this.readVertices(model);
   if(model.modelType == 'PolygonMesh'){
-    this.readPolygons(model)
-    this.completeMesh(model)
+    this.readPolygons(model);
   }
   return model;
 }
@@ -48,7 +49,6 @@ OffLoadStrategy.prototype.readHeader = function(){
     }
   }
 
-
   if(polygonsCount == null || verticesCount == null ) throw new Error('countError');
 
   if(polygonsCount == 0){
@@ -68,7 +68,7 @@ OffLoadStrategy.prototype.readVertices = function(model){
       var line = this.fileArray[i].replace(/\t/g, " ");
       line = line.split(' ').filter(Boolean);
       x = parseFloat(line[0]); y = parseFloat(line[1]); z = parseFloat(line[2]);
-      vertices.push(new Vertex(id, x, y, z));
+      vertices[i-this.vertexStart] = new Vertex(id, x, y, z);
       
       if(bounds.length < 1){ 
         bounds.push(x);
@@ -113,9 +113,10 @@ OffLoadStrategy.prototype.readPolygons = function(model){
 
       for(var j=1; j<=sidesCount; j++){
         polygonVertices.push(modelVertices[parseInt(line[j])])
+        modelVertices[parseInt(line[j])].getPolygons().push(polygon);
       }
 
-      polygons.push(polygon);
+      polygons[i-this.polygonStart] = polygon;
 
       id++; i++;
     }

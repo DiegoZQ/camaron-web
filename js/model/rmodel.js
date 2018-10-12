@@ -1,22 +1,36 @@
-var RModel = function(model){
-  this.originalModel = model;
+"use strict";
+
+var RModel = function(){
+
+  // Model Size data
   this.bounds = model.getBounds();
   this.center = vec3.fromValues((this.bounds[0]+this.bounds[3])/2, (this.bounds[1]+this.bounds[4])/2, (this.bounds[2]+this.bounds[5])/2);
   this.modelWidth = Math.abs(this.bounds[3] - this.bounds[0]);
   this.modelHeight = Math.abs(this.bounds[4] - this.bounds[1]);
   this.modelDepth = Math.abs(this.bounds[5] - this.bounds[2]);
-  this.triangles = []; this.edges = []; this.vertices = [];
-  this.trianglesNormals = []; this.verticesNormals = [];
-  this.vertexNormalsLines = []; this.faceNormalsLines = [];
-  this.polygonsCount = 0; this.trianglesCount = 0; this.edgesCount = 0; this.verticesCount = 0;
   
+  // Buffers
+  this.trianglesBuffer = gl.createBuffer(); this.edgesBuffer = gl.createBuffer(); this.verticesBuffer = gl.createBuffer();
+  this.trianglesNormalsBuffer = gl.createBuffer(); this.verticesNormalsBuffer = gl.createBuffer();
+  this.faceNormalsLinesBuffer = gl.createBuffer(); this.vertexNormalsLinesBuffer = gl.createBuffer();
+  
+  // Element Quantities
+  this.polygonsCount = model.getPolygonsCount();
+  this.verticesCount = model.getVerticesCount();
+  this.trianglesCount = 0; this.edgesCount = 0; 
+  
+  // Configuration
+  this.loaded = 0;
   this.viewType = "perspective";
   this.aspect = gl.canvas.clientWidth/gl.canvas.clientHeight;
 
+  // Movement Vectors/Matrices
   this.translation = vec3.fromValues(0, 0, 0);
   this.rotationMatrix = mat4.create();
   this.scale = vec3.fromValues(1, 1, 1);
 
+
+  // CG Matrices
   this.modelMatrix;
   this.viewMatrix;
 
@@ -28,96 +42,12 @@ var RModel = function(model){
 }
 
 RModel.prototype.loadData = function(){
-  if(this.originalModel.modelType == "PolygonMesh"){
+  if(model.modelType == "PolygonMesh"){
     this.loadDataFromPolygonMesh();
   }
 }
 
 RModel.prototype.loadDataFromPolygonMesh = function(){
-  var modelVerticesCount = this.originalModel.getVerticesCount();
-  var modelVertices = this.originalModel.getVertices();
-  var polygonsCount = this.originalModel.getPolygonsCount();
-  var polygons = this.originalModel.getPolygons();
-  var polygon;
-  var polygonVerticesCount;
-  var polygonVertices;
-  var normal;
-  var center;
-  var vertex1; var vertexNormal1;
-  var vertex2; var vertexNormal2;
-  var vertex3; var vertexNormal3;
-  
-  for(var i = 0; i < polygonsCount; i++){
-    polygon = polygons[i];
-    normal = polygon.getNormal();
-    polygonVerticesCount = polygon.getVerticesCount();
-    polygonVertices = polygon.getVertices();
-    for(var j = 1; j < polygonVerticesCount-1; j++){
-      vertex1 = polygonVertices[0]; var vertexNormal1 = vertex1.getNormal();
-      vertex2 = polygonVertices[j]; var vertexNormal2 = vertex2.getNormal();
-      vertex3 = polygonVertices[j+1]; var vertexNormal3 = vertex3.getNormal();
-
-      this.triangles.push(vertex1.getCoords()[0]); this.triangles.push(vertex1.getCoords()[1]); this.triangles.push(vertex1.getCoords()[2]);
-      this.triangles.push(vertex2.getCoords()[0]); this.triangles.push(vertex2.getCoords()[1]); this.triangles.push(vertex2.getCoords()[2]);
-      this.triangles.push(vertex3.getCoords()[0]); this.triangles.push(vertex3.getCoords()[1]); this.triangles.push(vertex3.getCoords()[2]);
-      
-      this.trianglesNormals.push(normal[0]);this.trianglesNormals.push(normal[1]);this.trianglesNormals.push(normal[2]);
-      this.trianglesNormals.push(normal[0]);this.trianglesNormals.push(normal[1]);this.trianglesNormals.push(normal[2]);
-      this.trianglesNormals.push(normal[0]);this.trianglesNormals.push(normal[1]);this.trianglesNormals.push(normal[2]);
-
-      this.verticesNormals.push(vertexNormal1[0]);this.verticesNormals.push(vertexNormal1[1]);this.verticesNormals.push(vertexNormal1[2]);
-      this.verticesNormals.push(vertexNormal2[0]);this.verticesNormals.push(vertexNormal2[1]);this.verticesNormals.push(vertexNormal2[2]);
-      this.verticesNormals.push(vertexNormal3[0]);this.verticesNormals.push(vertexNormal3[1]);this.verticesNormals.push(vertexNormal3[2]);
-
-      this.trianglesCount++;
-    }
-
-    for(var j = 0; j < polygonVerticesCount; j++){
-      vertex1 = polygonVertices[j];
-      if(j+1 == polygonVerticesCount){
-        vertex2 = polygonVertices[0];
-      }else{
-        vertex2 = polygonVertices[j+1];
-      }
-      this.edges.push(vertex1.getCoords()[0]); this.edges.push(vertex1.getCoords()[1]); this.edges.push(vertex1.getCoords()[2]);
-      this.edges.push(vertex2.getCoords()[0]); this.edges.push(vertex2.getCoords()[1]); this.edges.push(vertex2.getCoords()[2]);
-
-      this.edgesCount++;
-    }
-
-    center = polygon.getGeometricCenter();
-    vec3.scale(normal, normal, this.modelHeight/50);
-    vec3.add(normal, center, normal);
-    this.faceNormalsLines.push(center[0]); this.faceNormalsLines.push(center[1]); this.faceNormalsLines.push(center[2]);
-    this.faceNormalsLines.push(normal[0]); this.faceNormalsLines.push(normal[1]); this.faceNormalsLines.push(normal[2]);
-
-    this.polygonsCount++;
-  }
-
-  for(var k = 0; k < modelVerticesCount; k++){
-    vertex1 = modelVertices[k];
-    normal = vertex1.getNormal();
-
-    this.vertices.push(vertex1.getCoords()[0]); this.vertices.push(vertex1.getCoords()[1]); this.vertices.push(vertex1.getCoords()[2]);
-
-    vec3.scale(normal, normal, this.modelHeight/50);
-    vec3.add(normal, vertex1.getCoords(), normal);
-    this.vertexNormalsLines.push(vertex1.getCoords()[0]); this.vertexNormalsLines.push(vertex1.getCoords()[1]); this.vertexNormalsLines.push(vertex1.getCoords()[2]);
-    this.vertexNormalsLines.push(normal[0]); this.vertexNormalsLines.push(normal[1]); this.vertexNormalsLines.push(normal[2]);
-      
-    this.verticesCount++;
-  }
-    
-
-  // Transform Arrays in Float32A Arrays
-  this.triangles = new Float32Array(this.triangles);
-  this.edges = new Float32Array(this.edges);
-  this.vertices = new Float32Array(this.vertices);
-  this.trianglesNormals = new Float32Array(this.trianglesNormals);
-  this.verticesNormals = new Float32Array(this.verticesNormals);
-  this.vertexNormalsLines = new Float32Array(this.vertexNormalsLines);
-  this.faceNormalsLines = new Float32Array(this.faceNormalsLines);
-
   // Set Model Matrix
   var translation = vec3.fromValues(-this.center[0], -this.center[1], -this.center[2]);
   this.modelMatrix = mat4.create();
@@ -128,10 +58,226 @@ RModel.prototype.loadDataFromPolygonMesh = function(){
   var target = vec3.fromValues(0, 0, 0)
   var up = vec3.fromValues(0, 1, 0);
   this.viewMatrix = mat4.create()
-  mat4.lookAt(this.viewMatrix, camera, target, up);  
+  mat4.lookAt(this.viewMatrix, camera, target, up);
+}
+
+RModel.prototype.loadTriangles = function(){
+  var polygons = model.getPolygons();
+
+  var polygon; var polygonVerticesCount; var polygonVertices;
+  var vertex1; var vertex2; var vertex3;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygonVerticesCount = polygons[i].getVerticesCount();
+    for(var j = 1; j < polygonVerticesCount-1; j++){
+      this.trianglesCount++;
+    }
+  }
+
+  var triangles = new Float32Array(this.trianglesCount*9);
+  var tcount = 0;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygon = polygons[i];
+    polygonVerticesCount = polygon.getVerticesCount();
+    polygonVertices = polygon.getVertices();
+    for(var j = 1; j < polygonVerticesCount-1; j++){
+      vertex1 = polygonVertices[0].getCoords();
+      vertex2 = polygonVertices[j].getCoords();
+      vertex3 = polygonVertices[j+1].getCoords();
+
+      triangles[tcount] = vertex1[0]; triangles[tcount+1] = vertex1[1]; triangles[tcount+2] = vertex1[2];
+      triangles[tcount+3] = vertex2[0]; triangles[tcount+4] = vertex2[1]; triangles[tcount+5] = vertex2[2];
+      triangles[tcount+6] = vertex3[0]; triangles[tcount+7] = vertex3[1]; triangles[tcount+8] = vertex3[2];
+
+      tcount += 9;
+    }
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
+  this.loaded += 1;
+}
+
+RModel.prototype.loadTrianglesNormals = function(){
+  var polygons = model.getPolygons();
+
+  var polygon; var polygonVerticesCount; var polygonVertices;
+  var normal;
+
+  var trianglesNormals = new Float32Array(this.trianglesCount*9);
+  var tcount = 0;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygon = polygons[i];
+    normal = polygon.getNormal();
+    polygonVerticesCount = polygon.getVerticesCount();
+    polygonVertices = polygon.getVertices();
+    for(var j = 1; j < polygonVerticesCount-1; j++){      
+      trianglesNormals[tcount] = normal[0]; trianglesNormals[tcount+1] = normal[1]; trianglesNormals[tcount+2] = normal[2];
+      trianglesNormals[tcount+3] = normal[0]; trianglesNormals[tcount+4] = normal[1]; trianglesNormals[tcount+5] = normal[2];
+      trianglesNormals[tcount+6] = normal[0]; trianglesNormals[tcount+7] = normal[1]; trianglesNormals[tcount+8] = normal[2];
+
+      tcount += 9;
+    }
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesNormalsBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, trianglesNormals, gl.STATIC_DRAW);
+  this.loaded += 1;
+}
+
+RModel.prototype.loadVertexNormals = function(){
+  var polygons = model.getPolygons();
+
+  var polygon; var polygonVerticesCount; var polygonVertices;
+  var vertexNormal1; var vertexNormal2; var vertexNormal3;
+
+  var verticesNormals = new Float32Array(this.trianglesCount*9);
+  var tcount = 0;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygon = polygons[i];
+    polygonVerticesCount = polygon.getVerticesCount();
+    polygonVertices = polygon.getVertices();
+    for(var j = 1; j < polygonVerticesCount-1; j++){
+      vertexNormal1 = polygonVertices[0].getNormal();
+      vertexNormal2 = polygonVertices[j].getNormal();
+      vertexNormal3 = polygonVertices[j+1].getNormal();
+      
+      verticesNormals[tcount] = vertexNormal1[0]; verticesNormals[tcount+1] = vertexNormal1[1]; verticesNormals[tcount+2] = vertexNormal1[2];
+      verticesNormals[tcount+3] = vertexNormal2[0]; verticesNormals[tcount+4] = vertexNormal2[1]; verticesNormals[tcount+5] = vertexNormal2[2];
+      verticesNormals[tcount+6] = vertexNormal3[0]; verticesNormals[tcount+7] = vertexNormal3[1]; verticesNormals[tcount+8] = vertexNormal3[2];
+
+      tcount += 9;
+    }
+  }
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesNormalsBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, verticesNormals, gl.STATIC_DRAW);
+  this.loaded += 1;
+}
+
+RModel.prototype.loadEdges = function(){
+  var polygons = model.getPolygons();
+
+  var polygon; var polygonVerticesCount; var polygonVertices;
+  var vertex1; var vertex2;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygonVerticesCount = polygons[i].getVerticesCount();
+    for(var j = 0; j < polygonVerticesCount; j++){
+      this.edgesCount++;
+    }
+  }
+
+  var edges = new Float32Array(this.edgesCount*6);
+  var ecount = 0;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygon = polygons[i];
+    polygonVerticesCount = polygon.getVerticesCount();
+    polygonVertices = polygon.getVertices();
+ 
+
+    for(var j = 0; j < polygonVerticesCount; j++){
+      vertex1 = polygonVertices[j].getCoords();
+      if(j+1 == polygonVerticesCount){
+        vertex2 = polygonVertices[0].getCoords();
+      }else{
+        vertex2 = polygonVertices[j+1].getCoords();
+      }
+
+      edges[ecount] = vertex1[0]; edges[ecount+1] = vertex1[1]; edges[ecount+2] = vertex1[2];
+      edges[ecount+3] = vertex2[0]; edges[ecount+4] = vertex2[1]; edges[ecount+5] = vertex2[2];
+
+      ecount += 6;
+    }
+  }
+    
+  // Add data to buffer on GPU
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, edges, gl.STATIC_DRAW);
+  this.loaded += 1;
+}
+
+RModel.prototype.loadVertices = function(){
+  var modelVertices = model.getVertices();
+
+  var normal; var vertex1;
+
+  var vertices = new Float32Array(this.verticesCount*3);
+  var vcount = 0;
+
+  for(var k = 0; k < this.verticesCount; k++){
+    vertex1 = modelVertices[k].getCoords();
+    normal = modelVertices[k].getNormal();
+
+    vertices[vcount] = vertex1[0]; vertices[vcount+1] = vertex1[1]; vertices[vcount+2] = vertex1[2];
+    
+    vcount += 3;
+  }
+
+  // Add data to buffer on GPU
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  this.loaded += 1;
+}
+
+RModel.prototype.loadVertexNormalsLines = function(){
+  var modelVertices = model.getVertices();
+
+  var normal;  var vertex1;
+
+  var vertexNormalsLines = new Float32Array(this.verticesCount*6);
+  var vncount = 0;
+
+  for(var k = 0; k < this.verticesCount; k++){
+    vertex1 = modelVertices[k].getCoords();
+    normal = modelVertices[k].getNormal();
+
+    vec3.scale(normal, normal, this.modelHeight/50);
+    vec3.add(normal, vertex1, normal);
+
+    vertexNormalsLines[vncount] = vertex1[0]; vertexNormalsLines[vncount+1] = vertex1[1]; vertexNormalsLines[vncount+2] = vertex1[2];
+    vertexNormalsLines[vncount+3] = normal[0]; vertexNormalsLines[vncount+4] = normal[1]; vertexNormalsLines[vncount+5] = normal[2];
+
+    vncount += 6;
+  }
+
+  // Add data to buffer on GPU
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexNormalsLinesBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, vertexNormalsLines, gl.STATIC_DRAW);
+  this.loaded += 1;
+}
+
+RModel.prototype.loadFaceNormalsLines = function(){
+  var polygons = model.getPolygons();
+
+  var polygon; var normal;  var center;
+
+  var faceNormalsLines = new Float32Array(this.polygonsCount*6);
+  var fncount = 0;
+
+  for(var i = 0; i < this.polygonsCount; i++){
+    polygon = polygons[i];
+    normal = polygon.getNormal();
+    center = polygon.getGeometricCenter();
+
+    vec3.scale(normal, normal, this.modelHeight/50);
+    vec3.add(normal, center, normal);
+
+    faceNormalsLines[fncount] = center[0]; faceNormalsLines[fncount+1] = center[1]; faceNormalsLines[fncount+2] = center[2];
+    faceNormalsLines[fncount+3] = normal[0]; faceNormalsLines[fncount+4] = normal[1]; faceNormalsLines[fncount+5] = normal[2];
+
+    fncount += 6;
+  }
+  // Add data to buffer on GPU
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, faceNormalsLines, gl.STATIC_DRAW);
+  this.loaded += 1;
 }
 
 // Movement
+
 RModel.prototype.setRotation = function(rotationMatrix){
   this.rotationMatrix = rotationMatrix;
   this.recalculateMV = true;
@@ -255,12 +401,14 @@ RModel.prototype.updateAspect = function(){
 }
 
 RModel.prototype.getColorMatrix = function(){
-  var polygonsCount = this.originalModel.getPolygonsCount();
-  var polygons = this.originalModel.getPolygons();
+  var polygonsCount = model.getPolygonsCount();
+  var polygons = model.getPolygons();
   var polygon;
   var polygonVerticesCount;
   var color;
-  var colors = [];
+
+  var colors = new Float32Array(this.trianglesCount*9);
+  var ccount = 0;
   
   for(var i = 0; i < polygonsCount; i++){
     polygon = polygons[i];
@@ -273,41 +421,42 @@ RModel.prototype.getColorMatrix = function(){
       }else{
         color = colorConfig.getBaseColor();
       }
+      colors[ccount] = color[0]; colors[ccount+1] = color[1]; colors[ccount+2] = color[2];
+      colors[ccount+3] = color[0]; colors[ccount+4] = color[1]; colors[ccount+5] = color[2];
+      colors[ccount+6] = color[0]; colors[ccount+7] = color[1]; colors[ccount+8] = color[2];
 
-      colors.push(color[0]); colors.push(color[1]); colors.push(color[2]);
-      colors.push(color[0]); colors.push(color[1]); colors.push(color[2]);
-      colors.push(color[0]); colors.push(color[1]); colors.push(color[2]);
+      ccount += 9;
     }
   }
   return new Float32Array(colors);;
 }
 
-RModel.prototype.getTriangles = function(){
-  return this.triangles;
+RModel.prototype.getTrianglesBuffer = function(){
+  return this.trianglesBuffer;
 }
 
-RModel.prototype.getEdges = function(){
-  return this.edges;
+RModel.prototype.getEdgesBuffer = function(){
+  return this.edgesBuffer;
 }
 
-RModel.prototype.getVertices = function(){
-  return this.vertices;
+RModel.prototype.getVerticesBuffer = function(){
+  return this.verticesBuffer;
 }
 
-RModel.prototype.getTrianglesNormals = function(){
-  return this.trianglesNormals;
+RModel.prototype.getTrianglesNormalsBuffer = function(){
+  return this.trianglesNormalsBuffer;
 }
 
-RModel.prototype.getVerticesNormals = function(){
-  return this.verticesNormals;
+RModel.prototype.getVerticesNormalsBuffer = function(){
+  return this.verticesNormalsBuffer;
 }
 
-RModel.prototype.getVertexNormalsLines = function(){
-  return this.vertexNormalsLines;
+RModel.prototype.getVertexNormalsLinesBuffer = function(){
+  return this.vertexNormalsLinesBuffer;
 }
 
-RModel.prototype.getFaceNormalsLines = function(){
-  return this.faceNormalsLines;
+RModel.prototype.getFaceNormalsLinesBuffer = function(){
+  return this.faceNormalsLinesBuffer;
 }
 
 RModel.prototype.getPolygonsCount = function(){

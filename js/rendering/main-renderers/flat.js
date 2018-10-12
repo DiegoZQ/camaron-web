@@ -1,3 +1,5 @@
+"use strict";
+
 var FlatRenderer = function(rModel){
 	Renderer.call(this, rModel);
 	this.program = webglUtils.createProgramFromSources(gl, [basicVertexShader, basicFragmentShader]);
@@ -12,7 +14,7 @@ FlatRenderer.prototype.init = function(){
 	this.colorAttributeLocation = gl.getAttribLocation(this.program, "a_color");
 	this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 	
-	this.positionBuffer = gl.createBuffer();
+	this.positionBuffer = this.rModel.getTrianglesBuffer();
 	this.colorBuffer = gl.createBuffer();
 	this.vao = gl.createVertexArray();
 
@@ -20,7 +22,6 @@ FlatRenderer.prototype.init = function(){
 
 	gl.enableVertexAttribArray(this.positionAttributeLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getTriangles(), gl.STATIC_DRAW);
 	gl.vertexAttribPointer(this.positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
 	gl.enableVertexAttribArray(this.colorAttributeLocation);

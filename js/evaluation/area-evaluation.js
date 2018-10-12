@@ -1,3 +1,5 @@
+"use strict";
+
 var AreaEvaluationStrategy = function(model, mode){
 	EvaluationStrategy.call(this, model, mode);
 }

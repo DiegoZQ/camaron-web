@@ -1,3 +1,5 @@
+"use strict";
+
 var SelectionStrategy = function(model, mode){
 	this.model = model;
   this.mode = mode;

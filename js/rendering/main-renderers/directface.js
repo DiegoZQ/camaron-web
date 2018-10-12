@@ -1,3 +1,5 @@
+"use strict";
+
 var DirectFaceRenderer = function(rModel){
 	Renderer.call(this, rModel);
 	this.program = webglUtils.createProgramFromSources(gl, [normalVertexShader, normalFragmentShader]);
@@ -16,8 +18,8 @@ DirectFaceRenderer.prototype.init = function(){
 	this.modelLocation = gl.getUniformLocation(this.program, "u_world");
 	this.reverseLightDirectionLocation = gl.getUniformLocation(this.program, "u_reverseLightDirection");
 	
-	this.positionBuffer = gl.createBuffer();
-	this.normalBuffer = gl.createBuffer();
+	this.positionBuffer = this.rModel.getTrianglesBuffer();
+	this.normalBuffer = this.rModel.getTrianglesNormalsBuffer();
 	this.colorBuffer = gl.createBuffer();
 	this.vao = gl.createVertexArray();
 
@@ -25,12 +27,10 @@ DirectFaceRenderer.prototype.init = function(){
 
 	gl.enableVertexAttribArray(this.positionAttributeLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getTriangles(), gl.STATIC_DRAW);
 	gl.vertexAttribPointer(this.positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
 	gl.enableVertexAttribArray(this.normalAttributeLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getTrianglesNormals(), gl.STATIC_DRAW);
 	gl.vertexAttribPointer(this.normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
 	gl.enableVertexAttribArray(this.colorAttributeLocation);

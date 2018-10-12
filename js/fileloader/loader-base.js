@@ -1,3 +1,5 @@
+"use strict";
+
 // MODEL LOADING
 var ModelLoadStrategy = function(){ }
 
@@ -9,16 +11,13 @@ ModelLoadStrategy.prototype.isValid = function(){
   return false
 }
 
-ModelLoadStrategy.prototype.completeVertexPolygonsRelations = function(polygonMesh){
-  var polygons = polygonMesh.getPolygons();
-  for(var i in polygons){
-    vertices = polygons[i].getVertices();
-    for(var j in vertices){
-      vertices[j].getPolygons().push(polygons[i]);
-    }
+ModelLoadStrategy.prototype.calculateVertexNormals = function(polygonMesh){
+  var vertices = polygonMesh.getVertices();
+  for(var i in vertices){
+    vertices[i].calculateNormal();
   }
 }
 
 ModelLoadStrategy.prototype.completeMesh = function(polygonMesh){
-  this.completeVertexPolygonsRelations(polygonMesh);
+  //this.calculateVertexNormals(polygonMesh);
 }

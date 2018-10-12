@@ -1,3 +1,5 @@
+"use strict";
+
 var VCloudRenderer = function(rModel){
 	Renderer.call(this, rModel);
 	this.program = webglUtils.createProgramFromSources(gl, [pointVertexShader, pointFragmentShader]);
@@ -12,14 +14,13 @@ VCloudRenderer.prototype.init = function(){
 	this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 	this.colorLocation = gl.getUniformLocation(this.program, "u_color");
 	
-	this.positionBuffer = gl.createBuffer();
+	this.positionBuffer = this.rModel.getVerticesBuffer();
 	this.vao = gl.createVertexArray();
 
 	gl.bindVertexArray(this.vao);
 
 	gl.enableVertexAttribArray(this.positionAttributeLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, this.rModel.getVertices(), gl.STATIC_DRAW);
 	gl.vertexAttribPointer(this.positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 }
 

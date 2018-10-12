@@ -68,6 +68,21 @@ function select_loading_strategy(extension, fileArray){
   }
 }
 
+function waitLoaded(){
+  if(rModel != undefined && rModel.loaded == 7){
+    setMainRenderer();
+    setSecondaryRenderers();
+    updateInfo();
+    draw();
+    enable_model_dependant();
+    updateEventHandlers();
+    close_loading_modal();
+  }
+  else{
+    setTimeout(waitLoaded, 1000);
+  }
+}
+
 // Binds the design button, with the actual input type file button.
 
 file_button.onclick = function(){
@@ -80,7 +95,7 @@ file_button.onclick = function(){
 file.onchange = function(){
   if(file.files.length){
     var reader = new FileReader();
-    reader.onload = function(e){
+    reader.onloadend = function(e){
       open_loading_modal();
       // waiting half second for the modal to open
       setTimeout(function(){
@@ -92,27 +107,37 @@ file.onchange = function(){
         update_active_selections();
 
         // Model Loading
+        model = undefined;
+        rModel = undefined;
         var fileArray = e.target.result.split('\n');
         var loader = select_loading_strategy(file.files[0].name.split('.')[1], fileArray);
         if(loader != null && loader.isValid()){
           model = loader.load();
           rModel = new RModel(model);
+          
+          setTimeout(function(){
+            rModel.loadTriangles();
+            rModel.loadTrianglesNormals();
+            rModel.loadVertexNormals();
+            rModel.loadEdges();
+            rModel.loadVertices();
+            rModel.loadVertexNormalsLines();
+            rModel.loadFaceNormalsLines();
+          }, 0);
           rModel.loadData();
           changeViewType();
-          setMainRenderer();
-          setSecondaryRenderers();
           rotator = new Rotator();
           translator = new Translator();
           scalator = new Scalator();
-          updateInfo();
-          draw();
-          enable_model_dependant();
-          updateEventHandlers();
+          waitLoaded();
         }
-        close_loading_modal();
       }, 400);
     }
     reader.readAsBinaryString(file.files[0]);
+    //reader.onloadend = function(e){
+    //  console.log(e.target.result);
+    //}
+    //reader.readAsArrayBuffer(file.files[0]);
   }  
 }
 
@@ -170,7 +195,6 @@ none_button.onclick = function(){
   flat_button.classList.remove("active");
   none_button.classList.add("active");
 }
-
 
 /*--------------------------------------------------------------------------------------
 ------------------------------------- VIEW HELPERS -------------------------------------
@@ -541,7 +565,6 @@ applyButton.onclick = function(){
   apply_selections();
 }
 
-
 /*--------------------------------------------------------------------------------------
 ------------------------------------- EVALUATIONS --------------------------------------
 ----------------------------------------------------------------------------------------
@@ -600,7 +623,6 @@ evalButton.onclick = function(){
   show_evaluation_results();
   enable_evaluation_dependant();
 }
-
 
 /*--------------------------------------------------------------------------------------
 ---------------------------------- MAIN DRAW FUNCTION ----------------------------------

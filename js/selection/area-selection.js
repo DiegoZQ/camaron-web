@@ -1,3 +1,5 @@
+"use strict";
+
 var AreaSelectionStrategy = function(model, mode, minArea, maxArea){
 	SelectionStrategy.call(this, model, mode);
 	this.minArea = minArea;

@@ -1,3 +1,5 @@
+"use strict";
+
 var Element = function(id){
   this.id = id;
   this.selected = false;
@@ -43,15 +45,9 @@ Vertex.prototype.getPolygons = function(){
 
 Vertex.prototype.calculateNormal = function(){
   this.normal = vec3.create();
-  var polygon;
-  var polygonNormal;
-  var polygons = this.getPolygons();
-  var polygonsCount = polygons.length;
-  if(polygonsCount > 0){
-    for(var i = 0; i < polygonsCount; i++){
-      polygon = polygons[i];
-      polygonNormal = polygon.getNormal();
-      vec3.add(this.normal, this.normal, polygonNormal);
+  if(this.polygons.length > 0){
+    for(var i = 0; i < this.polygons.length; i++){
+      vec3.add(this.normal, this.normal, this.polygons[i].getNormal());
     }
     vec3.normalize(this.normal, this.normal);
   }
@@ -118,12 +114,9 @@ Polygon.prototype.calculateNormal = function(){
 
 Polygon.prototype.calculateGeometricCenter = function(){
   this.geometricCenter = vec3.create();
-  var vertex;
   for(var i=0; i< this.vertices.length; i++){
-    vertex = this.vertices[i].getCoords();
-    vec3.add(this.geometricCenter, this.geometricCenter, vertex);
+    vec3.add(this.geometricCenter, this.geometricCenter, this.vertices[i].getCoords());
   }
-
   this.geometricCenter[0] = this.geometricCenter[0]/this.vertices.length;
   this.geometricCenter[1] = this.geometricCenter[1]/this.vertices.length;
   this.geometricCenter[2] = this.geometricCenter[2]/this.vertices.length;
@@ -151,20 +144,20 @@ Polygon.prototype.calculateArea = function(){
 }
 
 Polygon.prototype.calculateAngles = function(){
-  this.angles = [];
+  this.angles = new Array(this.vertices.length);
   var sum = (this.vertices.length -2) * 180;
   for(var i = 0; i<this.vertices.length; i++){
-    var vertex1 = this.vertices[i];
-    var vertex2 = this.vertices[(i+1)%this.vertices.length];
-    var vertex3 = this.vertices[(i+2)%this.vertices.length];
+    var vertex1 = this.vertices[i].getCoords();
+    var vertex2 = this.vertices[(i+1)%this.vertices.length].getCoords();
+    var vertex3 = this.vertices[(i+2)%this.vertices.length].getCoords();
 
     var vector1 = vec3.create();
     var vector2 = vec3.create();
 
-    vec3.subtract(vector1, vertex1.getCoords(), vertex2.getCoords());
-    vec3.subtract(vector2, vertex2.getCoords(), vertex3.getCoords());
+    vec3.subtract(vector1, vertex1, vertex2);
+    vec3.subtract(vector2, vertex2, vertex3);
 
-    this.angles.push(Math.PI - vec3.angle(vector1, vector2));
+    this.angles[i] = Math.PI - vec3.angle(vector1, vector2);
   }
 }
 

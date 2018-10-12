@@ -1,3 +1,5 @@
+"use strict";
+
 var Renderer = function(rModel){
 	this.rModel = rModel;
 }

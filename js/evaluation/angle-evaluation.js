@@ -1,3 +1,5 @@
+"use strict";
+
 var AngleEvaluationStrategy = function(model, mode){
 	EvaluationStrategy.call(this, model, mode);
 }

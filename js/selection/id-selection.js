@@ -1,3 +1,5 @@
+"use strict";
+
 var IdSelectionStrategy = function(model, mode, minId, maxId, idList){
 	SelectionStrategy.call(this, model, mode);
 	this.minId = minId;

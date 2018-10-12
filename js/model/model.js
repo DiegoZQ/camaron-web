@@ -1,3 +1,5 @@
+"use strict";
+
 var Model = function(){
   this.bounds = [];
   this.modelType = null;
@@ -7,19 +9,13 @@ Model.prototype.getBounds = function(){
   return this.bounds;
 }
 
-Model.prototype.evaluate = function(evaluationStrategy){
-  // TODO: implement
-  return 1;
-}
-
-
 var PolygonMesh = function(polygonsCount, verticesCount){
   Model.call(this);
   this.modelType = 'PolygonMesh'
   this.polygonsCount = polygonsCount;
   this.verticesCount = verticesCount;
-  this.polygons = [];
-  this.vertices = [];
+  this.polygons = new Array(this.polygonsCount);
+  this.vertices = new Array(this.verticesCount);
 
 }
 

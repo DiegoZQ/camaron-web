@@ -1,3 +1,5 @@
+"use strict";
+
 var ColorConfig = function(){
 	this.baseColor = vec4.fromValues(0.7, 0.7, 0.7, 1);
 	this.selectedColor = vec4.fromValues(0.7, 0.2, 0.2, 1);

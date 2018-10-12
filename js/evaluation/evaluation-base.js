@@ -1,3 +1,5 @@
+"use strict";
+
 var EvaluationStrategy = function(model, mode){
 	this.model = model;
   	this.mode = mode;
