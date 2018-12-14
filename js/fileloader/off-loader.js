@@ -63,12 +63,12 @@ OffLoadStrategy.prototype.readVertices = function(model){
   var vertices = model.getVertices();
   var id = 1; var x; var y; var z;
   var i = this.vertexStart;
-  while(i < model.getVerticesCount()+this.vertexStart){
+  while(id-1 < model.getVerticesCount()){
     if(this.fileArray[i] != '' && this.fileArray[i][0] != '#'){
       var line = this.fileArray[i].replace(/\t/g, " ");
       line = line.split(' ').filter(Boolean);
       x = parseFloat(line[0]); y = parseFloat(line[1]); z = parseFloat(line[2]);
-      vertices[i-this.vertexStart] = new Vertex(id, x, y, z);
+      vertices[id-1] = new Vertex(id, x, y, z);
       
       if(bounds.length < 1){ 
         bounds.push(x);
@@ -88,8 +88,9 @@ OffLoadStrategy.prototype.readVertices = function(model){
       if(bounds[2] > z) {bounds[2] = z;}
       else if(bounds[5] < z) {bounds[5] = z;}
 
-      id++; i++;
+      id++;
     }
+    i++;
   }
   this.polygonStart = i;
 }
@@ -100,7 +101,7 @@ OffLoadStrategy.prototype.readPolygons = function(model){
   var modelVertices = model.getVertices();
   var id = 1;
   var i = this.polygonStart;
-  while(i < model.getPolygonsCount()+this.polygonStart){
+  while(id-1 < model.getPolygonsCount()){
     if(this.fileArray[i] != '' && this.fileArray[i][0] != '#'){
       var line = this.fileArray[i].replace(/\t/g, " ");
       line = line.split(' ').filter(Boolean);
@@ -116,9 +117,10 @@ OffLoadStrategy.prototype.readPolygons = function(model){
         modelVertices[parseInt(line[j])].getPolygons().push(polygon);
       }
 
-      polygons[i-this.polygonStart] = polygon;
+      polygons[id-1] = polygon;
 
-      id++; i++;
+      id++;
     }
+    i++;
   }
 }

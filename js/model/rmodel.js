@@ -1,6 +1,8 @@
 "use strict";
 
-var RModel = function(){
+var RModel = function(model){
+
+  this.model = model;
 
   // Model Size data
   this.bounds = model.getBounds();
@@ -42,7 +44,7 @@ var RModel = function(){
 }
 
 RModel.prototype.loadData = function(){
-  if(model.modelType == "PolygonMesh"){
+  if(this.model.modelType == "PolygonMesh"){
     this.loadDataFromPolygonMesh();
   }
 }
@@ -62,7 +64,7 @@ RModel.prototype.loadDataFromPolygonMesh = function(){
 }
 
 RModel.prototype.loadTriangles = function(){
-  var polygons = model.getPolygons();
+  var polygons = this.model.getPolygons();
 
   var polygon; var polygonVerticesCount; var polygonVertices;
   var vertex1; var vertex2; var vertex3;
@@ -93,13 +95,14 @@ RModel.prototype.loadTriangles = function(){
       tcount += 9;
     }
   }
+
   gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
   this.loaded += 1;
 }
 
 RModel.prototype.loadTrianglesNormals = function(){
-  var polygons = model.getPolygons();
+  var polygons = this.model.getPolygons();
 
   var polygon; var polygonVerticesCount; var polygonVertices;
   var normal;
@@ -126,7 +129,7 @@ RModel.prototype.loadTrianglesNormals = function(){
 }
 
 RModel.prototype.loadVertexNormals = function(){
-  var polygons = model.getPolygons();
+  var polygons = this.model.getPolygons();
 
   var polygon; var polygonVerticesCount; var polygonVertices;
   var vertexNormal1; var vertexNormal2; var vertexNormal3;
@@ -157,7 +160,7 @@ RModel.prototype.loadVertexNormals = function(){
 }
 
 RModel.prototype.loadEdges = function(){
-  var polygons = model.getPolygons();
+  var polygons = this.model.getPolygons();
 
   var polygon; var polygonVerticesCount; var polygonVertices;
   var vertex1; var vertex2;
@@ -200,7 +203,7 @@ RModel.prototype.loadEdges = function(){
 }
 
 RModel.prototype.loadVertices = function(){
-  var modelVertices = model.getVertices();
+  var modelVertices = this.model.getVertices();
 
   var normal; var vertex1;
 
@@ -223,7 +226,7 @@ RModel.prototype.loadVertices = function(){
 }
 
 RModel.prototype.loadVertexNormalsLines = function(){
-  var modelVertices = model.getVertices();
+  var modelVertices = this.model.getVertices();
 
   var normal;  var vertex1;
 
@@ -250,7 +253,7 @@ RModel.prototype.loadVertexNormalsLines = function(){
 }
 
 RModel.prototype.loadFaceNormalsLines = function(){
-  var polygons = model.getPolygons();
+  var polygons = this.model.getPolygons();
 
   var polygon; var normal;  var center;
 
@@ -401,8 +404,8 @@ RModel.prototype.updateAspect = function(){
 }
 
 RModel.prototype.getColorMatrix = function(){
-  var polygonsCount = model.getPolygonsCount();
-  var polygons = model.getPolygons();
+  var polygonsCount = this.model.getPolygonsCount();
+  var polygons = this.model.getPolygons();
   var polygon;
   var polygonVerticesCount;
   var color;

@@ -79,7 +79,7 @@ function waitLoaded(){
     close_loading_modal();
   }
   else{
-    setTimeout(waitLoaded, 1000);
+    setTimeout(waitLoaded, 500);
   }
 }
 
@@ -134,10 +134,6 @@ file.onchange = function(){
       }, 400);
     }
     reader.readAsBinaryString(file.files[0]);
-    //reader.onloadend = function(e){
-    //  console.log(e.target.result);
-    //}
-    //reader.readAsArrayBuffer(file.files[0]);
   }  
 }
 
