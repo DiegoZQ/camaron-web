@@ -36,7 +36,8 @@ Vertex.prototype.getNormal = function(){
   if(this.normal == null){
     this.calculateNormal()
   }
-  return this.normal;
+  var n = vec3.clone(this.normal)
+  return n;
 }
 
 Vertex.prototype.getPolygons = function(){
@@ -78,7 +79,8 @@ Polygon.prototype.getNormal = function(){
   if(this.normal == null){
     this.calculateNormal();
   }
-  return this.normal;
+  var n = vec3.clone(this.normal);
+  return n;
 }
 
 Polygon.prototype.getGeometricCenter = function(){
@@ -123,8 +125,8 @@ Polygon.prototype.calculateGeometricCenter = function(){
 }
 
 Polygon.prototype.calculateArea = function(){
-  var total = [0, 0, 0];
-  var result;
+  var total = vec3.create();
+  var result; var v1; var v2;
   for(var i=0; i < this.vertices.length; i++){
     v1 = this.vertices[i].getCoords();
     if(i == this.vertices.length-1){
@@ -135,10 +137,9 @@ Polygon.prototype.calculateArea = function(){
     var prod = vec3.create();
     vec3.cross(prod, v1, v2);
 
-    total[0] += prod[0];
-    total[1] += prod[1];
-    total[2] += prod[2];
+    vec3.add(total, total, prod)
   }
+  var aux = vec3.create();
   result = vec3.dot(total, this.getNormal());
   this.area = Math.abs(result/2);
 }

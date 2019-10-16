@@ -18,7 +18,7 @@ IdSelectionStrategy.prototype.selectElement = function(polygon){
 			polygon.setSelected(false);
 		}
 	}else{
-		if(idList.includes(polygon.getId())){
+		if(this.idList.includes(polygon.getId().toString())){
 			polygon.setSelected(true);
 		}
 		else{

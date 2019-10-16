@@ -108,6 +108,10 @@ $( document ).ready(function() {
             $('.select-box').removeClass('active').hide();
             $('.select-box.id-box').fadeIn().addClass('active');
             }
+        else if ($('#selection-type select').val() === 'edges') {
+            $('.select-box').removeClass('active').hide();
+            $('.select-box.edges-box').fadeIn().addClass('active');
+            }
         });  
         
     // Activar opciones de los radio buttons de New selecction

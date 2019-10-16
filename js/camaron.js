@@ -535,8 +535,10 @@ applyButton.onclick = function(){
     }else{
       idFrom = null;
       idTo = null;
-      list = null;
+      list = document.getElementById("id_list").value.split(',');
     }
+
+    console.log(list)
 
     selection = new IdSelectionStrategy(model, selectionMode, idFrom, idTo, list);
 
@@ -550,6 +552,9 @@ applyButton.onclick = function(){
     var areaTo = document.getElementById("area_to").value;
     selection = new AreaSelectionStrategy(model, selectionMode, areaFrom, areaTo);
 
+  }else if(selectionMethod == 'edges'){
+    var edges_number = document.getElementById("edges_number").value;
+    selection = new EdgesSelectionStrategy(model, selectionMode, edges_number)
   }
 
   if(selection.mode == 'clean'){

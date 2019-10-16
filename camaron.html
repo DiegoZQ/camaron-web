@@ -239,6 +239,7 @@
                                 <option value="angle" data-img="img/icon-ev-angles.svg">By Internal Angles</option>
                                 <option value="area" data-img="img/icon-ev-area.svg">By Polygons Area</option>
                                 <option value="id" data-img="img/img-id.svg">By ID</option>
+                                <option value="edges" data-img="img/icon-ev-edges.svg">By Polygons Edges Number</option>
                             </select>
                         </div>
                         <div class="angle-box select-box active">
@@ -288,7 +289,17 @@
                                     <button class="btn min hidden" disabled>Attach</button>
                                 </div>
                                 <div class="attached-list">
-                                    <textarea disabled placeholder="Ej: 34"></textarea>
+                                    <textarea id="id_list" disabled placeholder="Ej: 34"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="edges-box select-box">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <span>Value</span>
+                                </label>
+                                <div class="flex v-center">
+                                    <input id='edges_number' type="text" placeholder="0">
                                 </div>
                             </div>
                         </div>
@@ -493,7 +504,7 @@
                     <h3>About Camaron</h3>
                 </div>
                 <div class="modal-body">
-                    <p>Quisque id euismod libero, at mollis ligula. Fusce tincidunt nisl sem, scelerisque interdum nisl aliquam a. Nulla vitae eleifend libero. Nam tempor eros eu magna scelerisque, ac aliquam ex tempor. Vivamus gravida nulla lectus, quis varius neque accumsan vel. Etiam interdum gravida mauris at tempus.</p>
+                    <p></p>
                 </div>
             </div>
         </div>
@@ -528,6 +539,7 @@
     <script type="text/javascript" src="js/selection/angle-selection.js"></script>
     <script type="text/javascript" src="js/selection/area-selection.js"></script>
     <script type="text/javascript" src="js/selection/id-selection.js"></script>
+    <script type="text/javascript" src="js/selection/edges-selection.js"></script>
     <script type="text/javascript" src="js/evaluation/evaluation-base.js"></script>
     <script type="text/javascript" src="js/evaluation/angle-evaluation.js"></script>
     <script type="text/javascript" src="js/evaluation/area-evaluation.js"></script>
