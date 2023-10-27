@@ -1,43 +1,39 @@
 "use strict";
 
-var AreaEvaluationStrategy = function(model, mode){
-	EvaluationStrategy.call(this, model, mode);
-}
+import EvaluationStrategy from './evaluation-base'
 
-AreaEvaluationStrategy.prototype = Object.create(EvaluationStrategy.prototype);
-AreaEvaluationStrategy.prototype.constructor = AreaEvaluationStrategy;
 
-AreaEvaluationStrategy.prototype.evaluate = function(element){
-	var data = {};
-	var area_list = [];
-	var min_area = 1000000;
-	var max_area = 0;
-
-	var polygonsCount = this.model.getPolygonsCount();
-  var polygons = this.model.getPolygons();
-  var polygon;
-  var area;
-  
-  for(var i = 0; i < polygonsCount; i++){
-  	polygon = polygons[i];
-  	if(this.mode == "selection" && !polygon.isSelected()){
-  		continue;
+class AreaEvaluationStrategy extends EvaluationStrategy {
+   constructor(model, mode) {
+      super(model, mode);
   	}
-    area = polygon.getArea();
-    area_list.push(area);
 
-    if(area > max_area){
-    	max_area = area;
-    }else if(area < min_area){
-    	min_area = area;
-    }
-  }
+   evaluate() {
+      const data = {};
+      const areaList = [];
+      let minArea = 1000000;
+      let maxArea = 0;
 
-  data["title"] = 'Area Histogram';
-  data["x_axis"] = 'Area';
-  data["list"] = area_list;
-  data["min"] = min_area;
-  data["max"] = max_area;
+      const polygons = this.model.getPolygons();
+      // Itera sobre los polígonos del modelo
+      for (const polygon of polygons) {
+         if (this.mode === "selection" && !polygon.isSelected()) 
+            continue;
+         // Obtiene el área de cada polígono	
+         const area = polygon.getArea();
+         areaList.push(area);
 
-  return data;
+         maxArea = Math.max(maxArea, area);
+         minArea = Math.min(minArea, area);
+      }
+      data.title = 'Area Histogram';
+      data.x_axis = 'Area';
+      data.list = areaList;
+      data.min = minArea;
+      data.max = maxArea;
+
+      return data;
+   }
 }
+
+export default AreaEvaluationStrategy;

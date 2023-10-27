@@ -1,23 +1,34 @@
 "use strict";
 
-// MODEL LOADING
-var ModelLoadStrategy = function(){ }
 
-ModelLoadStrategy.prototype.load = function(){
-  return 1;
+class ModelLoadStrategy {
+   constructor(fileArray) {
+      this.fileArray = fileArray;
+      this.valid = true;
+      this.model = null;
+   }
+
+   getModel() {
+      return this.model;
+   }
+
+   load() {
+      return 1;
+   }
+
+   isValid() {
+      return this.valid;
+   }
+
+   calculateVertexNormals(polygonMesh) {
+      const vertices = polygonMesh.getVertices();
+      for (const vertex of vertices) 
+         vertex.calculateNormal();
+   }
+
+   completeMesh(polygonMesh) {
+      // this.calculateVertexNormals(polygonMesh);
+   }
 }
 
-ModelLoadStrategy.prototype.isValid = function(){
-  return false
-}
-
-ModelLoadStrategy.prototype.calculateVertexNormals = function(polygonMesh){
-  var vertices = polygonMesh.getVertices();
-  for(var i in vertices){
-    vertices[i].calculateNormal();
-  }
-}
-
-ModelLoadStrategy.prototype.completeMesh = function(polygonMesh){
-  //this.calculateVertexNormals(polygonMesh);
-}
+export default ModelLoadStrategy;

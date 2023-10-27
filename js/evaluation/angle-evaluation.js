@@ -1,48 +1,43 @@
 "use strict";
 
-var AngleEvaluationStrategy = function(model, mode){
-	EvaluationStrategy.call(this, model, mode);
-}
+import EvaluationStrategy from './evaluation-base'
+import { radToDeg } from '../helpers';
 
-AngleEvaluationStrategy.prototype = Object.create(EvaluationStrategy.prototype);
-AngleEvaluationStrategy.prototype.constructor = AngleEvaluationStrategy;
 
-AngleEvaluationStrategy.prototype.evaluate = function(element){
-	var data = {};
-	var angle_list = [];
-	var min_angle = 360;
-	var max_angle = 0;
+class AngleEvaluationStrategy extends EvaluationStrategy {
+   constructor(model, mode) {
+      super(model, mode);
+   }
 
-	var polygonsCount = this.model.getPolygonsCount();
-  	var polygons = this.model.getPolygons();
-  	var polygon;
-  	var angle;
-  	var polygon_angles;
+   evaluate() {
+      const data = {};
+      const angleList = [];
+      let minAngle = 360;
+    	let maxAngle = 0;
 
-  
-  	for(var i = 0; i < polygonsCount; i++){
-  		polygon = polygons[i];
-  		if(this.mode == "selection" && !polygon.isSelected()){
-  			continue;
-  		}
-    	polygon_angles = polygon.getAngles();
-    	for(var j=0; j < polygon_angles.length; j++){
-    		angle = radToDeg(polygon_angles[j]);
-    		angle_list.push(angle);
-    		if(angle > max_angle){
-    			max_angle = angle;
-    		}else if(angle < min_angle){
-    			min_angle = angle;
-    		}
-    	}
+    	const polygons = this.model.getPolygons();
+		// Itera sobre los polígonos del modelo
+    	for (const polygon of polygons) {
+    	   if (this.mode === "selection" && !polygon.isSelected()) 
+    			continue;
+			// Obtiene los ángulos de cada polígono	
+    	   const polygonAngles = polygon.getAngles();
+
+    	   for (const angleRad of polygonAngles) {
+    	      const angleDeg = radToDeg(angleRad);
+    	      angleList.push(angleDeg);
+    	      minAngle = Math.min(minAngle, angleDeg);
+    	      maxAngle = Math.max(maxAngle, angleDeg);
+    	  	}
+   	}
+      data.title = 'Angles Histogram';
+      data.x_axis = 'Angles (deg)';
+      data.list = angleList;
+      data.min = minAngle;
+      data.max = maxAngle;
+
+    	return data;
   	}
-
-  	data["title"] = 'Angles Histogram';
-  	data["x_axis"] = 'Angles(deg)';
-  	data["list"] = angle_list;
-  	data["min"] = min_angle;
-  	data["max"] = max_angle;
-
-
-  	return data;
 }
+
+export default AngleEvaluationStrategy;

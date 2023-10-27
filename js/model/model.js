@@ -1,5 +1,19 @@
 "use strict";
 
+class Model {
+  constructor() {
+    this.bounds = [];
+    this.modelType = null;
+  }
+
+  getBounds() {
+    return this.bounds;
+  }
+}
+
+
+
+
 var Model = function(){
   this.bounds = [];
   this.modelType = null;
