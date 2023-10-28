@@ -6,7 +6,10 @@ import Renderer from "../Renderer";
 class MainRenderer extends Renderer {
 	constructor(GPUModel, vertexShader, fragmentShader) {
 	   super(GPUModel, vertexShader, fragmentShader);
-	   this.colorBuffer = null;
+      this.positionBuffer = this.GPUModel.trianglesBuffer;
+	   this.colorBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, this.GPUModel.colorMatrix, gl.STATIC_DRAW);
 	}
 
    // Una vez inicializado el vao (gl.bindVertexArray(this.vao)) y asignado variables dentro de este (setupAttributePointer(attributeLocation, buffer)),

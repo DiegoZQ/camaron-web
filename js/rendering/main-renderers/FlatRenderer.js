@@ -1,6 +1,6 @@
 "use strict";
 
-import MainRenderer from "./MainRender";
+import MainRenderer from "./MainRenderer";
 import { basicVertexShader, basicFragmentShader } from "../shaders";
 
 
@@ -16,12 +16,6 @@ class FlatRenderer extends MainRenderer {
 		this.positionAttributeLocation = gl.getAttribLocation(this.program, "a_position");
 		this.colorAttributeLocation = gl.getAttribLocation(this.program, "a_color");
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
-
-		// Obtiene la información de trianglesBuffer y crea el color buffer
-		this.positionBuffer = this.GPUModel.trianglesBuffer;
-		this.colorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.GPUModel.colorMatrix, gl.STATIC_DRAW);
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);

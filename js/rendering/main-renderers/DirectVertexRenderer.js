@@ -1,13 +1,13 @@
 "use strict";
 
-import MainRenderer from "./MainRender";
+import MainRenderer from "./MainRenderer";
 import { normalVertexShader, normalFragmentShader } from "../shaders";
 
 
 class DirectVertexRenderer extends MainRenderer {
 	constructor(GPUModel) {
 	   super(GPUModel, normalVertexShader, normalFragmentShader);
-	   this.normalBuffer = null;
+	   this.normalBuffer = this.normalBuffer = this.GPUModel.verticesNormalsBuffer;;
   
 	   this.normalAttributeLocation = null;
 	   this.modelLocation = null;
@@ -24,13 +24,6 @@ class DirectVertexRenderer extends MainRenderer {
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 		this.modelLocation = gl.getUniformLocation(this.program, "u_world");
 		this.reverseLightDirectionLocation = gl.getUniformLocation(this.program, "u_reverseLightDirection");
-
-		// Obtiene la información de los buffers de trianglesBuffer y verticesNormalsBuffer y crea el color buffer
-		this.positionBuffer = this.GPUModel.trianglesBuffer;
-		this.normalBuffer = this.GPUModel.verticesNormalsBuffer;
-		this.colorBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.GPUModel.colorMatrix, gl.STATIC_DRAW);
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
