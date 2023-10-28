@@ -15,7 +15,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
    // Retorna el índice de la línea donde empieza el header (flag OFF). Si no lo encuentra, 
    // o tiene un formato inválido, arroja un error.
    findHeaderIndex() {
-      for (const i in this.fileArray) {
+      for (let i = 0; i < this.fileArray.length; i++) {
          const line = this.fileArray[i].trim();
          // Si es un comentario, lo ignora
          if (line.startsWith('#')) 
@@ -41,7 +41,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
       // Caso: OFF
       //       numVertices numFaces numEdges
       if (headerLineWords == 1) {
-         for (const i = headerIndex + 1; i < this.fileArray.length; i++) {
+         for (let i = headerIndex + 1; i < this.fileArray.length; i++) {
             const line = this.fileArray[i].trim();
             if (line && !line.startsWith('#')) {
                const lineWords = getLineWords(line);
@@ -59,11 +59,11 @@ class OffLoadStrategy extends ModelLoadStrategy {
          numVertices = parseInt(headerLineWords[1]);
          numFaces = parseInt(headerLineWords[2]);
       }
-      // Caso: formato incorrecto
-      if (numVertices === null || numFaces === null) 
+      // Caso: formato incorrecto, si no existen o son 0, arroja un error
+      if (!numVertices|| !numFaces) 
          throw new Error('countError');
 
-      this.getModel() = numFaces == 0 ? new VertexCloud(numVertices) : new PolygonMesh(numFaces, numVertices);
+      this.getModel() = new PolygonMesh(numFaces, numVertices);
    }
 
    createModelVertices() {

@@ -1,5 +1,6 @@
 import Element from './element';
 import { vec3 } from '../external/gl-matrix';
+import earcut from "../external/earcut";
 
 
 class Polygon extends Element {
@@ -11,14 +12,12 @@ class Polygon extends Element {
       this.normal = null;
       this.geometricCenter = null;
       this.neighbours = [];
+      this.trianglesVertexIndices = [];
+      this.trianglesVertexCoords = [];
    }
 
    getVertices() {
       return this.vertices;
-   }
-
-   getVerticesCount() {
-      return this.getVertices().length;
    }
 
    // Asume que el polígono es planar, ie, todos sus vértices se ubican en un mismo plano.
@@ -61,7 +60,7 @@ class Polygon extends Element {
    calculateArea() {
       const total = vec3.create();
       const vertices = this.getVertices();
-      for (const i in vertices) {
+      for (let i = 0; i < vertices.length; i++) {
          const v1 = vertices[i].getCoords();
          const v2 = vertices[(i + 1) % vertices.length].getCoords();
          const prod = vec3.create();
@@ -81,7 +80,7 @@ class Polygon extends Element {
    calculateAngles() {
       const vertices = this.getVertices();
       this.angles = new Array(vertices.length);
-      for (const i in vertices) {
+      for (let i = 0; i < vertices.length; i++) {
          const vertex1 = vertices[i].getCoords();
          const vertex2 = vertices[(i + 1) % vertices.length].getCoords();
          const vertex3 = vertices[(i + 2) % vertices.length].getCoords();
@@ -101,6 +100,50 @@ class Polygon extends Element {
 
    isNeighbour(polygon) {
       return this.neighbours.includes(polygon);
+   }
+
+   calculateTrianglesVertexIndices() {
+      const vertices = this.getVertices();
+      const vertexCoords = new Float32Array(3*vertices.length);
+      for (let i = 0; i < vertices.length; i++) {
+         const coords = vertices[i].getCoords();
+         const j = i*3;
+         vertexCoords[j] = coords[0];
+         vertexCoords[j+1] = coords[1];
+         vertexCoords[j+2] = coords[2];
+      }
+      this.trianglesVertexIndices = earcut(vertexCoords, null, 3);
+   }
+
+   // Obtiene los índices de los vértices de cada triángulo, cada 3 índices corresponde a un triángulo.
+   getTrianglesVertexIndices() {
+      if (this.trianglesVertexIndices == null) 
+         this.calculateTrianglesVertexIndices();
+      return this.trianglesVertexIndices;
+   }
+
+   calculateTrianglesVertexCoords() {
+      const vertices = this.getVertices();
+      const trianglesVertexIndices = this.getTriangleVertexIndices();
+      const orderedVertexCoords = [];
+      for (const vertexIndex of trianglesVertexIndices) {
+         const coords = vertices[vertexIndex].getCoords();
+         orderedVertexCoords.push(coords[0], coords[1], coords[2]);
+      }
+      this.trianglesVertexCoords = orderedVertexCoords;
+   }
+
+   // Similar a getTriangleVertexIndices, sólo que cada índice ahora corresponde a las 3 dimensiones del vértice.
+   getTrianglesVertexCoords() {
+      if (this.trianglesVertexCoords == null) 
+         this.calculateTrianglesVertexCoords();
+      return this.trianglesVertexCoords;
+   }
+
+   // Obtiene la cantidad de triángulos del polígonos a partir de los índices generados
+   // de cada triángulo en la triangulación. 3 índices <=> 1 triángulo.
+   getTrianglesCount() {
+      return this.getTrianglesVertexIndices()/3;
    }
 }
 
