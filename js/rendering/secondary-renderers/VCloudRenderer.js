@@ -6,13 +6,7 @@ import { pointVertexShader, pointFragmentShader } from "../shaders";
 
 class VCloudRenderer extends Renderer {
 	constructor(rModel) {
-	  super(rModel);
-	  this.program = webglUtils.createProgramFromSources(gl, [pointVertexShader, pointFragmentShader]);
-	  this.positionBuffer = null;
-  
-	  this.positionAttributeLocation = null;
-	  this.colorAttributeLocation = null;
-	  this.MVPLocation = null;
+	   super(rModel, pointVertexShader, pointFragmentShader);
 	}
 
 	init() {

@@ -1,22 +1,17 @@
 "use strict";
 
-import Renderer from "../Renderer";
+import MainRenderer from "./MainRender";
+import { normalVertexShader, normalFragmentShader } from "../shaders";
 
 
-class DirectVertexRenderer extends Renderer {
-	constructor(rModel, normalVertexShader, normalFragmentShader) {
-	  super(rModel);
-	  this.program = webglUtils.createProgramFromSources(gl, [normalVertexShader, normalFragmentShader]);
-	  this.positionBuffer = null;
-	  this.normalBuffer = null;
-	  this.colorBuffer = null;
+class DirectVertexRenderer extends MainRenderer {
+	constructor(rModel) {
+	   super(rModel, normalVertexShader, normalFragmentShader);
+	   this.normalBuffer = null;
   
-	  this.positionAttributeLocation = null;
-	  this.normalAttributeLocation = null;
-	  this.colorAttributeLocation = null;
-	  this.MVPLocation = null;
-	  this.modelLocation = null;
-	  this.reverseLightDirectionLocation = null;
+	   this.normalAttributeLocation = null;
+	   this.modelLocation = null;
+	   this.reverseLightDirectionLocation = null;
 	}
 
 	init() {
@@ -58,15 +53,6 @@ class DirectVertexRenderer extends Renderer {
 
 		const lightDirection = vec3.normalize(vec3.fromValues(0.5, 0.7, 1), vec3.fromValues(0.5, 0.7, 1));
 		this.renderWithCulling(this.reverseLightDirectionLocation, lightDirection);
-	}
-
-	updateColor() {
-		// Modifica el valor del color buffer con información actualizada de la color matrix del RModel
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.rModel.colorMatrix, gl.STATIC_DRAW);
-
-		// Asigna el valor del color buffer dentro de las variables a_color
-		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer);
 	}
 }
 

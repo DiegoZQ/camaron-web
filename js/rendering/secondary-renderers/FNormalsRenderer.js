@@ -6,13 +6,7 @@ import { sCVertexShader, sCFragmentShader } from "../shaders";
 
 class FNormalsRenderer extends Renderer {
 	constructor(rModel) {
-	  super(rModel);
-	  this.program = webglUtils.createProgramFromSources(gl, [sCVertexShader, sCFragmentShader]);
-	  this.positionBuffer = null;
-  
-	  this.positionAttributeLocation = null;
-	  this.colorAttributeLocation = null;
-	  this.MVPLocation = null;
+	   super(rModel, sCVertexShader, sCFragmentShader);
 	}
 
 	init() {

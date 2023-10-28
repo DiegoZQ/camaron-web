@@ -1,18 +1,12 @@
 "use strict";
 
-import Renderer from "../Renderer";
+import MainRenderer from "./MainRender";
 import { basicVertexShader, basicFragmentShader } from "../shaders";
 
-class FlatRenderer extends Renderer {
+
+class FlatRenderer extends MainRenderer {
 	constructor(rModel) {
-	  super(rModel);
-	  this.program = webglUtils.createProgramFromSources(gl, [basicVertexShader, basicFragmentShader]);
-	  this.positionBuffer = null;
-	  this.colorBuffer = null;
-  
-	  this.positionAttributeLocation = null;
-	  this.colorAttributeLocation = null;
-	  this.MVPLocation = null;
+	  super(rModel, basicVertexShader, basicFragmentShader);
 	}
 
 	init() {
@@ -47,15 +41,6 @@ class FlatRenderer extends Renderer {
 		gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.MVP);
 
 		this.renderWithCulling();
-	}
-
-	updateColor() {
-		// Modifica el valor del color buffer con información actualizada de la color matrix del RModel
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.rModel.colorMatrix, gl.STATIC_DRAW);
-
-		// Asigna el valor del color buffer dentro de las variables a_color
-		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer);
 	}
 }
 
