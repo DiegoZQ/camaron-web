@@ -6,10 +6,6 @@ class Model {
       this.bounds = [];
       this.modelType = null;
    }
-
-   getBounds() {
-      return this.bounds;
-   }
 }
 
 export default Model;

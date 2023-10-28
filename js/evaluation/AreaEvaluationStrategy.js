@@ -1,6 +1,6 @@
 "use strict";
 
-import EvaluationStrategy from './evaluation-base'
+import EvaluationStrategy from './EvaluationStrategy'
 
 
 class AreaEvaluationStrategy extends EvaluationStrategy {
@@ -14,13 +14,13 @@ class AreaEvaluationStrategy extends EvaluationStrategy {
       let minArea = 1000000;
       let maxArea = 0;
 
-      const polygons = this.model.getPolygons();
+      const polygons = this.model.polygons;
       // Itera sobre los polígonos del modelo
       for (const polygon of polygons) {
-         if (this.mode === "selection" && !polygon.isSelected()) 
+         if (this.mode === "selection" && !polygon.isSelected) 
             continue;
          // Obtiene el área de cada polígono	
-         const area = polygon.getArea();
+         const area = polygon.area;
          areaList.push(area);
 
          maxArea = Math.max(maxArea, area);

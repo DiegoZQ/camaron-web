@@ -23,36 +23,7 @@ class RModel {
       this.loaded = 0;
    }
 
-   // Buffer getters
-   getTrianglesBuffer() {
-      return this.trianglesBuffer;
-   }
-   getEdgesBuffer() {
-      return this.edgesBuffer;
-   }
-   getVerticesBuffer() {
-      return this.verticesBuffer;
-   }
-   getTrianglesNormalsBuffer() {
-      return this.trianglesNormalsBuffer;
-   }
-   getVerticesNormalsBuffer() {
-      return this.verticesNormalsBuffer;
-   }
-   getVertexNormalsLinesBuffer() {
-      return this.vertexNormalsLinesBuffer;
-   }
-   getFaceNormalsLinesBuffer() {
-      return this.faceNormalsLinesBuffer;
-   }
-   // Count getters
-   getTrianglesCount() {
-      return this.trianglesCount;
-   }
-   getEdgesCount() {
-      return this.edgesCount;
-   }
-   // Count setters
+   // Count increasers
    increaseTriangleCounts(number) {
       this.trianglesCount += number;
    }
@@ -63,13 +34,13 @@ class RModel {
    // Por cada polígono del modelo, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
    // en un arreglo global. Sirve para dibujar las caras del modelo.
    loadTriangles() {
-      const polygons = this.model.getPolygons();
+      const polygons = this.model.polygons;
       const polygonTrianglesVertexCoords = [];
       for (const polygon of polygons) {
-         polygonTrianglesVertexCoords.concat(polygon.getTrianglesVertexCoords());
-         this.increaseTriangleCounts(polygon.getTrianglesCount());
+         polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
+         this.increaseTriangleCounts(polygon.trianglesCount);
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getTrianglesBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
       this.loaded += 1;
    }
@@ -77,12 +48,12 @@ class RModel {
    // Por cada vértice de cada triángulo de cada polígono, agrega la normal del polígono que comprende cada subconjunto de triángulos.
    // Sirve para representar la iluminación sobre las caras.
    loadTriangleNormals() {
-      const polygons = this.model.getPolygons();
+      const polygons = this.model.polygons;
       // Agrega una normal para cada vértice del triángulo, 3 vértices 3 dimesiones => 9 espacios
-      const trianglesNormals = new Float32Array(this.getTrianglesCount()*9);
+      const trianglesNormals = new Float32Array(this.trianglesCount*9);
       for (const polygon of polygons) {
-         const normal = polygon.getNormal();
-         const polygonTrianglesCount = polygon.getTrianglesCount();
+         const normal = polygon.normal;
+         const polygonTrianglesCount = polygon.trianglesCount;
          for (let i = 0; i < polygonTrianglesCount; i++) {
             const j = i*9;
             trianglesNormals[j] = normal[0]; trianglesNormals[j+1] = normal[1]; trianglesNormals[j+2] = normal[2];
@@ -90,7 +61,7 @@ class RModel {
             trianglesNormals[j+6] = normal[0]; trianglesNormals[j+7] = normal[1]; trianglesNormals[j+8] = normal[2];
          }
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getTrianglesNormalsBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesNormalsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, trianglesNormals, gl.STATIC_DRAW);
       this.loaded += 1;
    }
@@ -99,22 +70,22 @@ class RModel {
    // cada 3 valores corresponden a una normal de un vértice, y cada 3*n vértices (9*n valores) corresponden a un polígono de n triángulos.
    // Sirve para representar la iluminación sobre los vértices.
    loadVertexNormals() {
-      const polygons = this.model.getPolygons();
-      const verticesNormals = new Float32Array(this.getTrianglesCount()*9);
+      const polygons = this.model.polygons;
+      const verticesNormals = new Float32Array(this.trianglesCount*9);
 
       for (const polygon of polygons) {
-         const polygonVertices = polygon.getVertices();
-         const polygonTrianglesVertexIndices = polygon.getTrianglesVertexIndices();
+         const polygonVertices = polygon.vertices;
+         const polygonTrianglesVertexIndices = polygon.trianglesVertexIndices;
          for (let i = 0; i < polygonTrianglesVertexIndices; i++) {
             const j = i*3;
             const polygonVertex = polygonVertices[polygonTrianglesVertexIndices[i]];
-            const vertexNormal = polygonVertex.getNormal();
+            const vertexNormal = polygonVertex.normal;
             verticesNormals[j] = vertexNormal[0]; 
             verticesNormals[j+1] = vertexNormal[1]; 
             verticesNormals[j+2] = vertexNormal[2];
          }
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getVerticesNormalsBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesNormalsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, verticesNormals, gl.STATIC_DRAW);
       this.loaded += 1;
    }
@@ -122,25 +93,25 @@ class RModel {
    // Por cada par de vértices consecutivos de cada polígono, agrega las dos coordenadas de ambos vértices 
    // para representar una "línea" entre ambos puntos. Este cálculo es necesario para representar el wireframe de un modelo.
    loadEdges() {
-      const polygons = this.model.getPolygons();
+      const polygons = this.model.polygons;
       for (const polygon of polygons) {
-         const polygonVertices = polygon.getVertices();
+         const polygonVertices = polygon.vertices;
          this.increaseEdgesCounts(polygonVertices.length);
       }
-      const edges = new Float32Array(this.getEdgesCount()*6);
+      const edges = new Float32Array(this.edgesCount*6);
     
       for (const polygon of polygons) {
-        const polygonVertices = polygon.getVertices();
+        const polygonVertices = polygon.vertices;
         for (let i = 0; i < polygonVertices.length; i++) {
             const j = i*6;
-            const vertex1 = polygonVertices[i].getCoords();
-            const vertex2 = polygonVertices[(i + 1) % polygonVertices.length].getCoords();
+            const vertex1 = polygonVertices[i].coords;
+            const vertex2 = polygonVertices[(i + 1) % polygonVertices.length].coords;
 
             edges[j] = vertex1[0]; edges[j+1] = vertex1[1]; edges[j+2] = vertex1[2];
             edges[j+3] = vertex2[0]; edges[j+4] = vertex2[1]; edges[j+5] = vertex2[2];
         }
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getEdgesBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, edges, gl.STATIC_DRAW);
       this.loaded += 1;
    }
@@ -148,16 +119,16 @@ class RModel {
    // Por cada vértice del modelo, obtiene sus coordenadas y las almacena en un arreglo global.
    // Sirve para representar nubes de puntos.
    loadVertices() {
-      const modelVertices = this.model.getVertices();
+      const modelVertices = this.model.vertices;
       const vertices = new Float32Array(modelVertices.length*3);
  
       for (let i = 0; i < modelVertices.length; i++) {
          const j = i*3;
-         const vertex1 = modelVertices[i].getCoords();
+         const vertex1 = modelVertices[i].coords;
      
          vertices[j] = vertex1[0]; vertices[j+1] = vertex1[1]; vertices[j+2] = vertex1[2];
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getVerticesBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
       this.loaded += 1;
    }
@@ -166,21 +137,21 @@ class RModel {
    // obteniendo así 2 puntos: el vértice y el vértice desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de los vértices. 
    loadVertexNormalsLines() {
-      const modelVertices = this.model.getVertices();
+      const modelVertices = this.model.vertices;
       const vertexNormalsLines = new Float32Array(modelVertices.length*6);
 
       for (let i = 0; j < modelVertices.length; i++) {
          const j = i*6;
-         const vertex1 = modelVertices[i].getCoords();
-         const normal = modelVertices[i].getNormal();
+         const vertex1 = modelVertices[i].coords;
+         const normal = modelVertices[i].normal;
      
-         vec3.scale(normal, normal, this.MVPManager.getModelHeight()/50);
+         vec3.scale(normal, normal, this.MVPManager.modelHeight/50);
          vec3.add(normal, vertex1, normal);
      
          vertexNormalsLines[j] = vertex1[0]; vertexNormalsLines[j+1] = vertex1[1]; vertexNormalsLines[j+2] = vertex1[2];
          vertexNormalsLines[j+3] = normal[0]; vertexNormalsLines[j+4] = normal[1]; vertexNormalsLines[j+5] = normal[2];
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getVertexNormalsLinesBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexNormalsLinesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, vertexNormalsLines, gl.STATIC_DRAW);
       this.loaded += 1;
    }
@@ -189,41 +160,40 @@ class RModel {
    // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de las caras. 
    loadFaceNormalsLines() {
-      const modelPolygons = this.model.getPolygons();
+      const modelPolygons = this.model.polygons;
       const faceNormalsLines = new Float32Array(modelPolygons.length*6);
 
       for(let i = 0; i < modelPolygons.length; i++){
          const j = i*6;
-         const normal = modelPolygons[i].getNormal();
-         const center = modelPolygons[i].getGeometricCenter();
+         const normal = modelPolygons[i].normal;
+         const center = modelPolygons[i].geometricCenter;
      
-         vec3.scale(normal, normal, this.MVPManager.getModelHeight()/50);
+         vec3.scale(normal, normal, this.MVPManager.modelHeight/50);
          vec3.add(normal, center, normal);
      
          faceNormalsLines[j] = center[0]; faceNormalsLines[j+1] = center[1]; faceNormalsLines[j+2] = center[2];
          faceNormalsLines[j+3] = normal[0]; faceNormalsLines[j+4] = normal[1]; faceNormalsLines[j+5] = normal[2];
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.getFaceNormalsLinesBuffer());
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, faceNormalsLines, gl.STATIC_DRAW);
       this.loaded += 1;
    }
   
-   getColor() {
+   get color() {
       return vec4.fromValues(0.7, 0.7, 0.7, 1);
    }
 
    // Obtiene un arreglo general con los colores de cada vértice de los triángulos que conforman el modelo. 
    // Si están seleccionados, marca el triángulo de un color distinto.
-   getColorMatrix() {
-      const polygons = this.model.getPolygons();
-      const colors = new Float32Array(this.getTrianglesCount()*9);
+   get colorMatrix() {
+      const polygons = this.model.polygons;
+      const colors = new Float32Array(this.trianglesCount*9);
    
       for (const polygon of polygons) {
-         const polygonTrianglesCount = polygon.getTrianglesCount();
-         for (let i = 0; i < polygonTrianglesCount; i++) {
+         for (let i = 0; i < polygon.trianglesCount; i++) {
             const j = i*9;
             let color;
-            if (polygon.isSelected()) 
+            if (polygon.isSelected) 
                color = colorConfig.getSelectedColor();
             else 
                color = colorConfig.getBaseColor();

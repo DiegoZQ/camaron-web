@@ -1,6 +1,6 @@
 "use strict";
 
-import Model from "./model";
+import Model from "./Model";
 
 
 class PolygonMesh extends Model {
@@ -10,14 +10,6 @@ class PolygonMesh extends Model {
       this.polygons = new Array(polygonsCount);
       this.vertices = new Array(verticesCount);
    }
-  
-   getPolygons() {
-      return this.polygons;
-   }
-  
-   getVertices() {
-      return this.vertices;
-   }
-  }
+}
 
 export default PolygonMesh;

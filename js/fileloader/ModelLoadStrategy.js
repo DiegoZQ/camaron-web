@@ -3,21 +3,17 @@
 
 class ModelLoadStrategy {
    constructor(fileArray) {
-      this.fileArray = fileArray;
-      this.valid = true;
+      this.fileArray = normalizeFileArray(fileArray);
+      this.isValid = true;
       this.model = null;
    }
 
-   getModel() {
-      return this.model;
+   normalizeFileArray(fileArray) {
+      return fileArray.map(line => line.trim()).filter(line => line && !line.startsWith('#'));
    }
 
    load() {
       return 1;
-   }
-
-   isValid() {
-      return this.valid;
    }
 
    calculateVertexNormals(polygonMesh) {

@@ -1,6 +1,6 @@
 "use strict";
 
-import EvaluationStrategy from './evaluation-base'
+import EvaluationStrategy from './EvaluationStrategy'
 import { radToDeg } from '../helpers';
 
 
@@ -15,15 +15,12 @@ class AngleEvaluationStrategy extends EvaluationStrategy {
       let minAngle = 360;
     	let maxAngle = 0;
 
-    	const polygons = this.model.getPolygons();
+    	const polygons = this.model.polygons;
 		// Itera sobre los polígonos del modelo
     	for (const polygon of polygons) {
-    	   if (this.mode === "selection" && !polygon.isSelected()) 
+    	   if (this.mode === "selection" && !polygon.isSelected) 
     			continue;
-			// Obtiene los ángulos de cada polígono	
-    	   const polygonAngles = polygon.getAngles();
-
-    	   for (const angleRad of polygonAngles) {
+    	   for (const angleRad of polygon.angles) {
     	      const angleDeg = radToDeg(angleRad);
     	      angleList.push(angleDeg);
     	      minAngle = Math.min(minAngle, angleDeg);
