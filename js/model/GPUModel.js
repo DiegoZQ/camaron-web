@@ -4,10 +4,10 @@ import { vec3 } from "../external/gl-matrix";
 import MVPManager from "./MVPManager";
 
 
-class RModel {
-   constructor(model) {
-      this.model = model;
-      this.MVPManager = new MVPManager(gl, model);
+class GPUModel {
+   constructor(CPUModel) {
+      this.CPUModel = CPUModel;
+      this.MVPManager = new MVPManager(CPUModel);
       // Buffers
       this.trianglesBuffer = gl.createBuffer();
       this.edgesBuffer = gl.createBuffer();
@@ -16,7 +16,7 @@ class RModel {
       this.verticesNormalsBuffer = gl.createBuffer();
       this.faceNormalsLinesBuffer = gl.createBuffer();
       this.vertexNormalsLinesBuffer = gl.createBuffer();
-      // Element Quantities
+      // Shape Quantities
       this.trianglesCount = 0;
       this.edgesCount = 0;
       // Configuration
@@ -31,10 +31,10 @@ class RModel {
       this.edgesCount += number;
    }
 
-   // Por cada polígono del modelo, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
+   // Por cada polígono del CPUModel, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
    // en un arreglo global. Sirve para dibujar las caras del modelo.
    loadTriangles() {
-      const polygons = this.model.polygons;
+      const polygons = this.CPUModel.polygons;
       const polygonTrianglesVertexCoords = [];
       for (const polygon of polygons) {
          polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
@@ -48,7 +48,7 @@ class RModel {
    // Por cada vértice de cada triángulo de cada polígono, agrega la normal del polígono que comprende cada subconjunto de triángulos.
    // Sirve para representar la iluminación sobre las caras.
    loadTriangleNormals() {
-      const polygons = this.model.polygons;
+      const polygons = this.CPUModel.polygons;
       // Agrega una normal para cada vértice del triángulo, 3 vértices 3 dimesiones => 9 espacios
       const trianglesNormals = new Float32Array(this.trianglesCount*9);
       for (const polygon of polygons) {
@@ -66,11 +66,11 @@ class RModel {
       this.loaded += 1;
    }
 
-   // Por cada normal de cada vértice de cada triángulo de cada polígono, agrega dicha normal a un array global con todas las normales del modelo.
+   // Por cada normal de cada vértice de cada triángulo de cada polígono, agrega dicha normal a un array global con todas las normales del CPUModel.
    // cada 3 valores corresponden a una normal de un vértice, y cada 3*n vértices (9*n valores) corresponden a un polígono de n triángulos.
    // Sirve para representar la iluminación sobre los vértices.
    loadVertexNormals() {
-      const polygons = this.model.polygons;
+      const polygons = this.CPUModel.polygons;
       const verticesNormals = new Float32Array(this.trianglesCount*9);
 
       for (const polygon of polygons) {
@@ -93,7 +93,7 @@ class RModel {
    // Por cada par de vértices consecutivos de cada polígono, agrega las dos coordenadas de ambos vértices 
    // para representar una "línea" entre ambos puntos. Este cálculo es necesario para representar el wireframe de un modelo.
    loadEdges() {
-      const polygons = this.model.polygons;
+      const polygons = this.CPUModel.polygons;
       for (const polygon of polygons) {
          const polygonVertices = polygon.vertices;
          this.increaseEdgesCounts(polygonVertices.length);
@@ -116,10 +116,10 @@ class RModel {
       this.loaded += 1;
    }
 
-   // Por cada vértice del modelo, obtiene sus coordenadas y las almacena en un arreglo global.
+   // Por cada vértice del CPUModel, obtiene sus coordenadas y las almacena en un arreglo global.
    // Sirve para representar nubes de puntos.
    loadVertices() {
-      const modelVertices = this.model.vertices;
+      const modelVertices = this.CPUModel.vertices;
       const vertices = new Float32Array(modelVertices.length*3);
  
       for (let i = 0; i < modelVertices.length; i++) {
@@ -133,11 +133,11 @@ class RModel {
       this.loaded += 1;
    }
 
-   // Por cada vértice del modelo, obtiene sus coordenadas y su vector normal, suma la normal a cada vértice,
+   // Por cada vértice del CPUModel, obtiene sus coordenadas y su vector normal, suma la normal a cada vértice,
    // obteniendo así 2 puntos: el vértice y el vértice desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de los vértices. 
    loadVertexNormalsLines() {
-      const modelVertices = this.model.vertices;
+      const modelVertices = this.CPUModel.vertices;
       const vertexNormalsLines = new Float32Array(modelVertices.length*6);
 
       for (let i = 0; j < modelVertices.length; i++) {
@@ -156,11 +156,11 @@ class RModel {
       this.loaded += 1;
    }
 
-   // Por cada polígono del modelo, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
+   // Por cada polígono del CPUModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
    // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de las caras. 
    loadFaceNormalsLines() {
-      const modelPolygons = this.model.polygons;
+      const modelPolygons = this.CPUModel.polygons;
       const faceNormalsLines = new Float32Array(modelPolygons.length*6);
 
       for(let i = 0; i < modelPolygons.length; i++){
@@ -183,10 +183,10 @@ class RModel {
       return vec4.fromValues(0.7, 0.7, 0.7, 1);
    }
 
-   // Obtiene un arreglo general con los colores de cada vértice de los triángulos que conforman el modelo. 
+   // Obtiene un arreglo general con los colores de cada vértice de los triángulos que conforman el CPUModel. 
    // Si están seleccionados, marca el triángulo de un color distinto.
    get colorMatrix() {
-      const polygons = this.model.polygons;
+      const polygons = this.CPUModel.polygons;
       const colors = new Float32Array(this.trianglesCount*9);
    
       for (const polygon of polygons) {
@@ -207,4 +207,4 @@ class RModel {
    }
 }
 
-export default RModel;
+export default GPUModel;

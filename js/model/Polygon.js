@@ -1,9 +1,9 @@
-import Element from './Element';
+import Shape from './Shape';
 import { vec3 } from '../external/gl-matrix';
 import earcut from "../external/earcut";
 
 
-class Polygon extends Element {
+class Polygon extends Shape {
    constructor(id) {
       super(id);
       this.vertices = [];

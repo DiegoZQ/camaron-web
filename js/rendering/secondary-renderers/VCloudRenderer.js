@@ -5,8 +5,8 @@ import { pointVertexShader, pointFragmentShader } from "../shaders";
 
 
 class VCloudRenderer extends Renderer {
-	constructor(rModel) {
-	   super(rModel, pointVertexShader, pointFragmentShader);
+	constructor(GPUModel) {
+	   super(GPUModel, pointVertexShader, pointFragmentShader);
 	}
 
 	init() {
@@ -18,7 +18,7 @@ class VCloudRenderer extends Renderer {
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 
 		// Obtiene la información de verticesBuffer 
-		this.positionBuffer = this.rModel.verticesBuffer;
+		this.positionBuffer = this.GPUModel.verticesBuffer;
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
@@ -34,10 +34,10 @@ class VCloudRenderer extends Renderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y colorConfig a las variables u_worldViewProjection y u_color del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, colorConfig.getVertexCloudColor());
 
-		gl.drawArrays(gl.POINTS, 0, this.rModel.vertices.length);
+		gl.drawArrays(gl.POINTS, 0, this.GPUModel.vertices.length);
 	}
 }
 

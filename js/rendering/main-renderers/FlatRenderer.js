@@ -5,8 +5,8 @@ import { basicVertexShader, basicFragmentShader } from "../shaders";
 
 
 class FlatRenderer extends MainRenderer {
-	constructor(rModel) {
-	  super(rModel, basicVertexShader, basicFragmentShader);
+	constructor(GPUModel) {
+	  super(GPUModel, basicVertexShader, basicFragmentShader);
 	}
 
 	init() {
@@ -18,10 +18,10 @@ class FlatRenderer extends MainRenderer {
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 
 		// Obtiene la información de trianglesBuffer y crea el color buffer
-		this.positionBuffer = this.rModel.trianglesBuffer;
+		this.positionBuffer = this.GPUModel.trianglesBuffer;
 		this.colorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.rModel.colorMatrix, gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, this.GPUModel.colorMatrix, gl.STATIC_DRAW);
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
@@ -38,7 +38,7 @@ class FlatRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP a la variable u_worldViewProjection del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
 
 		this.renderWithCulling();
 	}

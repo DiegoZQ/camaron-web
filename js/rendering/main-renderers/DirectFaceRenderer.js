@@ -5,8 +5,8 @@ import { normalVertexShader, normalFragmentShader } from "../shaders";
 
 
 class DirectFaceRenderer extends MainRenderer {
-	constructor(rModel) {
-	   super(rModel, normalVertexShader, normalFragmentShader);
+	constructor(GPUModel) {
+	   super(GPUModel, normalVertexShader, normalFragmentShader);
 	   this.normalBuffer = null;
   
 	   this.normalAttributeLocation = null;
@@ -26,11 +26,11 @@ class DirectFaceRenderer extends MainRenderer {
 		this.reverseLightDirectionLocation = gl.getUniformLocation(this.program, "u_reverseLightDirection");
 
 		// Obtiene la información de los buffers de trianglesBuffer y trianglesNormalsBuffer y crea el color buffer
-		this.positionBuffer = this.rModel.trianglesBuffer;
-		this.normalBuffer = this.rModel.trianglesNormalsBuffer;
+		this.positionBuffer = this.GPUModel.trianglesBuffer;
+		this.normalBuffer = this.GPUModel.trianglesNormalsBuffer;
 		this.colorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.rModel.colorMatrix, gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, this.GPUModel.colorMatrix, gl.STATIC_DRAW);
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
@@ -48,8 +48,8 @@ class DirectFaceRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y modelMatrix a las variables u_worldViewProjection y u_world del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.MVP);
-		gl.uniformMatrix4fv(this.modelLocation, false, this.rModel.modelMatrix);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
+		gl.uniformMatrix4fv(this.modelLocation, false, this.GPUModel.modelMatrix);
 
 		const lightDirection = vec3.normalize(vec3.fromValues(0.5, 0.7, 1), vec3.fromValues(0.5, 0.7, 1));
 		this.renderWithCulling(this.reverseLightDirectionLocation, lightDirection);

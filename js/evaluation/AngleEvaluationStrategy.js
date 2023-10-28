@@ -5,8 +5,8 @@ import { radToDeg } from '../helpers';
 
 
 class AngleEvaluationStrategy extends EvaluationStrategy {
-   constructor(model, mode) {
-      super(model, mode);
+   constructor(CPUModel, mode) {
+      super(CPUModel, mode);
    }
 
    evaluate() {
@@ -15,7 +15,7 @@ class AngleEvaluationStrategy extends EvaluationStrategy {
       let minAngle = 360;
     	let maxAngle = 0;
 
-    	const polygons = this.model.polygons;
+    	const polygons = this.CPUModel.polygons;
 		// Itera sobre los polígonos del modelo
     	for (const polygon of polygons) {
     	   if (this.mode === "selection" && !polygon.isSelected) 

@@ -5,8 +5,8 @@ import { sCVertexShader, sCFragmentShader } from "../shaders";
 
 
 class FNormalsRenderer extends Renderer {
-	constructor(rModel) {
-	   super(rModel, sCVertexShader, sCFragmentShader);
+	constructor(GPUModel) {
+	   super(GPUModel, sCVertexShader, sCFragmentShader);
 	}
 
 	init() {
@@ -18,7 +18,7 @@ class FNormalsRenderer extends Renderer {
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 
 		// Obtiene la información de faceNormalsLinesBuffer 
-		this.positionBuffer = this.rModel.faceNormalsLinesBuffer;
+		this.positionBuffer = this.GPUModel.faceNormalsLinesBuffer;
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
@@ -34,10 +34,10 @@ class FNormalsRenderer extends Renderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y colorConfig a las variables u_worldViewProjection y u_color del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, colorConfig.getFaceNormalsColor());
 
-		gl.drawArrays(gl.LINES, 0, this.rModel.polygons.length*2);
+		gl.drawArrays(gl.LINES, 0, this.GPUModel.polygons.length*2);
 	}
 }
 

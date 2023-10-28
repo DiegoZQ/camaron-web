@@ -5,8 +5,8 @@ import { sCVertexShader, sCFragmentShader } from "../shaders";
 
 
 class WireRenderer extends Renderer {
-	constructor(rModel) {
-		super(rModel, sCVertexShader, sCFragmentShader);
+	constructor(GPUModel) {
+		super(GPUModel, sCVertexShader, sCFragmentShader);
 	}
 
 	init() {
@@ -18,7 +18,7 @@ class WireRenderer extends Renderer {
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 
 		// Obtiene la información de edgesBuffer 
-		this.positionBuffer = this.rModel.edgesBuffer;
+		this.positionBuffer = this.GPUModel.edgesBuffer;
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
@@ -34,10 +34,10 @@ class WireRenderer extends Renderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y colorConfig a las variables u_worldViewProjection y u_color del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.rModel.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, colorConfig.getWireFrameColor());
 
-		gl.drawArrays(gl.LINES, 0, this.rModel.edgesCount*2);
+		gl.drawArrays(gl.LINES, 0, this.GPUModel.edgesCount*2);
 	}
 }
 

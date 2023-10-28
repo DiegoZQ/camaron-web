@@ -5,7 +5,7 @@ class ModelLoadStrategy {
    constructor(fileArray) {
       this.fileArray = normalizeFileArray(fileArray);
       this.isValid = true;
-      this.model = null;
+      this.CPUModel = null;
    }
 
    normalizeFileArray(fileArray) {

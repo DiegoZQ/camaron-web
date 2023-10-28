@@ -1,9 +1,9 @@
 "use strict";
 
-import Model from "./Model";
+import CPUModel from "./CPUModel";
 
 
-class PolygonMesh extends Model {
+class PolygonMesh extends CPUModel {
    constructor(polygonsCount, verticesCount) {
       super();
       this.modelType = 'PolygonMesh';

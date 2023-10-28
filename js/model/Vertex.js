@@ -1,10 +1,10 @@
 "use strict";
 
-import Element from './Element';
+import Shape from './Shape';
 import { vec3 } from '../external/gl-matrix'; 
 
 
-class Vertex extends Element {
+class Vertex extends Shape {
    // Crea un vértice a partir de un id entero positivo y 3 floats.
    constructor(id, x, y, z) {
       super(id);

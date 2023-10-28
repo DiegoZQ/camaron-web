@@ -5,7 +5,7 @@ import { degToRad } from '../helpers';
 
 
 class MVPManager {
-   constructor(model) {
+   constructor(CPUModel) {
       // Canvas
       this.center = null;
       this.modelWidth = null;
@@ -23,13 +23,13 @@ class MVPManager {
       this._MVP = mat4.create();
       this.recalculateMV = true;
       this.recalculateMVP = true;
-      this.loadDataFromModel(model);
+      this.loadDataFromModel(CPUModel);
    }
 
-   // Translada el modelo al orígen y asigna una cámara que lo mira a una distancia el doble del modelo en el eje z.
-   loadDataFromPolygonMesh(model) {
+   // Translada el CPUModel al orígen y asigna una cámara que lo mira a una distancia el doble del modelo en el eje z.
+   loadDataFromPolygonMesh(CPUModel) {
       // Set Canvas
-      const bounds = model.bounds;
+      const bounds = CPUModel.bounds;
       this.center = vec3.fromValues(
          (bounds[0] + bounds[3]) / 2,
          (bounds[1] + bounds[4]) / 2,
@@ -46,9 +46,9 @@ class MVPManager {
       mat4.lookAt(this.viewMatrix, camera, target, up);
    }
    
-   loadDataFromModel(model) {
-      if (model.modelType == "PolygonMesh")
-         this.loadDataFromPolygonMesh(model);
+   loadDataFromModel(CPUModel) {
+      if (CPUModel.modelType == "PolygonMesh")
+         this.loadDataFromPolygonMesh(CPUModel);
    }
 
    // Establece una rotación del modelo a partir de una matriz de rotación.

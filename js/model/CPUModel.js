@@ -1,11 +1,11 @@
 "use strict";
 
 
-class Model {
+class CPUModel {
    constructor() {
       this.bounds = [];
       this.modelType = null;
    }
 }
 
-export default Model;
+export default CPUModel;

@@ -4,8 +4,8 @@ import EvaluationStrategy from './EvaluationStrategy'
 
 
 class AreaEvaluationStrategy extends EvaluationStrategy {
-   constructor(model, mode) {
-      super(model, mode);
+   constructor(CPUModel, mode) {
+      super(CPUModel, mode);
   	}
 
    evaluate() {
@@ -14,7 +14,7 @@ class AreaEvaluationStrategy extends EvaluationStrategy {
       let minArea = 1000000;
       let maxArea = 0;
 
-      const polygons = this.model.polygons;
+      const polygons = this.CPUModel.polygons;
       // Itera sobre los polígonos del modelo
       for (const polygon of polygons) {
          if (this.mode === "selection" && !polygon.isSelected) 

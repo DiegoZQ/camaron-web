@@ -47,12 +47,12 @@ class OffLoadStrategy extends ModelLoadStrategy {
       if (!numVertices|| !numFaces) 
          throw new Error('countError');
 
-      this.model = new PolygonMesh(numFaces, numVertices);
+      this.CPUModel = new PolygonMesh(numFaces, numVertices);
    }
 
    createModelVertices() {
-      const bounds = this.model.bounds;
-      const modelVertices = this.model.vertices;
+      const bounds = this.CPUModel.bounds;
+      const modelVertices = this.CPUModel.vertices;
       const numVertices = modelVertices.length;
 
       let id = 0;
@@ -83,8 +83,8 @@ class OffLoadStrategy extends ModelLoadStrategy {
    }
 
    createModelPolygons() {
-      const modelVertices = this.model.vertices;
-      const polygons = this.model.polygons;
+      const modelVertices = this.CPUModel.vertices;
+      const polygons = this.CPUModel.polygons;
       const numPolygons = polygons.length;
 
       let id = 0;
@@ -118,11 +118,11 @@ class OffLoadStrategy extends ModelLoadStrategy {
          this.checkHeader();
          this.createModelFromHeader();
          this.createModelVertices();
-         if (this.model.modelType === 'PolygonMesh') 
+         if (this.CPUModel.modelType === 'PolygonMesh') 
             this.createModelPolygons();
       } catch {
          this.isValid = false;
-         this.model = null;
+         this.CPUModel = null;
       }
    }
 }
