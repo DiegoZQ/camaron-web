@@ -2,6 +2,7 @@
 
 import { vec3 } from "../external/gl-matrix";
 import MVPManager from "./MVPManager";
+import { colorConfig } from "../camaron-config";
 
 
 class GPUModel {
@@ -194,9 +195,9 @@ class GPUModel {
             const j = i*9;
             let color;
             if (polygon.isSelected) 
-               color = colorConfig.getSelectedColor();
+               color = colorConfig.selectedColor;
             else 
-               color = colorConfig.getBaseColor();
+               color = colorConfig.baseColor;
 
             colors[j] = color[0]; colors[j+1] = color[1]; colors[j+2] = color[2];
             colors[j+3] = color[0]; colors[j+4] = color[1]; colors[j+5] = color[2];

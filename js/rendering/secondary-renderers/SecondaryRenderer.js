@@ -33,7 +33,7 @@ class SecondaryRenderer extends Renderer {
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
 
-		// Asigna los valores de MVP y colorConfig a las variables u_worldViewProjection y u_color del shader
+		// Asigna los valores de MVP y color a las variables u_worldViewProjection y u_color del shader
 		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, this.color);
 

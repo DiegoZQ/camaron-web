@@ -1,6 +1,7 @@
 "use strict";
 
 import ModelLoadStrategy from "./ModelLoadStrategy";
+import Vertex from "../model/vertex";
 import Polygon from '../model/Polygon';
 import { getLineWords } from "../helpers";
 
@@ -27,47 +28,43 @@ class OffLoadStrategy extends ModelLoadStrategy {
       // Caso: OFF
       //       numVertices numFaces numEdges
       if (headerLineWords == 1) {
-         for (let i = 1; i < this.fileArray.length; i++) {
-            const line = this.fileArray[i];
-            const lineWords = getLineWords(line);
-            if (lineWords.length != 3) 
-               throw new Error('headerPartsError');
-            this.vertexStart = i + 1;
-            numVertices = parseInt(lineWords[0]);
-            numFaces = parseInt(lineWords[1]);
-         }
+         const line = this.fileArray[1];
+         const lineWords = getLineWords(line);
+         if (lineWords.length != 3) 
+            throw new Error('headerPartsError');
+         numVertices = parseInt(lineWords[0]);
+         numFaces = parseInt(lineWords[1]);
+         this.vertexStart = 2;
       }
       // Caso: OFF numVertices numFaces numEdges 
       else if (headerLineWords == 4) {
-         this.vertexStart = 1;
          numVertices = parseInt(headerLineWords[1]);
          numFaces = parseInt(headerLineWords[2]);
+         this.vertexStart = 1;
       }
       // Caso: formato incorrecto, si no existen o son 0, arroja un error
-      if (!numVertices|| !numFaces) 
+      if (!numVertices || !numFaces) 
          throw new Error('countError');
 
+      this.polygonStart = this.vertexStart + numVertices;
       this.CPUModel = new PolygonMesh(numFaces, numVertices);
    }
 
    createModelVertices() {
-      const bounds = this.CPUModel.bounds;
-      const modelVertices = this.CPUModel.vertices;
-      const numVertices = modelVertices.length;
+      const bounds = new Float32Array(6);
+      const numVertices = this.CPUModel.vertices.length;
 
-      let id = 0;
-      let i = this.vertexStart;
-      while(id < numVertices) {
-         const line = this.fileArray[i];
+      for (let i = 0; i < numVertices; i++) {
+         const line = this.fileArray[this.vertexStart + i];
          const lineWords = getLineWords(line);
          if (lineWords.length != 3) 
             throw new Error('InvalidVertexDimensions');
-         const x = parseFloat(lineWords[0]);
-         const y = parseFloat(lineWords[1]);
-         const z = parseFloat(lineWords[2]);
-         modelVertices[id] = new Vertex(id+1, x, y, z);
-         if (!bounds.length) 
-            bounds.push(x, y, z, x, y, z);
+
+         const [x, y, z] = lineWords.map(parseFloat);
+         this.CPUModel.vertices[i] = new Vertex(i + 1, x, y, z);
+
+         if (bounds.every(value => value === 0)) 
+            bounds.set([x, y, z, x, y, z]);       
          else {
             bounds[0] = Math.min(bounds[0], x);
             bounds[1] = Math.min(bounds[1], y);
@@ -76,39 +73,34 @@ class OffLoadStrategy extends ModelLoadStrategy {
             bounds[4] = Math.max(bounds[4], y);
             bounds[5] = Math.max(bounds[5], z);
          }
-         id++;
-         i++;
       }
-      this.polygonStart = i;
+      this.CPUModel.bounds = bounds;
    }
 
    createModelPolygons() {
-      const modelVertices = this.CPUModel.vertices;
-      const polygons = this.CPUModel.polygons;
-      const numPolygons = polygons.length;
+      const numPolygons = this.CPUModel.polygons.length;
 
-      let id = 0;
-      let i = this.polygonStart;
-      while(id < numPolygons) {
-         const line = this.fileArray[i];
+      for (let i = 0; i < numPolygons; i++) {
+         const line = this.fileArray[this.polygonStart + i];
          const lineWords = getLineWords(line);
          const sidesCount = parseInt(lineWords[0]);
-         if (lineWords.length != sidesCount + 1) 
+
+         if (lineWords.length !== sidesCount + 1) 
          	throw new Error('InvalidPolygonSideCount');
-         const polygon = new Polygon(id + 1);
-         // if(sidesCount === 3){var polygon = new Triangle(id);}
-         //	else{var polygon = new Polygon(id);}
+
+         const polygon = new Polygon(i+1);
          const polygonVertices = polygon.vertices;
+         // para cada índice de vértice
          for(let j = 1; j <= sidesCount; j++) {
             const vertexIndex = parseInt(lineWords[j]);
-            // para cada índice de vértice agrega el vértice a los vértices del polígono
-            polygonVertices.push(modelVertices[vertexIndex]);
+            const modelVertex = this.CPUModel.vertices[vertexIndex];
+
+            // agrega cada vértice a los vértices del polígono
+            polygonVertices.push(modelVertex);
             // y agrega el nuevo polígono como parte de los polígonos de cada vértice
-            modelVertices[vertexIndex].polygons.push(polygon);
+            modelVertex.polygons.push(polygon);
          }
-         polygons[id] = polygon;
-         id++;
-         i++
+         this.CPUModel.polygons[i + 1] = polygon;
       }
    }
 
