@@ -27,7 +27,7 @@ class Vertex extends Shape {
 
   // Obtiene la normal de un vértice, y si no está guardada, la calcula.
    get normal() {
-      if (this._normal === null) 
+      if (this._normal == null) 
          this.calculateNormal();
       return vec3.clone(this._normal);
    }

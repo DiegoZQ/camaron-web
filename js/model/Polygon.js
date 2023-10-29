@@ -31,7 +31,7 @@ class Polygon extends Shape {
    }
 
    get normal() {
-      if (this._normal === null) 
+      if (this._normal == null) 
          this.calculateNormal();
       return vec3.clone(this._normal);
    }
@@ -47,7 +47,7 @@ class Polygon extends Shape {
    }
 
    get geometricCenter() {
-      if (this._geometricCenter === null) 
+      if (this._geometricCenter == null) 
          this.calculateGeometricCenter();
       return vec3.clone(this._geometricCenter);
    }
@@ -68,7 +68,7 @@ class Polygon extends Shape {
    }
 
    get area() {
-      if (this._area === null) 
+      if (this._area == null) 
          this.calculateArea();
       return this._area;
    }
