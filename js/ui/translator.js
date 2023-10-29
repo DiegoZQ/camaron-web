@@ -1,43 +1,47 @@
 "use strict";
 
-var Translator = function(){
-  this.width = gl.canvas.clientWidth;
-  this.height = gl.canvas.clientHeight;
-  this.startX;
-  this.startY;
-  this.v = vec3.create();
-};
+import { vec3 } from "../external/gl-matrix";
 
-Translator.prototype.setMovementStart = function(win_x, win_y){
-  this.startX = win_x;
-  this.startY = win_y;
+
+class Translator {
+   constructor() {
+      this.width = gl.canvas.clientWidth;
+      this.height = gl.canvas.clientHeight;
+      this.startX = 0;
+      this.startY = 0;
+      this.endX = 0;
+      this.endY = 0;
+      this.movementVector = vec3.create();
+   }
+
+   setMovementStart(win_x, win_y) {
+      this.startX = win_x;
+      this.startY = win_y;
+   }
+
+   moveTo(win_x, win_y) {
+      this.endX = win_x;
+      this.endY = win_y;
+
+      const dx = this.startX - this.endX;
+      const dy = this.startY - this.endY;
+
+      this.movementVector[0] += -dx;
+      this.movementVector[1] += dy;
+
+      this.startX = this.endX;
+      this.startY = this.endY;
+   }
+
+   rescale() {
+      this.width = gl.canvas.clientWidth;
+      this.height = gl.canvas.clientHeight;
+   }
+
+   reset() {
+      this.rescale();
+      this.movementVector = vec3.create();
+   }
 }
 
-Translator.prototype.moveTo = function(win_x, win_y){
-  this.endX = win_x;
-  this.endY = win_y;
-
-  var dx = this.startX - this.endX;
-  var dy = this.startY - this.endY;
-  
-  this.v[0] += -dx;
-  this.v[1] +=  dy;
-  this.v[2] +=  0.0;
-
-  this.startX = this.endX;
-  this.startY = this.endY;
-}
-
-Translator.prototype.getMovementVector = function(){
-  return this.v;
-}
-
-Translator.prototype.rescale = function(){
-  this.width = gl.canvas.clientWidth;
-  this.height = gl.canvas.clientHeight;
-}
-
-Translator.prototype.reset = function(){
-  this.rescale();
-  this.v = vec3.create();
-}
+export default Translator;
