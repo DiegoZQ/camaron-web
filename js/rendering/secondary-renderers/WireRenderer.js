@@ -2,7 +2,7 @@
 
 import SecondaryRenderer from "./SecondaryRenderer";
 import { sCVertexShader, sCFragmentShader } from "../shaders";
-import { colorConfig } from "../../camaron-config";
+import { colorConfig } from "../../camaron/camaron-config";
 
 
 class WireRenderer extends SecondaryRenderer {

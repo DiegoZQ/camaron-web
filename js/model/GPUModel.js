@@ -2,7 +2,7 @@
 
 import { vec3 } from "../external/gl-matrix";
 import MVPManager from "./MVPManager";
-import { colorConfig } from "../camaron-config";
+import { colorConfig } from "../camaron/camaron-config";
 
 
 class GPUModel {

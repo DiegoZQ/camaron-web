@@ -116,6 +116,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
          this.isValid = false;
          this.CPUModel = null;
       }
+      return this.CPUModel;
    }
 }
 

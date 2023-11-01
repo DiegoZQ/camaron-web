@@ -1,5 +1,15 @@
 "use strict";
 
+
+import GPUModel from "../model/GPUModel";
+import PolygonMesh from "../model/PolygonMesh";
+import OffLoadStrategy from "../fileloader/OffLoadStrategy";
+import Rotator from "../ui/rotator";
+import Scalator from "../ui/scalator";
+import Translator from "../ui/translator";
+
+import { updateInfo, setMainRenderer, setSecondaryRenderers, changeViewType, resetView, rescaleView, enableModelDependant, enableEvaluationDependant, disableEvaluationDependant } from "./view-helpers";
+
 /*--------------------------------------------------------------------------------------
 ----------------------------------- COMMON VARIABLES -----------------------------------
 --------------------------------------------------------------------------------------*/
@@ -29,113 +39,134 @@ var canvas = document.getElementById("glCanvas");
 var gl = canvas.getContext("webgl2");
 if (!gl) {alert("No WebGL");}
 
+
+
+const globalVars = {
+  cpuModel: null,
+  gpuModel: null,
+  mainRenderer: null,
+  secondaryRenderers: [],
+
+  scalator: null,
+  translator: null,
+  rotator: null,
+  rotating: false,
+  moving: false,
+
+  scaleInfo: document.getElementById("scale_info"),
+
+  canvas: document.getElementById("glCanvas")
+};
+
+
+
 /*--------------------------------------------------------------------------------------
 --------------------------------- OPEN FILE/DRAW MODEL ---------------------------------
 --------------------------------------------------------------------------------------*/
 
-var file = document.getElementById('import_e');
-var file_button = document.getElementById('import_b');
+let cpuModel = null; 
+let gpuModel = null;
+let rotator = null;
+let translator = null;
+let scalator = null; 
 
-// The next variable and the following functions are the only piece of JQuery in here
-// (besides the entire sitio.js file). This was done by the designer and will be replaced
-// as soon as I have time with pure JavaScript.
-
-var modal_loading = $('#modal-loading');
+const file = document.getElementById('import_e');
+const fileButton = document.getElementById('import_b');
+const modalLoading = $('#modal-loading');
 
 // Opens the loading modal.
-
-function open_loading_modal(){
-  modal_loading.fadeIn().addClass('active');
-  modal_loading.find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
-}
+const openLoadingModal = () => {
+   modalLoading.fadeIn().addClass('active');
+   modalLoading.find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
+};
 
 // Closes the loading modal.
-
-function close_loading_modal(){
-  modal_loading.delay(150).fadeOut().removeClass('active');$('.modal-container').toggleClass('bottom-in bottom-out');
-}
+const closeLoadingModal = () => {
+   modalLoading.delay(150).fadeOut().removeClass('active').find('.modal-container').toggleClass('bottom-in bottom-out');
+};
 
 // Selects loading strategy
+const selectLoadingStrategy = (extension, fileArray) => {
+   if (extension === 'off') 
+      return new OffLoadStrategy(fileArray);
+   alert('Unsupported Format');
+   // TODO: Implement a null loader
+   return null;   
+};
 
-function select_loading_strategy(extension, fileArray){
-  if(extension == "off"){
-    return new OffLoadStrategy(fileArray);
-  }
-  else{
-    alert("Unsupported Format");
-    // TODO: make a null loader
-    return null;
-  }
-}
+// Waits for the gpuModel to be loaded
+const waitForGPUModelLoaded = (gpuModel) => {
+   if (gpuModel != null && gpuModel.loaded === 7) {
+      setMainRenderer(globalVars);
+      setSecondaryRenderers(globalVars);
+      updateInfo(globalVars);
+      draw();
+      enableModelDependant();
+      updateEventHandlers();
+      closeLoadingModal();
+   } else {
+      setTimeout(waitLoaded, 500);
+   } 
+};
 
-function waitLoaded(){
-  if(rModel != undefined && rModel.loaded == 7){
-    setMainRenderer();
-    setSecondaryRenderers();
-    updateInfo();
-    draw();
-    enable_model_dependant();
-    updateEventHandlers();
-    close_loading_modal();
-  }
-  else{
-    setTimeout(waitLoaded, 500);
-  }
-}
+// Initializes gpuModel loading and waits for it to be loaded
+const loadGPUModel = (gpuModel) => {
+   setTimeout(() => {
+      gpuModel.loadTriangles();
+      gpuModel.loadTrianglesNormals();
+      gpuModel.loadVertexNormals();
+      gpuModel.loadEdges();
+      gpuModel.loadVertices();
+      gpuModel.loadVertexNormalsLines();
+      gpuModel.loadFaceNormalsLines();
+   }, 0);
+   changeViewType(globalVars);
+   rotator = new Rotator();
+   translator = new Translator();
+   scalator = new Scalator();
+   
+   waitForGPUModelLoaded(gpuModel);
+};
 
 // Binds the design button, with the actual input type file button.
-
-file_button.onclick = function(){
-  file.click();
-}
+fileButton.onclick = () => {
+   file.click();
+};
 
 // The onchange event is triggered on the input when a file is selected.
 // Here is were everything gets initialized.
+file.onchange = () => {
+   if (file.files.length) {
+      openLoadingModal();
 
-file.onchange = function(){
-  if(file.files.length){
-    var reader = new FileReader();
-    reader.onloadend = function(e){
-      open_loading_modal();
-      // waiting half second for the modal to open
-      setTimeout(function(){
-        // Before loading model, remove existing selections and evaluations
-        mainView.classList.remove("view2");
-        mainView.classList.add("view0");
-        disable_evaluation_dependant();
-        applied_selections = [];
-        update_active_selections();
+      const handleFileLoad = (e) => {
+         setTimeout(() => {
+            mainView.classList.remove('view2');
+            mainView.classList.add('view0');
+            disableEvaluationDependant();
+            appliedSelections = [];
+            updateActiveSelections();
 
-        // Model Loading
-        model = undefined;
-        rModel = undefined;
-        var fileArray = e.target.result.split('\n');
-        var loader = select_loading_strategy(file.files[0].name.split('.')[1], fileArray);
-        if(loader != null && loader.isValid()){
-          model = loader.load();
-          rModel = new RModel(model);
-          
-          setTimeout(function(){
-            rModel.loadTriangles();
-            rModel.loadTrianglesNormals();
-            rModel.loadVertexNormals();
-            rModel.loadEdges();
-            rModel.loadVertices();
-            rModel.loadVertexNormalsLines();
-            rModel.loadFaceNormalsLines();
-          }, 0);
-          rModel.loadData();
-          changeViewType();
-          rotator = new Rotator();
-          translator = new Translator();
-          scalator = new Scalator();
-          waitLoaded();
-        }
-      }, 400);
-    }
-    reader.readAsBinaryString(file.files[0]);
-  }  
-}
+            const fileArray = e.target.result.split('\n');
+            const extension = file.files[0].name.split('.')[1];
+            const loader = selectLoadingStrategy(extension, fileArray);
+
+            if (loader) {
+               cpuModel = loader.load();
+               if (cpuModel.isValid) {
+                  gpuModel = new GPUModel(cpuModel);
+                  loadGPUModel(gpuModel);
+               } else {
+                  alert('Invalid format');
+               } 
+            }
+         }, 400); // delay de 400ms después de abrir el archivo
+      };
+      const reader = new FileReader();
+      reader.onloadend = handleFileLoad;
+      reader.readAsBinaryString(file.files[0]);
+   }
+};
 
 /*--------------------------------------------------------------------------------------
 --------------------------------- BUTTONS INTERACTIONS ---------------------------------
@@ -192,237 +223,15 @@ none_button.onclick = function(){
   none_button.classList.add("active");
 }
 
-/*--------------------------------------------------------------------------------------
-------------------------------------- VIEW HELPERS -------------------------------------
-----------------------------------------------------------------------------------------
-
-These functions are used for setting and updating different aspects of the view or the model.
-These are often used by buttons on the same view, or by other methods.
---------------------------------------------------------------------------------------*/
-
-// Updates the visible information of the model when is loaded.
-
-function updateInfo(){
-  var verticesInfo = document.getElementById("vertices_info");
-  var polygonsInfo = document.getElementById("polygons_info");
-  verticesInfo.innerHTML ="Vertices: " + model.getVerticesCount();
-  polygonsInfo.innerHTML = "Polygons: " + model.getPolygonsCount();
-
-  var widthInfo = document.getElementById("width_info");
-  var heightInfo = document.getElementById("height_info");
-  var depthInfo = document.getElementById("depth_info");
-
-  widthInfo.innerHTML ="Width: " + Math.round(rModel.modelWidth);
-  heightInfo.innerHTML = "Height: " + Math.round(rModel.modelHeight);
-  depthInfo.innerHTML = "Depth: " + Math.round(rModel.modelDepth);
-  scaleInfo.value = scalator.getScaleFactor().toFixed(1);
-}
-
-// Creates a main renderer and assigns it to the main renderer variable.
-
-function setMainRenderer(){
-  if(rModel == undefined){
-    return;
-  }
-  var main = document.getElementsByName("main_renderer");
-  for(var i = 0; i < main.length; i++){
-    if(main[i].checked){
-      var name = main[i].value;
-      if(name == "Face"){
-        mainRenderer = new DirectFaceRenderer(rModel);
-      }else if(name == "Vertex"){
-        mainRenderer = new DirectVertexRenderer(rModel);
-      }else if(name == "Flat"){
-        mainRenderer = new FlatRenderer(rModel);
-      }else{
-        mainRenderer = null;
-      }
-
-      if(mainRenderer != null){
-        mainRenderer.init();
-      }
-      break;
-    }
-  }
-}
-
-// Creates a list of  every secondary renderer selected created and 
-// adds it to the secondary renderers variable.
-
-function setSecondaryRenderers(){
-  if(rModel == undefined){
-    return;
-  }
-  var secondary = document.getElementsByName("secondary_renderer");
-  var secondaryRenderer;
-  secondaryRenderers = [];
-  for(var i = 0; i < secondary.length; i++){
-    if(secondary[i].checked){
-      var name = secondary[i].value;
-      if(name == "WireFrame"){
-        secondaryRenderer = new WireRenderer(rModel);
-      }
-      if(name == "VertexNormals"){
-        secondaryRenderer = new VNormalsRenderer(rModel);
-      }
-      if(name == "FaceNormals"){
-        secondaryRenderer = new FNormalsRenderer(rModel);  
-      }
-      if(name == "VertexCloud"){
-        secondaryRenderer = new VCloudRenderer(rModel);  
-      }
-      secondaryRenderer.init();
-      secondaryRenderers.push(secondaryRenderer);
-    }
-  } 
-}
-
-// Changes the viewtype between perspective and orthogonal.
-
-function changeViewType(){
-  if(rModel == undefined){
-    return;
-  }
-  var viewType = document.getElementsByName("view_type");
-  if(viewType[0].checked){
-    rModel.setViewType("perspective");
-  }else{
-    rModel.setViewType("ortho");
-  }
-}
-
-// Resets the model to its original position.
-
-function resetView(){
-  if(rotator == undefined || translator == undefined)
-    return;
-
-  rotator.reset();
-  translator.reset();
-  scalator.reset();
-  scaleInfo.value = scalator.getScaleFactor().toFixed(1);
-  rModel.reset();
-  draw();
-}
-
-// Rescales the model when the canvas changes size.
-
-function rescaleView(){
-  if(rotator == undefined || translator == undefined)
-    return;
-
-  rotator.rescale();
-  translator.rescale();
-  scalator.rescale();
-  rModel.rescale();
-  draw();
-}
 
 // Button binding  of reset button, because i dont know where else to put it.
-
-document.getElementById("reset_view").onclick =function() {
+document.getElementById("reset_view").onclick = function() {
   if(this.classList.contains("disabled")){
     return;
   }
-  resetView()
+  resetView(globalVars, draw);
 };
 
-
-// Enables every disabled button with the model dependant class
-
-function enable_model_dependant(){
-  var elements = document.getElementsByClassName("model-d");
-  for(var i = 0; i < elements.length; i++){
-    elements[i].classList.remove("disabled");
-  }
-}
-
-// Enables every disabled button with the evaluation dependant class
-
-function enable_evaluation_dependant(){
-  var elements = document.getElementsByClassName("eval-d");
-  for(var i = 0; i < elements.length; i++){
-    elements[i].classList.remove("disabled");
-  
-  }
-}
-
-function disable_evaluation_dependant(){
-  var elements = document.getElementsByClassName("eval-d");
-  for(var i = 0; i < elements.length; i++){
-    elements[i].classList.add("disabled");
-  
-  }
-}
-
-/*--------------------------------------------------------------------------------------
----------------------------------- MOUSE INTERACTIONS ----------------------------------
-----------------------------------------------------------------------------------------
-
-These functions are used for mouse operations such as moving, rotating and scalating.
-The binding of the functions with the canvas is included here.
---------------------------------------------------------------------------------------*/
-
-function mousedown(e){
-  if(e.button == 0){
-    rotating = true;
-    var rect = canvas.getBoundingClientRect();
-    rotator.setRotationStart(event.clientX - rect.left, event.clientY - rect.top);
-  }else if(e.button == 2){
-    moving = true;
-    var rect = canvas.getBoundingClientRect();
-    translator.setMovementStart(event.clientX - rect.left, event.clientY - rect.top)
-  }
-}
-
-function mouseup(e){
-  rotating = false;
-  moving = false;
-}
-
-function mousemove(e){
-  if(rotating){
-    var rect = canvas.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    rotator.rotateTo(x, y);
-
-    rModel.setRotation(rotator.getRotationMatrix());
-    draw();
-  }
-
-  if(moving){
-    var rect = canvas.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    translator.moveTo(x, y);
-
-    rModel.setTranslation(translator.getMovementVector());
-    draw();
-  }
-}
-
-function onwheel(e){
-  e.preventDefault();
-  if(e.deltaY < 0){
-    scalator.scale(0.1)
-  }else{
-    scalator.scale(-0.1);
-  }
-  rModel.setScale(scalator.getScaleFactor());
-
-  scaleInfo.value = scalator.getScaleFactor().toFixed(1);
-
-  draw();
-}
-
-function updateEventHandlers(){
-  canvas.addEventListener("mousedown", mousedown);
-  canvas.addEventListener("mouseup", mouseup);
-  canvas.addEventListener("mousemove", mousemove);
-  canvas.addEventListener("wheel", onwheel);
-  canvas.addEventListener("contextmenu", function(e){e.preventDefault();})
-}
 
 /*--------------------------------------------------------------------------------------
 -------------------------------------- SELECTIONS --------------------------------------
@@ -579,7 +388,7 @@ var evalButton = document.getElementById("eval_btn");
 function show_evaluation_results(){
   mainView.classList.remove("view0");
   mainView.classList.add("view2");
-  rescaleView();
+  rescaleView(globalVars, draw);
   document.getElementById('info').innerHTML = '';
   var trace = {
     x: evaluation_results['list'],
@@ -622,7 +431,7 @@ evalButton.onclick = function(){
 
   evaluation_results = evaluation.evaluate();
   show_evaluation_results();
-  enable_evaluation_dependant();
+  enableEvaluationDependant();
 }
 
 /*--------------------------------------------------------------------------------------
@@ -655,13 +464,6 @@ function draw(){
 
 These are helper functions that were not in any of the previous categories.
 --------------------------------------------------------------------------------------*/
-function degToRad(d) {
-  return d * Math.PI / 180;
-}
-
-function radToDeg(d) {
-  return d * 180 / Math.PI;
-}
 
 function resizeCanvas(canvas) {
   var width  = canvas.clientWidth*2;
