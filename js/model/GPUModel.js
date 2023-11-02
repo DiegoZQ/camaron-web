@@ -40,9 +40,7 @@ class GPUModel {
       for (const polygon of polygons) {
          polygonTrianglesVertexCoords = polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
          this.increaseTriangleCounts(polygon.trianglesCount);
-         console.log(polygon.trianglesCount);
       }
-      console.log('estoy lol', polygonTrianglesVertexCoords);
       //const triangles = new Float32Array(this.trianglesCount*9);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, polygonTrianglesVertexCoords, gl.STATIC_DRAW);
@@ -80,7 +78,7 @@ class GPUModel {
       for (const polygon of polygons) {
          const polygonVertices = polygon.vertices;
          const polygonTrianglesVertexIndices = polygon.trianglesVertexIndices;
-         for (let i = 0; i < polygonTrianglesVertexIndices; i++) {
+         for (let i = 0; i < polygonTrianglesVertexIndices.length; i++) {
             const j = i*3;
             const polygonVertex = polygonVertices[polygonTrianglesVertexIndices[i]];
             const vertexNormal = polygonVertex.normal;

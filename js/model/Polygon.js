@@ -99,16 +99,17 @@ class Polygon extends Shape {
    }
 
    calculateTrianglesVertexIndices() {
-      const vertices = this.vertices;
-      const vertexCoords = new Float32Array(3*vertices.length);
-      for (let i = 0; i < vertices.length; i++) {
-         const coords = vertices[i].coords;
-         const j = i*3;
-         vertexCoords[j] = coords[0];
-         vertexCoords[j+1] = coords[1];
-         vertexCoords[j+2] = coords[2];
-      }
-      this._trianglesVertexIndices = earcut(vertexCoords, null, 3);
+      //const vertices = this.vertices;
+      //const vertexCoords = new Float32Array(3*vertices.length);
+      //for (let i = 0; i < vertices.length; i++) {
+      //   const coords = vertices[i].coords;
+      //   const j = i*3;
+      //   vertexCoords[j] = coords[0];
+      //   vertexCoords[j+1] = coords[1];
+      //   vertexCoords[j+2] = coords[2];
+      //}
+      //this._trianglesVertexIndices = earcut(vertexCoords, null, 3);
+      this._trianglesVertexIndices = [0,1,2];
    }
 
    // Obtiene los índices de los vértices de cada triángulo, cada 3 índices corresponde a un triángulo.
@@ -148,6 +149,6 @@ class Polygon extends Shape {
    // Obtiene la cantidad de triángulos del polígonos a partir de los índices generados
    // de cada triángulo en la triangulación. 3 índices <=> 1 triángulo.
    get trianglesCount() {
-      return this.trianglesVertexIndices/3;
+      return this.trianglesVertexIndices.length/3;
    }
 }
