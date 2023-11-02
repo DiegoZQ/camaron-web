@@ -36,14 +36,16 @@ class GPUModel {
    // en un arreglo global. Sirve para dibujar las caras del modelo.
    loadTriangles() {
       const polygons = this.cpuModel.polygons;
-      const polygonTrianglesVertexCoords = [];
+      let polygonTrianglesVertexCoords = [];
       for (const polygon of polygons) {
-         polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
+         polygonTrianglesVertexCoords = polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
          this.increaseTriangleCounts(polygon.trianglesCount);
+         console.log(polygon.trianglesCount);
       }
-      const triangles = new Float32Array(this.trianglesCount*9);
+      console.log('estoy lol', polygonTrianglesVertexCoords);
+      //const triangles = new Float32Array(this.trianglesCount*9);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, polygonTrianglesVertexCoords, gl.STATIC_DRAW);
       this.loaded += 1;
    }
 
