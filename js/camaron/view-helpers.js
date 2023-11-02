@@ -51,6 +51,8 @@ const setMainRenderer = () => {
       if (RendererClass) {
          mainRenderer = new RendererClass(gpuModel);
          mainRenderer.init();
+      } else {
+         mainRenderer = null;
       }
    }
 }
