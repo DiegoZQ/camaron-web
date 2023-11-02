@@ -33,7 +33,7 @@ class SelectionStrategy {
    }
 
    // Aplica el método selectElement sobre todos los polígono con la propiedad isSelect=true y los deselecciona.
-   subtract() {
+   substract() {
       this.polygons.filter(polygon => polygon.isSelected).forEach(polygon => {
          this.selectPolygon(polygon);
          polygon.isSelected = !polygon.isSelected;
@@ -47,7 +47,7 @@ class SelectionStrategy {
          this.intersect();
       else if (this.mode == 'add') 
          this.add();
-      else if (this.mode == 'subtract')
+      else if (this.mode == 'substract')
          this.substract();
       else
          console.log("Unsupported Mode");

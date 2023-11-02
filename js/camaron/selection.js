@@ -32,7 +32,7 @@ const updateActiveSelections = () => {
       "clean": "img/btn-normal.svg",
       "intersect": "img/btn-intercept.svg",
       "add": "img/btn-add.svg",
-      "subtract": "img/btn-subtract.svg"
+      "substract": "img/btn-substract.svg"
    };
    for (let i = 0; i < appliedSelections.length; i++) {
       const selection = appliedSelections[i];
