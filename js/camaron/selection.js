@@ -34,8 +34,8 @@ const updateActiveSelections = () => {
       "add": "img/btn-add.svg",
       "subtract": "img/btn-subtract.svg"
    };
-
-   for (const selection of appliedSelections) {
+   for (let i = 0; i < appliedSelections.length; i++) {
+      const selection = appliedSelections[i];
       const selectionTab = document.createElement("li");
       const img = document.createElement("img");
       const div = document.createElement("div");
@@ -50,7 +50,7 @@ const updateActiveSelections = () => {
       remove.setAttribute("class", "material-icons");
       remove.appendChild(document.createTextNode("close"));
       remove.setAttribute("data-index", i);
-      remove.onclick = () => removeSelection(this);
+      remove.onclick = () => removeSelection(remove);
 
       selectionTab.appendChild(img);
       selectionTab.appendChild(div);

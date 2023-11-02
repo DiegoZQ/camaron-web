@@ -5,12 +5,6 @@ class SelectionStrategy {
    constructor(cpuModel, mode) {
       this.polygons = cpuModel.polygons;
       this.mode = mode;
-      this.modes = {
-         'clean': this.select,
-         'intersect': this.intersect,
-         'add': this.add,
-         'subtract': this.subtract
-      };
    }
 
    selectPolygon(polygon) {
@@ -47,9 +41,15 @@ class SelectionStrategy {
    }
 
    apply() {
-      if (this.mode in this.modes) 
-         this.modes[this.mode]();
-      else 
+      if (this.mode == 'clean') 
+         this.select();
+      else if (this.mode == 'intersect') 
+         this.intersect();
+      else if (this.mode == 'add') 
+         this.add();
+      else if (this.mode == 'subtract')
+         this.substract();
+      else
          console.log("Unsupported Mode");
    }
 }
