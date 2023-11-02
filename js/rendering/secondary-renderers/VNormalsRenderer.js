@@ -7,7 +7,7 @@
 
 class VNormalsRenderer extends SecondaryRenderer {
 	constructor(gpuModel) {
-		super(gpuModel, sCVertexShader, sCFragmentShader, this.gpuModel.vertexNormalsLinesBuffer,
-            colorConfig.vertexNormalColor, gl.LINES, this.gpuModel.vertices.length*2);
+		super(gpuModel, sCVertexShader, sCFragmentShader, gpuModel.vertexNormalsLinesBuffer,
+            colorConfig.vertexNormalColor, gl.LINES, gpuModel.cpuModel.vertices.length*2);
 	}
 }

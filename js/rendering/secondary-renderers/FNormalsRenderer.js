@@ -7,7 +7,7 @@
 
 class FNormalsRenderer extends SecondaryRenderer {
 	constructor(gpuModel) {
-	   super(gpuModel, sCVertexShader, sCFragmentShader, this.gpuModel.faceNormalsLinesBuffer,
-            colorConfig.faceNormalColor, gl.LINES, this.gpuModel.polygons.length*2);
+	   super(gpuModel, sCVertexShader, sCFragmentShader, gpuModel.faceNormalsLinesBuffer,
+            colorConfig.faceNormalColor, gl.LINES, gpuModel.cpuModel.polygons.length*2);
 	}
 }

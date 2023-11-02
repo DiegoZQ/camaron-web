@@ -58,14 +58,17 @@ class GPUModel {
       const polygons = this.cpuModel.polygons;
       // Agrega una normal para cada vértice del triángulo, 3 vértices 3 dimesiones => 9 espacios
       const trianglesNormals = new Float32Array(this.trianglesCount*9);
+      
+      let j = 0;
       for (const polygon of polygons) {
          const normal = polygon.normal;
          const polygonTrianglesCount = polygon.trianglesCount;
          for (let i = 0; i < polygonTrianglesCount; i++) {
-            const j = i*9;
             trianglesNormals[j] = normal[0]; trianglesNormals[j+1] = normal[1]; trianglesNormals[j+2] = normal[2];
             trianglesNormals[j+3] = normal[0]; trianglesNormals[j+4] = normal[1]; trianglesNormals[j+5] = normal[2];
             trianglesNormals[j+6] = normal[0]; trianglesNormals[j+7] = normal[1]; trianglesNormals[j+8] = normal[2];
+
+            j += 9;
          }
       }
       console.log('trianglesNormals', trianglesNormals);
@@ -82,16 +85,18 @@ class GPUModel {
       const polygons = this.cpuModel.polygons;
       const verticesNormals = new Float32Array(this.trianglesCount*9);
 
+      let j = 0;
       for (const polygon of polygons) {
          const polygonVertices = polygon.vertices;
          const polygonTrianglesVertexIndices = polygon.trianglesVertexIndices;
          for (let i = 0; i < polygonTrianglesVertexIndices.length; i++) {
-            const j = i*3;
             const polygonVertex = polygonVertices[polygonTrianglesVertexIndices[i]];
             const vertexNormal = polygonVertex.normal;
             verticesNormals[j] = vertexNormal[0]; 
             verticesNormals[j+1] = vertexNormal[1]; 
             verticesNormals[j+2] = vertexNormal[2];
+
+            j += 3;
          }
       }
 
@@ -112,16 +117,18 @@ class GPUModel {
       }
       const edges = new Float32Array(this.edgesCount*6);
     
+      let j = 0;
       for (const polygon of polygons) {
         const polygonVertices = polygon.vertices;
         for (let i = 0; i < polygonVertices.length; i++) {
-            const j = i*6;
             const vertex1 = polygonVertices[i].coords;
             const vertex2 = polygonVertices[(i + 1) % polygonVertices.length].coords;
 
             edges[j] = vertex1[0]; edges[j+1] = vertex1[1]; edges[j+2] = vertex1[2];
             edges[j+3] = vertex2[0]; edges[j+4] = vertex2[1]; edges[j+5] = vertex2[2];
-        }
+
+            j += 6;
+         }
       }
       console.log('edges', edges);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);
@@ -206,9 +213,9 @@ class GPUModel {
       const polygons = this.cpuModel.polygons;
       const colors = new Float32Array(this.trianglesCount*9);
    
+      let j = 0;
       for (const polygon of polygons) {
          for (let i = 0; i < polygon.trianglesCount; i++) {
-            const j = i*9;
             let color;
             if (polygon.isSelected) 
                color = colorConfig.selectedColor;
@@ -218,6 +225,8 @@ class GPUModel {
             colors[j] = color[0]; colors[j+1] = color[1]; colors[j+2] = color[2];
             colors[j+3] = color[0]; colors[j+4] = color[1]; colors[j+5] = color[2];
             colors[j+6] = color[0]; colors[j+7] = color[1]; colors[j+8] = color[2];
+
+            j += 9;
          }
       }
       return new Float32Array(colors);

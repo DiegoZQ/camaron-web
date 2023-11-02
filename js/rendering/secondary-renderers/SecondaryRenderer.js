@@ -37,6 +37,6 @@ class SecondaryRenderer extends Renderer {
 		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, this.color);
 
-		gl.drawArrays(drawingPrimitive, 0, numVertices);
+		gl.drawArrays(this.drawingPrimitive, 0, this.numVertices);
 	}
 }

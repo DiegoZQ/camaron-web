@@ -163,7 +163,6 @@ class MVPManager {
          mat4.multiply(this._MVP, this.projectionMatrix, this.MV)
          this.recalculateMVP = false
       }
-      console.log(this._MVP);
       return this._MVP;
    }
 
