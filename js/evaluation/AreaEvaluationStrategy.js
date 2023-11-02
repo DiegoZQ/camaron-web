@@ -1,11 +1,11 @@
 "use strict";
 
-import EvaluationStrategy from './EvaluationStrategy'
+// requires './EvaluationStrategy'
 
 
 class AreaEvaluationStrategy extends EvaluationStrategy {
-   constructor(CPUModel, mode) {
-      super(CPUModel, mode);
+   constructor(cpuModel, mode) {
+      super(cpuModel, mode);
   	}
 
    evaluate() {
@@ -14,8 +14,8 @@ class AreaEvaluationStrategy extends EvaluationStrategy {
       let minArea = 1000000;
       let maxArea = 0;
 
-      const polygons = this.CPUModel.polygons;
-      // Itera sobre los polígonos del modelo
+      const polygons = this.cpuModel.polygons;
+      // Itera sobre los polígonos del cpuModel
       for (const polygon of polygons) {
          if (this.mode === "selection" && !polygon.isSelected) 
             continue;
@@ -35,5 +35,3 @@ class AreaEvaluationStrategy extends EvaluationStrategy {
       return data;
    }
 }
-
-export default AreaEvaluationStrategy;

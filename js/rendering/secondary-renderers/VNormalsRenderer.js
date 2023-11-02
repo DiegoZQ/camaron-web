@@ -1,15 +1,13 @@
 "use strict";
 
-import SecondaryRenderer from "./SecondaryRenderer";
-import { sCVertexShader, sCFragmentShader } from "../shaders";
-import { colorConfig } from "../../camaron/camaron-config";
+// requires "./SecondaryRenderer";
+// requires "../shaders";
+// requires "../../config";
 
 
 class VNormalsRenderer extends SecondaryRenderer {
-	constructor(GPUModel) {
-		super(GPUModel, sCVertexShader, sCFragmentShader, this.GPUModel.vertexNormalsLinesBuffer,
-            colorConfig.vertexNormalColor, gl.LINES, this.GPUModel.vertices.length*2);
+	constructor(gpuModel) {
+		super(gpuModel, sCVertexShader, sCFragmentShader, this.gpuModel.vertexNormalsLinesBuffer,
+            colorConfig.vertexNormalColor, gl.LINES, this.gpuModel.vertices.length*2);
 	}
 }
-
-export default VNormalsRenderer

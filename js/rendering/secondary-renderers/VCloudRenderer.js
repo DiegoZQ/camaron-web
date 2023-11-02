@@ -1,15 +1,13 @@
 "use strict";
 
-import SecondaryRenderer from "./SecondaryRenderer";
-import { pointVertexShader, pointFragmentShader } from "../shaders";
-import { colorConfig } from "../../camaron/camaron-config";
+// requires "./SecondaryRenderer";
+// requires "../shaders";
+// requires "../../config";
 
 
 class VCloudRenderer extends SecondaryRenderer {
-	constructor(GPUModel) {
-	   super(GPUModel, pointVertexShader, pointFragmentShader, this.GPUModel.verticesBuffer, 
-            colorConfig.vertexCloudColor, gl.POINTS, this.GPUModel.vertices.length);
+	constructor(gpuModel) {
+	   super(gpuModel, pointVertexShader, pointFragmentShader, this.gpuModel.verticesBuffer, 
+            colorConfig.vertexCloudColor, gl.POINTS, this.gpuModel.vertices.length);
 	}
 }
-
-export default VCloudRenderer

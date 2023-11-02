@@ -1,12 +1,12 @@
 "use strict";
 
-import SelectionStrategy from "./SelectionStrategy";
-import { radToDeg } from "../helpers";
+// requires "./SelectionStrategy";
+// requires "../helpers";
 
 
 class AngleSelectionStrategy extends SelectionStrategy {
-	constructor(model, mode, minAngle, maxAngle) {
-	  	super(model, mode);
+	constructor(cpuModel, mode, minAngle, maxAngle) {
+	  	super(cpuModel, mode);
 	  	this.minAngle = minAngle;
 	  	this.maxAngle = maxAngle;
 	}
@@ -31,5 +31,3 @@ class AngleSelectionStrategy extends SelectionStrategy {
 		return `By Angle: ${this.minAngle} - ${this.maxAngle}`;
 	}
 }
-
-export default AngleSelectionStrategy;

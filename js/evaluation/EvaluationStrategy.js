@@ -2,8 +2,8 @@
 
 
 class EvaluationStrategy {
-	constructor(CPUModel, mode) {
-		this.CPUModel = CPUModel;
+	constructor(cpuModel, mode) {
+		this.cpuModel = cpuModel;
   		this.mode = mode;
 	}
 
@@ -11,5 +11,3 @@ class EvaluationStrategy {
 		console.warn("This should be implemented by specific strategies.");
 	}
 }
-
-export default EvaluationStrategy;

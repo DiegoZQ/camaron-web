@@ -8,5 +8,3 @@ class Shape {
       this.isSelected = false;
    }
 }
-
-export default Shape;

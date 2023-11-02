@@ -1,7 +1,7 @@
 "use strict";
 
-import Shape from './Shape';
-import { vec3 } from '../external/gl-matrix'; 
+// requires './Shape';
+// requires '../external/gl-matrix'; 
 
 
 class Vertex extends Shape {
@@ -32,5 +32,3 @@ class Vertex extends Shape {
       return vec3.clone(this._normal);
    }
 }
-
-export default Vertex;

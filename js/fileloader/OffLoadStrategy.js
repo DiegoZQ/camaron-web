@@ -1,14 +1,15 @@
 "use strict";
 
-import ModelLoadStrategy from "./ModelLoadStrategy";
-import Vertex from "../model/vertex";
-import Polygon from '../model/Polygon';
-import { getLineWords } from "../helpers";
+// requires "./ModelLoadStrategy";
+// requires "../model/PolygonMesh";
+// requires "../model/vertex";
+// requires '../model/Polygon';
+// requires "../helpers";
 
 
 class OffLoadStrategy extends ModelLoadStrategy {
    constructor(fileArray) {
-      super.constructor(fileArray);
+      super(fileArray);
       this.vertexStart = 0;
       this.polygonStart = 0;
    }
@@ -27,7 +28,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
       let numFaces = null; 
       // Caso: OFF
       //       numVertices numFaces numEdges
-      if (headerLineWords == 1) {
+      if (headerLineWords.length == 1) {
          const line = this.fileArray[1];
          const lineWords = getLineWords(line);
          if (lineWords.length != 3) 
@@ -37,7 +38,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
          this.vertexStart = 2;
       }
       // Caso: OFF numVertices numFaces numEdges 
-      else if (headerLineWords == 4) {
+      else if (headerLineWords.length == 4) {
          numVertices = parseInt(headerLineWords[1]);
          numFaces = parseInt(headerLineWords[2]);
          this.vertexStart = 1;
@@ -47,12 +48,12 @@ class OffLoadStrategy extends ModelLoadStrategy {
          throw new Error('countError');
 
       this.polygonStart = this.vertexStart + numVertices;
-      this.CPUModel = new PolygonMesh(numFaces, numVertices);
+      this.cpuModel = new PolygonMesh(numFaces, numVertices);
    }
 
    createModelVertices() {
       const bounds = new Float32Array(6);
-      const numVertices = this.CPUModel.vertices.length;
+      const numVertices = this.cpuModel.vertices.length;
 
       for (let i = 0; i < numVertices; i++) {
          const line = this.fileArray[this.vertexStart + i];
@@ -61,7 +62,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
             throw new Error('InvalidVertexDimensions');
 
          const [x, y, z] = lineWords.map(parseFloat);
-         this.CPUModel.vertices[i] = new Vertex(i + 1, x, y, z);
+         this.cpuModel.vertices[i] = new Vertex(i + 1, x, y, z);
 
          if (bounds.every(value => value === 0)) 
             bounds.set([x, y, z, x, y, z]);       
@@ -74,11 +75,11 @@ class OffLoadStrategy extends ModelLoadStrategy {
             bounds[5] = Math.max(bounds[5], z);
          }
       }
-      this.CPUModel.bounds = bounds;
+      this.cpuModel.bounds = bounds;
    }
 
    createModelPolygons() {
-      const numPolygons = this.CPUModel.polygons.length;
+      const numPolygons = this.cpuModel.polygons.length;
 
       for (let i = 0; i < numPolygons; i++) {
          const line = this.fileArray[this.polygonStart + i];
@@ -93,14 +94,14 @@ class OffLoadStrategy extends ModelLoadStrategy {
          // para cada índice de vértice
          for(let j = 1; j <= sidesCount; j++) {
             const vertexIndex = parseInt(lineWords[j]);
-            const modelVertex = this.CPUModel.vertices[vertexIndex];
+            const modelVertex = this.cpuModel.vertices[vertexIndex];
 
             // agrega cada vértice a los vértices del polígono
             polygonVertices.push(modelVertex);
             // y agrega el nuevo polígono como parte de los polígonos de cada vértice
             modelVertex.polygons.push(polygon);
          }
-         this.CPUModel.polygons[i + 1] = polygon;
+         this.cpuModel.polygons[i] = polygon;
       }
    }
 
@@ -110,14 +111,12 @@ class OffLoadStrategy extends ModelLoadStrategy {
          this.checkHeader();
          this.createModelFromHeader();
          this.createModelVertices();
-         if (this.CPUModel.modelType === 'PolygonMesh') 
+         if (this.cpuModel.modelType === 'PolygonMesh') 
             this.createModelPolygons();
-      } catch {
+      } catch (error) {
          this.isValid = false;
-         this.CPUModel = null;
+         this.cpuModel = null;
       }
-      return this.CPUModel;
+      return this.cpuModel;
    }
 }
-
-export default OffLoadStrategy

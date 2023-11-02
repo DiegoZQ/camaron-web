@@ -1,11 +1,11 @@
 "use strict";
 
-import SelectionStrategy from "./SelectionStrategy";
+// requires "./SelectionStrategy";
 
 
 class EdgesSelectionStrategy extends SelectionStrategy {
-	constructor(model, mode, edgesNumber) {
-		super(model, mode);
+	constructor(cpuModel, mode, edgesNumber) {
+		super(cpuModel, mode);
 		this.edgesNumber = edgesNumber;
 	}
 
@@ -19,5 +19,3 @@ class EdgesSelectionStrategy extends SelectionStrategy {
 		return `By Edges Number: ${this.edgesNumber}`;
 	}
 }
-
-export default EdgesSelectionStrategy;

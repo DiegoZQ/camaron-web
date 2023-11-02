@@ -1,12 +1,12 @@
 "use strict";
 
-import MainRenderer from "./MainRenderer";
-import { basicVertexShader, basicFragmentShader } from "../shaders";
+// requires "./MainRenderer";
+// requires "../shaders";
 
 
 class FlatRenderer extends MainRenderer {
-	constructor(GPUModel) {
-	  super(GPUModel, basicVertexShader, basicFragmentShader);
+	constructor(gpuModel) {
+	  super(gpuModel, basicVertexShader, basicFragmentShader);
 	}
 
 	init() {
@@ -32,10 +32,8 @@ class FlatRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP a la variable u_worldViewProjection del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
 
 		this.renderWithCulling();
 	}
 }
-
-export default FlatRenderer;

@@ -1,11 +1,11 @@
 "use strict";
 
-import SelectionStrategy from "./SelectionStrategy";
+// requires "./SelectionStrategy";
 
 
 class AreaSelectionStrategy extends SelectionStrategy {
-	constructor(model, mode, minArea, maxArea) {
-		super(model, mode);
+	constructor(cpuModel, mode, minArea, maxArea) {
+		super(cpuModel, mode);
 	  	this.minArea = minArea;
 	  	this.maxArea = maxArea;
 	}
@@ -21,5 +21,3 @@ class AreaSelectionStrategy extends SelectionStrategy {
 		return `By Area: ${this.minArea} - ${this.maxArea}`;
 	}
 }
-
-export default AreaSelectionStrategy;

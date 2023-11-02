@@ -1,6 +1,6 @@
 "use strict";
 
-import CPUModel from "./CPUModel";
+// requires "./CPUModel";
 
 
 class PolygonMesh extends CPUModel {
@@ -11,5 +11,3 @@ class PolygonMesh extends CPUModel {
       this.vertices = new Array(verticesCount);
    }
 }
-
-export default PolygonMesh;

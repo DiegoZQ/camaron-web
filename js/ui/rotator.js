@@ -1,6 +1,6 @@
 "use strict";
 
-import { vec3, mat4, quat } from "../external/gl-matrix";
+// requires "../external/gl-matrix";
 
 
 class Rotator {
@@ -65,5 +65,3 @@ class Rotator {
       this.q = quat.create();
    }
 }
-
-export default Rotator;

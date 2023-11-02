@@ -1,10 +1,12 @@
-import DirectFaceRenderer from "../rendering/main-renderers/DirectFaceRenderer";
-import DirectVertexRenderer from "../rendering/main-renderers/DirectVertexRenderer";
-import FlatRenderer from "../rendering/main-renderers/FlatRenderer";
-import WireRenderer from "../rendering/secondary-renderers/WireRenderer";
-import VNormalsRenderer from "../rendering/secondary-renderers/VNormalsRenderer";
-import FNormalsRenderer from "../rendering/secondary-renderers/FNormalsRenderer";
-import VCloudRenderer from "../rendering/secondary-renderers/VCloudRenderer";
+"use strict";
+
+// requires "../rendering/main-renderers/DirectFaceRenderer";
+// requires "../rendering/main-renderers/DirectVertexRenderer";
+// requires "../rendering/main-renderers/FlatRenderer";
+// requires "../rendering/secondary-renderers/WireRenderer";
+// requires "../rendering/secondary-renderers/VNormalsRenderer";
+// requires "../rendering/secondary-renderers/FNormalsRenderer";
+// requires "../rendering/secondary-renderers/VCloudRenderer";
 
 
 /*--------------------------------------------------------------------------------------
@@ -16,12 +18,7 @@ These are often used by buttons on the same view, or by other methods.
 --------------------------------------------------------------------------------------*/
 
 // Updates the visible information of the model when is loaded.
-export const updateInfo = (globalVars) => {
-   const cpuModel = globalVars.cpuModel;
-   const gpuModel = globalVars.gpuModel;
-   const scalator = globalVars.scalator;
-   const scaleInfo = globalVars.scaleInfo;
-
+const updateInfo = () => {
    const verticesInfo = document.getElementById("vertices_info");
    const polygonsInfo = document.getElementById("polygons_info");
    const widthInfo = document.getElementById("width_info");
@@ -30,44 +27,43 @@ export const updateInfo = (globalVars) => {
 
    verticesInfo.innerHTML = `Vertices: ${cpuModel.vertices.length}`;
    polygonsInfo.innerHTML = `Polygons: ${cpuModel.polygons.length}`;
-   widthInfo.innerHTML = `Width: ${Math.round(gpuModel.modelWidth)}`;
-   heightInfo.innerHTML = `Height: ${Math.round(gpuModel.modelHeight)}`;
-   depthInfo.innerHTML = `Depth: ${Math.round(gpuModel.modelDepth)}`;
+   widthInfo.innerHTML = `Width: ${Math.round(gpuModel.MVPManager.modelWidth)}`;
+   heightInfo.innerHTML = `Height: ${Math.round(gpuModel.MVPManager.modelHeight)}`;
+   depthInfo.innerHTML = `Depth: ${Math.round(gpuModel.MVPManager.modelDepth)}`;
    scaleInfo.value = scalator.scaleFactor.toFixed(1);
 };
   
 // Creates a main renderer and assigns it to the main renderer variable.
-export const setMainRenderer = (globalVars) => {
-   const gpuModel = globalVars.gpuModel;
-   let mainRenderer = globalVars.mainRenderer;
-
+const setMainRenderer = () => {
+   
    if (!gpuModel)
       return;
 
-   const main = document.getElementsByName("main_renderer");
+   const main = Array.from(document.getElementsByName("main_renderer"));
    const rendererMap = {
       "Face": DirectFaceRenderer,
       "Vertex": DirectVertexRenderer,
       "Flat": FlatRenderer,
    };
    const checkedElement = main.find(element => element.checked);
-   const RendererClass = rendererMap[checkedElement.value];
-   if (RendererClass) {
-      mainRenderer = new RendererClass(gpuModel);
-      mainRenderer.init();
+   if (checkedElement) {
+      const RendererClass = rendererMap[checkedElement.value];
+      if (RendererClass) {
+         mainRenderer = new RendererClass(gpuModel);
+         mainRenderer.init();
+      }
    }
 }
 
 // Creates a list of  every secondary renderer selected created and 
 // adds it to the secondary renderers variable.
-export const setSecondaryRenderers = (globalVars) => {
-   const gpuModel = globalVars.gpuModel;
+const setSecondaryRenderers = () => {
 
    if (!gpuModel)
       return;
 
-   const secondaryRenderers = [];
-   const secondary = document.getElementsByName("secondary_renderer");
+   const newSecondaryRenderers = [];
+   const secondary = Array.from(document.getElementsByName("secondary_renderer"));
    const rendererMap = {
       "WireFrame": WireRenderer,
       "VertexNormals": VNormalsRenderer,
@@ -79,36 +75,30 @@ export const setSecondaryRenderers = (globalVars) => {
       if (RendererClass) {
          const secondaryRenderer = new RendererClass(gpuModel);
          secondaryRenderer.init();
-         secondaryRenderers.push(secondaryRenderer);
+         newSecondaryRenderers.push(secondaryRenderer);
       }
    });
 
-   if (secondaryRenderers.length)
-      globalVars.secondaryRenderers = secondaryRenderers
+   if (newSecondaryRenderers.length)
+      secondaryRenderers = newSecondaryRenderers;
 }
 
 // Changes the viewtype between perspective and orthogonal.
-export const changeViewType = (globalVars) => {
-   const gpuModel = globalVars.gpuModel;
+const changeViewType = () => {
 
    if (!gpuModel)
       return;
     
    const viewType = document.getElementsByName("view_type");
    if (viewType[0].checked)
-      gpuModel.setViewType("perspective");
+      gpuModel.MVPManager.viewType ="perspective";
    else
-      gpuModel.setViewType("ortho");
+      gpuModel.MVPManager.viewType = "ortho";
 }
   
 // Resets the model to its original position.
-export const resetView = (globalVars, draw) => {
-   const gpuModel = globalVars.gpuModel;
-   const rotator = globalVars.rotator;
-   const translator = globalVars.translator;
-   const scalator = globalVars.scalator;
-   const scaleInfo = globalVars.scaleInfo;
-    
+const resetView = () => {
+
    if (rotator == undefined || translator == undefined)
       return;
 
@@ -121,11 +111,7 @@ export const resetView = (globalVars, draw) => {
 }
 
 // Rescales the model when the canvas changes size.
-export const rescaleView = (globalVars, draw) => {
-   const gpuModel = globalVars.gpuModel;
-   const rotator = globalVars.rotator;
-   const translator = globalVars.translator;
-   const scalator = globalVars.scalator;
+const rescaleView = () => {
 
    if (rotator == undefined || translator == undefined)
       return;
@@ -155,15 +141,27 @@ const switchClassDependant = (className, mode) => {
 }
 
 // Enables every disabled button with the model dependant class
-export const enableModelDependant = () => {
+const enableModelDependant = () => {
    switchClassDependant('model-d', 'enable');
 }
   
   // Enables every disabled button with the evaluation dependant class
-export const enableEvaluationDependant = () => {
+const enableEvaluationDependant = () => {
    switchClassDependant('eval-d', 'enable');
 }
   
-export const disableEvaluationDependant = () => {
+const disableEvaluationDependant = () => {
    switchClassDependant('eval-d', 'disable');
+}
+
+const resizeCanvas = (canvas) => {
+   const width  = canvas.clientWidth * 2;
+   const height = canvas.clientHeight * 2;
+   if (width > height) {
+      canvas.width  = width;
+      canvas.height = width/2;
+   } else {
+      canvas.width  = height*2;
+      canvas.height = height;
+   }
 }

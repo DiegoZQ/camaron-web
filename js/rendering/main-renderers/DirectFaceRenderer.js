@@ -1,13 +1,13 @@
 "use strict";
 
-import MainRenderer from "./MainRenderer";
-import { normalVertexShader, normalFragmentShader } from "../shaders";
+// requires "./MainRenderer";
+// requires "../shaders";
 
 
 class DirectFaceRenderer extends MainRenderer {
-	constructor(GPUModel) {
-	   super(GPUModel, normalVertexShader, normalFragmentShader);
-	   this.normalBuffer = this.GPUModel.trianglesNormalsBuffer;
+	constructor(gpuModel) {
+	   super(gpuModel, normalVertexShader, normalFragmentShader);
+	   this.normalBuffer = this.gpuModel.trianglesNormalsBuffer;
   
 	   this.normalAttributeLocation = null;
 	   this.modelLocation = null;
@@ -41,12 +41,10 @@ class DirectFaceRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y modelMatrix a las variables u_worldViewProjection y u_world del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
-		gl.uniformMatrix4fv(this.modelLocation, false, this.GPUModel.modelMatrix);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
+		gl.uniformMatrix4fv(this.modelLocation, false, this.gpuModel.MVPManager.modelMatrix);
 
 		const lightDirection = vec3.normalize(vec3.fromValues(0.5, 0.7, 1), vec3.fromValues(0.5, 0.7, 1));
 		this.renderWithCulling(this.reverseLightDirectionLocation, lightDirection);
 	}
 }
-
-export default DirectFaceRenderer

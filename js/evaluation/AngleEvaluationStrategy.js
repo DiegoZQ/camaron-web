@@ -1,12 +1,12 @@
 "use strict";
 
-import EvaluationStrategy from './EvaluationStrategy'
-import { radToDeg } from '../helpers';
+// requires './EvaluationStrategy'
+// requires '../helpers';
 
 
 class AngleEvaluationStrategy extends EvaluationStrategy {
-   constructor(CPUModel, mode) {
-      super(CPUModel, mode);
+   constructor(cpuModel, mode) {
+      super(cpuModel, mode);
    }
 
    evaluate() {
@@ -15,8 +15,8 @@ class AngleEvaluationStrategy extends EvaluationStrategy {
       let minAngle = 360;
     	let maxAngle = 0;
 
-    	const polygons = this.CPUModel.polygons;
-		// Itera sobre los polígonos del modelo
+    	const polygons = this.cpuModel.polygons;
+		// Itera sobre los polígonos del cpuModel
     	for (const polygon of polygons) {
     	   if (this.mode === "selection" && !polygon.isSelected) 
     			continue;
@@ -36,5 +36,3 @@ class AngleEvaluationStrategy extends EvaluationStrategy {
     	return data;
   	}
 }
-
-export default AngleEvaluationStrategy;

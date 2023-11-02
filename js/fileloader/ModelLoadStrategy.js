@@ -3,9 +3,9 @@
 
 class ModelLoadStrategy {
    constructor(fileArray) {
-      this.fileArray = normalizeFileArray(fileArray);
+      this.fileArray = this.normalizeFileArray(fileArray);
       this.isValid = true;
-      this.CPUModel = null;
+      this.cpuModel = null;
    }
 
    normalizeFileArray(fileArray) {
@@ -26,5 +26,3 @@ class ModelLoadStrategy {
       // this.calculateVertexNormals(polygonMesh);
    }
 }
-
-export default ModelLoadStrategy;

@@ -1,6 +1,6 @@
 "use strict";
 
-import { vec3 } from "../external/gl-matrix";
+// requires "../external/gl-matrix";
 
 
 class Translator {
@@ -43,5 +43,3 @@ class Translator {
       this.movementVector = vec3.create();
    }
 }
-
-export default Translator;

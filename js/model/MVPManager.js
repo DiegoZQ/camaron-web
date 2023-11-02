@@ -1,11 +1,11 @@
 "use strict"
 
-import { vec3, mat4 } from "../external/gl-matrix";
-import { degToRad } from '../helpers';
+// requires "../external/gl-matrix";
+// requires from '../helpers';
 
 
 class MVPManager {
-   constructor(CPUModel) {
+   constructor(cpuModel) {
       // Canvas
       this.center = null;
       this.modelWidth = null;
@@ -23,13 +23,13 @@ class MVPManager {
       this._MVP = mat4.create();
       this.recalculateMV = true;
       this.recalculateMVP = true;
-      this.loadDataFromModel(CPUModel);
+      this.loadDataFromModel(cpuModel);
    }
 
-   // Translada el CPUModel al orígen y asigna una cámara que lo mira a una distancia el doble del modelo en el eje z.
-   loadDataFromPolygonMesh(CPUModel) {
+   // Translada el cpuModel al orígen y asigna una cámara que lo mira a una distancia el doble del modelo en el eje z.
+   loadDataFromPolygonMesh(cpuModel) {
       // Set Canvas
-      const bounds = CPUModel.bounds;
+      const bounds = cpuModel.bounds;
       this.center = vec3.fromValues(
          (bounds[0] + bounds[3]) / 2,
          (bounds[1] + bounds[4]) / 2,
@@ -46,9 +46,9 @@ class MVPManager {
       mat4.lookAt(this.viewMatrix, camera, target, up);
    }
    
-   loadDataFromModel(CPUModel) {
-      if (CPUModel.modelType == "PolygonMesh")
-         this.loadDataFromPolygonMesh(CPUModel);
+   loadDataFromModel(cpuModel) {
+      if (cpuModel.modelType == "PolygonMesh")
+         this.loadDataFromPolygonMesh(cpuModel);
    }
 
    // Establece una rotación del modelo a partir de una matriz de rotación.
@@ -175,5 +175,3 @@ class MVPManager {
       }
    }
 }
-
-export default MVPManager;

@@ -514,37 +514,58 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript" src="js/external/webgl-utils.js"></script>
-    <script type="text/javascript" src="js/external/gl-matrix.js"></script>
+    <script type="text/javascript" src="js/external/gl-matrix-old.js"></script>
+    <script src="https://unpkg.com/earcut@2.2.4/dist/earcut.min.js"></script>
 
     <!-- Source Files -->
-    <script type="text/javascript" src="js/camaron-config.js"></script>
+    <!-- Generic -->
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/helpers.js"></script>
+    <!-- Model -->
+    <script type="text/javascript" src="js/model/Shape.js"></script>
+    <script type="text/javascript" src="js/model/Polygon.js"></script>
+    <script type="text/javascript" src="js/model/Vertex.js"></script>
+    <script type="text/javascript" src="js/model/CPUModel.js"></script>
+    <script type="text/javascript" src="js/model/PolygonMesh.js"></script>
+    <script type="text/javascript" src="js/model/MVPManager.js"></script>
+    <script type="text/javascript" src="js/model/GPUModel.js"></script>
+    <!-- File Loader -->
+    <script type="text/javascript" src="js/fileloader/ModelLoadStrategy.js"></script>
+    <script type="text/javascript" src="js/fileloader/OffLoadStrategy.js"></script>
+    <!-- Rendering -->
+    <script type="text/javascript" src="js/rendering/shaders.js"></script>
+    <script type="text/javascript" src="js/rendering/Renderer.js"></script>
+    <script type="text/javascript" src="js/rendering/main-renderers/MainRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/main-renderers/DirectFaceRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/main-renderers/DirectVertexRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/main-renderers/FlatRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/SecondaryRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/FNormalsRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/VCloudRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/VNormalsRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/WireRenderer.js"></script>
+    <!-- Selection -->
+    <script type="text/javascript" src="js/selection/SelectionStrategy.js"></script>
+    <script type="text/javascript" src="js/selection/AngleSelectionStrategy.js"></script>
+    <script type="text/javascript" src="js/selection/AreaSelectionStrategy.js"></script>
+    <script type="text/javascript" src="js/selection/EdgesSelectionStrategy.js"></script>
+    <script type="text/javascript" src="js/selection/IdSelectionStrategy.js"></script>
+    <!-- Evaluation -->
+    <script type="text/javascript" src="js/evaluation/EvaluationStrategy.js"></script>
+    <script type="text/javascript" src="js/evaluation/AngleEvaluationStrategy.js"></script>
+    <script type="text/javascript" src="js/evaluation/AreaEvaluationStrategy.js"></script>
+    <!-- UI -->
     <script type="text/javascript" src="js/ui/translator.js"></script>
     <script type="text/javascript" src="js/ui/rotator.js"></script>
     <script type="text/javascript" src="js/ui/scalator.js"></script>
-    <script type="text/javascript" src="js/model/element.js"></script>
-    <script type="text/javascript" src="js/model/model.js"></script>
-    <script type="text/javascript" src="js/model/rmodel.js"></script>
-    <script type="text/javascript" src="js/fileloader/loader-base.js"></script>
-    <script type="text/javascript" src="js/fileloader/off-loader.js"></script>
-    <script type="text/javascript" src="js/rendering/shaders.js"></script>
-    <script type="text/javascript" src="js/rendering/renderer-base.js"></script>
-    <script type="text/javascript" src="js/rendering/main-renderers/directface.js"></script>
-    <script type="text/javascript" src="js/rendering/main-renderers/directvertex.js"></script>
-    <script type="text/javascript" src="js/rendering/main-renderers/flat.js"></script>
-    <script type="text/javascript" src="js/rendering/secondary-renderers/wire.js"></script>
-    <script type="text/javascript" src="js/rendering/secondary-renderers/vertex-normals.js"></script>
-    <script type="text/javascript" src="js/rendering/secondary-renderers/face-normals.js"></script>
-    <script type="text/javascript" src="js/rendering/secondary-renderers/vertex-cloud.js"></script>
-    <script type="text/javascript" src="js/selection/selection-base.js"></script>
-    <script type="text/javascript" src="js/selection/angle-selection.js"></script>
-    <script type="text/javascript" src="js/selection/area-selection.js"></script>
-    <script type="text/javascript" src="js/selection/id-selection.js"></script>
-    <script type="text/javascript" src="js/selection/edges-selection.js"></script>
-    <script type="text/javascript" src="js/evaluation/evaluation-base.js"></script>
-    <script type="text/javascript" src="js/evaluation/angle-evaluation.js"></script>
-    <script type="text/javascript" src="js/evaluation/area-evaluation.js"></script>
-    <script type="text/javascript" src="js/camaron.js"></script>
-    <script src="js/sitio.js"></script>
+    <!-- Camaron -->
+    <script type="text/javascript" src="js/camaron/mouse-interactions.js"></script>
+    <script type="text/javascript" src="js/camaron/view-helpers.js"></script>
+    <script type="text/javascript" src="js/camaron/selection.js"></script>
+    <script type="text/javascript" src="js/camaron/evaluation.js"></script>
+    <script type="text/javascript" src="js/camaron/model-uploader.js"></script>
+    <script type="text/javascript" src="js/camaron/camaron.js"></script>
+    <script type="text/javascript" src="js/camaron/sitio.js"></script>
     
 </body>
 </html>

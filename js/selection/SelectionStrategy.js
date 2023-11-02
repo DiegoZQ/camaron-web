@@ -2,8 +2,8 @@
 
 
 class SelectionStrategy {
-   constructor(CPUModel, mode) {
-      this.polygons = CPUModel.polygons;
+   constructor(cpuModel, mode) {
+      this.polygons = cpuModel.polygons;
       this.mode = mode;
       this.modes = {
          'clean': this.select,
@@ -53,5 +53,3 @@ class SelectionStrategy {
          console.log("Unsupported Mode");
    }
 }
-
-export default SelectionStrategy;

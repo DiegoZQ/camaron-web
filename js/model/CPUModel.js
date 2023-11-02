@@ -7,5 +7,3 @@ class CPUModel {
       this.modelType = null;
    }
 }
-
-export default CPUModel;

@@ -24,5 +24,3 @@ class Scalator {
       this.scaleFactor = 1;
    }
 }
-
-export default Scalator;

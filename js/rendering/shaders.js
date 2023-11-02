@@ -1,6 +1,8 @@
-// NORMAL PROGRAM
+"use strict";
 
-export const normalVertexShader = `#version 300 es
+
+// NORMAL PROGRAM
+const normalVertexShader = `#version 300 es
 
 in vec4 a_position;
 in vec3 a_normal;
@@ -19,7 +21,7 @@ void main() {
 }
 `;
 
-export const normalFragmentShader = `#version 300 es
+const normalFragmentShader = `#version 300 es
 
 precision mediump float;
 
@@ -41,7 +43,7 @@ void main() {
 
 
 // BASIC PROGRAM
-export const basicVertexShader = `#version 300 es
+const basicVertexShader = `#version 300 es
 
 in vec4 a_position;
 in vec4 a_color;
@@ -56,7 +58,7 @@ void main() {
 }
 `;
 
-export const basicFragmentShader = `#version 300 es
+const basicFragmentShader = `#version 300 es
 
 precision mediump float;
 
@@ -71,7 +73,7 @@ void main() {
 
 
 //SINGLE COLOR PROGRAM
-export const sCVertexShader = `#version 300 es
+const sCVertexShader = `#version 300 es
 
 in vec4 a_position;
 
@@ -83,7 +85,7 @@ void main() {
 }
 `;
 
-export const sCFragmentShader = `#version 300 es
+const sCFragmentShader = `#version 300 es
 
 precision mediump float;
 
@@ -98,7 +100,7 @@ void main() {
 
 
 //POINT PROGRAM
-export const pointVertexShader = `#version 300 es
+const pointVertexShader = `#version 300 es
 
 in vec4 a_position;
 
@@ -111,7 +113,7 @@ void main() {
 }
 `;
 
-export const pointFragmentShader = `#version 300 es
+const pointFragmentShader = `#version 300 es
 
 precision mediump float;
 

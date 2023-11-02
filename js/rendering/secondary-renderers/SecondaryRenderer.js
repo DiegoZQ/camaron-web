@@ -1,11 +1,11 @@
 "use strict";
 
-import Renderer from "../Renderer";
+// requires "../Renderer";
 
 
 class SecondaryRenderer extends Renderer {
-	constructor(GPUModel, vertexShader, fragmentShader, positionBuffer, color, drawingPrimitive, numVertices) {
-	   super(GPUModel, vertexShader, fragmentShader);
+	constructor(gpuModel, vertexShader, fragmentShader, positionBuffer, color, drawingPrimitive, numVertices) {
+	   super(gpuModel, vertexShader, fragmentShader);
        this.positionBuffer = positionBuffer;
        this.color = color;
        this.drawingPrimitive = drawingPrimitive;
@@ -34,11 +34,9 @@ class SecondaryRenderer extends Renderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y color a las variables u_worldViewProjection y u_color del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.GPUModel.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, this.color);
 
 		gl.drawArrays(drawingPrimitive, 0, numVertices);
 	}
 }
-
-export default SecondaryRenderer

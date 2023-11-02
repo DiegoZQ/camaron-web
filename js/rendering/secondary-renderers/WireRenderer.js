@@ -1,15 +1,13 @@
 "use strict";
 
-import SecondaryRenderer from "./SecondaryRenderer";
-import { sCVertexShader, sCFragmentShader } from "../shaders";
-import { colorConfig } from "../../camaron/camaron-config";
+// requires "./SecondaryRenderer";
+// requires "../shaders";
+// requires "../../config";
 
 
 class WireRenderer extends SecondaryRenderer {
-	constructor(GPUModel) {
-		super(GPUModel, sCVertexShader, sCFragmentShader, this.GPUModel.edgesBuffer, 
-            colorConfig.wireFrameColor, gl.LINES, this.GPUModel.edgesCount*2);
+	constructor(gpuModel) {
+		super(gpuModel, sCVertexShader, sCFragmentShader, this.gpuModel.edgesBuffer, 
+            colorConfig.wireFrameColor, gl.LINES, this.gpuModel.edgesCount*2);
 	}
 }
-
-export default WireRenderer;

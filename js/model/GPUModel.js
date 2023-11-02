@@ -1,14 +1,14 @@
 "use strict";
 
-import { vec3 } from "../external/gl-matrix";
-import MVPManager from "./MVPManager";
-import { colorConfig } from "../camaron/camaron-config";
+// requires "../external/gl-matrix";
+// requires "./MVPManager";
+// requires "../config";
 
 
 class GPUModel {
-   constructor(CPUModel) {
-      this.CPUModel = CPUModel;
-      this.MVPManager = new MVPManager(CPUModel);
+   constructor(cpuModel) {
+      this.cpuModel = cpuModel;
+      this.MVPManager = new MVPManager(cpuModel);
       // Buffers
       this.trianglesBuffer = gl.createBuffer();
       this.edgesBuffer = gl.createBuffer();
@@ -32,15 +32,16 @@ class GPUModel {
       this.edgesCount += number;
    }
 
-   // Por cada polígono del CPUModel, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
+   // Por cada polígono del cpuModel, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
    // en un arreglo global. Sirve para dibujar las caras del modelo.
    loadTriangles() {
-      const polygons = this.CPUModel.polygons;
+      const polygons = this.cpuModel.polygons;
       const polygonTrianglesVertexCoords = [];
       for (const polygon of polygons) {
          polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
          this.increaseTriangleCounts(polygon.trianglesCount);
       }
+      const triangles = new Float32Array(this.trianglesCount*9);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
       this.loaded += 1;
@@ -48,8 +49,8 @@ class GPUModel {
 
    // Por cada vértice de cada triángulo de cada polígono, agrega la normal del polígono que comprende cada subconjunto de triángulos.
    // Sirve para representar la iluminación sobre las caras.
-   loadTriangleNormals() {
-      const polygons = this.CPUModel.polygons;
+   loadTrianglesNormals() {
+      const polygons = this.cpuModel.polygons;
       // Agrega una normal para cada vértice del triángulo, 3 vértices 3 dimesiones => 9 espacios
       const trianglesNormals = new Float32Array(this.trianglesCount*9);
       for (const polygon of polygons) {
@@ -67,11 +68,11 @@ class GPUModel {
       this.loaded += 1;
    }
 
-   // Por cada normal de cada vértice de cada triángulo de cada polígono, agrega dicha normal a un array global con todas las normales del CPUModel.
+   // Por cada normal de cada vértice de cada triángulo de cada polígono, agrega dicha normal a un array global con todas las normales del cpuModel.
    // cada 3 valores corresponden a una normal de un vértice, y cada 3*n vértices (9*n valores) corresponden a un polígono de n triángulos.
    // Sirve para representar la iluminación sobre los vértices.
    loadVertexNormals() {
-      const polygons = this.CPUModel.polygons;
+      const polygons = this.cpuModel.polygons;
       const verticesNormals = new Float32Array(this.trianglesCount*9);
 
       for (const polygon of polygons) {
@@ -94,7 +95,7 @@ class GPUModel {
    // Por cada par de vértices consecutivos de cada polígono, agrega las dos coordenadas de ambos vértices 
    // para representar una "línea" entre ambos puntos. Este cálculo es necesario para representar el wireframe de un modelo.
    loadEdges() {
-      const polygons = this.CPUModel.polygons;
+      const polygons = this.cpuModel.polygons;
       for (const polygon of polygons) {
          const polygonVertices = polygon.vertices;
          this.increaseEdgesCounts(polygonVertices.length);
@@ -117,10 +118,10 @@ class GPUModel {
       this.loaded += 1;
    }
 
-   // Por cada vértice del CPUModel, obtiene sus coordenadas y las almacena en un arreglo global.
+   // Por cada vértice del cpuModel, obtiene sus coordenadas y las almacena en un arreglo global.
    // Sirve para representar nubes de puntos.
    loadVertices() {
-      const modelVertices = this.CPUModel.vertices;
+      const modelVertices = this.cpuModel.vertices;
       const vertices = new Float32Array(modelVertices.length*3);
  
       for (let i = 0; i < modelVertices.length; i++) {
@@ -134,14 +135,14 @@ class GPUModel {
       this.loaded += 1;
    }
 
-   // Por cada vértice del CPUModel, obtiene sus coordenadas y su vector normal, suma la normal a cada vértice,
+   // Por cada vértice del cpuModel, obtiene sus coordenadas y su vector normal, suma la normal a cada vértice,
    // obteniendo así 2 puntos: el vértice y el vértice desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de los vértices. 
    loadVertexNormalsLines() {
-      const modelVertices = this.CPUModel.vertices;
+      const modelVertices = this.cpuModel.vertices;
       const vertexNormalsLines = new Float32Array(modelVertices.length*6);
 
-      for (let i = 0; j < modelVertices.length; i++) {
+      for (let i = 0; i < modelVertices.length; i++) {
          const j = i*6;
          const vertex1 = modelVertices[i].coords;
          const normal = modelVertices[i].normal;
@@ -157,11 +158,11 @@ class GPUModel {
       this.loaded += 1;
    }
 
-   // Por cada polígono del CPUModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
+   // Por cada polígono del cpuModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
    // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de las caras. 
    loadFaceNormalsLines() {
-      const modelPolygons = this.CPUModel.polygons;
+      const modelPolygons = this.cpuModel.polygons;
       const faceNormalsLines = new Float32Array(modelPolygons.length*6);
 
       for(let i = 0; i < modelPolygons.length; i++){
@@ -184,10 +185,10 @@ class GPUModel {
       return vec4.fromValues(0.7, 0.7, 0.7, 1);
    }
 
-   // Obtiene un arreglo general con los colores de cada vértice de los triángulos que conforman el CPUModel. 
+   // Obtiene un arreglo general con los colores de cada vértice de los triángulos que conforman el cpuModel. 
    // Si están seleccionados, marca el triángulo de un color distinto.
    get colorMatrix() {
-      const polygons = this.CPUModel.polygons;
+      const polygons = this.cpuModel.polygons;
       const colors = new Float32Array(this.trianglesCount*9);
    
       for (const polygon of polygons) {
@@ -207,5 +208,3 @@ class GPUModel {
       return new Float32Array(colors);
    }
 }
-
-export default GPUModel;

@@ -1,11 +1,11 @@
 "use strict";
 
-import SelectionStrategy from "./SelectionStrategy";
+// requires "./SelectionStrategy";
 
 
 class IdSelectionStrategy extends SelectionStrategy {
-	constructor(model, mode, minId, maxId, idList) {
-	  super(model, mode);
+	constructor(cpuModel, mode, minId, maxId, idList) {
+	  super(cpuModel, mode);
 	  this.minId = minId;
 	  this.maxId = maxId;
 	  this.idList = idList;
@@ -32,5 +32,3 @@ class IdSelectionStrategy extends SelectionStrategy {
 		return "By Id List";
 	}
 }
-
-export default IdSelectionStrategy;

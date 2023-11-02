@@ -1,7 +1,7 @@
 "use strict";
 
 
-export const colorConfig = {
+const colorConfig = {
 	baseColor: vec4.fromValues(0.7, 0.7, 0.7, 1),
 	selectedColor: vec4.fromValues(0.7, 0.2, 0.2, 1),
 	wireFrameColor: vec4.fromValues(0, 0, 0, 1),
