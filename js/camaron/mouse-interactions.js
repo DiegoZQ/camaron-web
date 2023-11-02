@@ -45,7 +45,7 @@ const mousemove = (event) => {
 const onwheel = (event) => {
    event.preventDefault();
    scalator.scale(0.1 * -Math.sign(event.deltaY));
-   gpuModel.scale = scalator.scaleFactor;
+   gpuModel.MVPManager.scale = scalator.scaleFactor;
    scaleInfo.value = scalator.scaleFactor.toFixed(1);
    draw();
 }

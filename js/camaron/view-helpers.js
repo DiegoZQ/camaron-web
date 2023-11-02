@@ -106,7 +106,7 @@ const resetView = () => {
    translator.reset();
    scalator.reset();
    scaleInfo.value = scalator.getScaleFactor().toFixed(1);
-   gpuModel.reset();
+   gpuModel.MVPManager.reset();
    draw();
 }
 
@@ -119,7 +119,7 @@ const rescaleView = () => {
    rotator.rescale();
    translator.rescale();
    scalator.rescale();
-   gpuModel.rescale();
+   gpuModel.MVPManager.rescale();
    draw();
 } 
 

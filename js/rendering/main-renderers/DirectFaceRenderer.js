@@ -29,9 +29,9 @@ class DirectFaceRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 		
 		// Asigna los valores de los buffers dentro de las variables del shader
-		this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer);
-		this.setupAttributePointer(this.normalAttributeLocation, this.normalBuffer);
-		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer);
+		this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer, 'A');
+		this.setupAttributePointer(this.normalAttributeLocation, this.normalBuffer, 'B');
+		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer, 'C');
 	}
 
 	draw() {
