@@ -10,7 +10,6 @@ class MainRenderer extends Renderer {
 	   this.colorBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, this.gpuModel.colorMatrix, gl.STATIC_DRAW);
-      console.log('wet',this.gpuModel.colorMatrix);
 	}
 
    // Una vez inicializado el vao (gl.bindVertexArray(this.vao)) y asignado variables dentro de este (setupAttributePointer(attributeLocation, buffer)),

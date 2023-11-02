@@ -43,12 +43,8 @@ class GPUModel {
       }
       const triangles = new Float32Array(polygonTrianglesVertexCoords);
       //const triangles = new Float32Array(this.trianglesCount*9);
-      console.log('triangles', triangles);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
-      const bufferSize = gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE);
-      console.log('papu', bufferSize, 'estoy impaktadeiono');
-
       this.loaded += 1;
    }
 
@@ -71,8 +67,6 @@ class GPUModel {
             j += 9;
          }
       }
-      console.log('trianglesNormals', trianglesNormals);
-
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesNormalsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, trianglesNormals, gl.STATIC_DRAW);
       this.loaded += 1;
@@ -99,9 +93,6 @@ class GPUModel {
             j += 3;
          }
       }
-
-      console.log('verticesNormals', verticesNormals);
-
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesNormalsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, verticesNormals, gl.STATIC_DRAW);
       this.loaded += 1;
@@ -130,7 +121,6 @@ class GPUModel {
             j += 6;
          }
       }
-      console.log('edges', edges);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, edges, gl.STATIC_DRAW);
       this.loaded += 1;
@@ -148,7 +138,6 @@ class GPUModel {
      
          vertices[j] = vertex1[0]; vertices[j+1] = vertex1[1]; vertices[j+2] = vertex1[2];
       }
-      console.log('vertices', vertices);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
       this.loaded += 1;
@@ -172,7 +161,6 @@ class GPUModel {
          vertexNormalsLines[j] = vertex1[0]; vertexNormalsLines[j+1] = vertex1[1]; vertexNormalsLines[j+2] = vertex1[2];
          vertexNormalsLines[j+3] = normal[0]; vertexNormalsLines[j+4] = normal[1]; vertexNormalsLines[j+5] = normal[2];
       }
-      console.log('vertexNormalsLines', vertexNormalsLines);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexNormalsLinesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, vertexNormalsLines, gl.STATIC_DRAW);
       this.loaded += 1;
@@ -196,8 +184,6 @@ class GPUModel {
          faceNormalsLines[j] = center[0]; faceNormalsLines[j+1] = center[1]; faceNormalsLines[j+2] = center[2];
          faceNormalsLines[j+3] = normal[0]; faceNormalsLines[j+4] = normal[1]; faceNormalsLines[j+5] = normal[2];
       }
-      console.log('faceNormalsLines', faceNormalsLines);
-
       gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, faceNormalsLines, gl.STATIC_DRAW);
       this.loaded += 1;
