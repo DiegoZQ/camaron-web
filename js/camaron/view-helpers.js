@@ -64,7 +64,7 @@ const setSecondaryRenderers = () => {
    if (!gpuModel)
       return;
 
-   const newSecondaryRenderers = [];
+   secondaryRenderers = [];
    const secondary = Array.from(document.getElementsByName("secondary_renderer"));
    const rendererMap = {
       "WireFrame": WireRenderer,
@@ -77,12 +77,9 @@ const setSecondaryRenderers = () => {
       if (RendererClass) {
          const secondaryRenderer = new RendererClass(gpuModel);
          secondaryRenderer.init();
-         newSecondaryRenderers.push(secondaryRenderer);
+         secondaryRenderers.push(secondaryRenderer);
       }
    });
-
-   if (newSecondaryRenderers.length)
-      secondaryRenderers = newSecondaryRenderers;
 }
 
 // Changes the viewtype between perspective and orthogonal.
