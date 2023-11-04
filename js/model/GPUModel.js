@@ -81,11 +81,10 @@ class GPUModel {
 
       let j = 0;
       for (const polygon of polygons) {
-         const polygonVertices = polygon.vertices;
-         const polygonTrianglesVertexIndices = polygon.trianglesVertexIndices;
-         for (let i = 0; i < polygonTrianglesVertexIndices.length; i++) {
-            const polygonVertex = polygonVertices[polygonTrianglesVertexIndices[i]];
-            const vertexNormal = polygonVertex.normal;
+         const polygonTrianglesVertexIndices = polygon.trianglesVertexIndices; // [1 0 2]
+         for (const vertexIndex of polygonTrianglesVertexIndices) {
+            const vertex = polygon.vertices[vertexIndex];
+            const vertexNormal = vertex.normal;
             verticesNormals[j] = vertexNormal[0]; 
             verticesNormals[j+1] = vertexNormal[1]; 
             verticesNormals[j+2] = vertexNormal[2];
@@ -93,6 +92,8 @@ class GPUModel {
             j += 3;
          }
       }
+      const lol = polygons[393];
+      console.log('wee',lol.trianglesVertexIndices);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesNormalsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, verticesNormals, gl.STATIC_DRAW);
       this.loaded += 1;

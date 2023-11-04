@@ -22,12 +22,18 @@ class Polygon extends Shape {
       const U = vec3.create();
       const V = vec3.create();
       const vertices = this.vertices;
-      // Calcula el plano a partir de los vectores U, V que conforman un triángulo cualquiera del plano.
-      // Como es planar, dicho plano es compartido por todos los demás triángulos.
-      vec3.subtract(U, vertices[1].coords, vertices[0].coords);
-      vec3.subtract(V, vertices[2].coords, vertices[0].coords);
+      const trianglesVertexIndices = this.trianglesVertexIndices;
+      vec3.subtract(U, vertices[trianglesVertexIndices[1]].coords, vertices[trianglesVertexIndices[0]].coords);
+      vec3.subtract(V, vertices[trianglesVertexIndices[2]].coords, vertices[trianglesVertexIndices[0]].coords);
       vec3.cross(this._normal, U, V);
       vec3.normalize(this._normal, this._normal);
+
+      // Calcula el plano a partir de los vectores U, V que conforman un triángulo cualquiera del plano.
+      // Como es planar, dicho plano es compartido por todos los demás triángulos.
+      //vec3.subtract(U, vertices[1].coords, vertices[0].coords);
+      //vec3.subtract(V, vertices[2].coords, vertices[0].coords);
+      //vec3.cross(this._normal, U, V);
+      //vec3.normalize(this._normal, this._normal);
    }
 
    get normal() {
@@ -99,6 +105,25 @@ class Polygon extends Shape {
    }
 
    calculateTrianglesVertexIndices() {
+      const vertices = this.vertices;
+      const vertexCoords = new Float32Array(2*vertices.length);
+      for (let i = 0; i < vertices.length; i++) {
+         const coords = vertices[i].coords;
+         const j = i*2;
+         const scale = 10 / (10 + coords[2]);
+         vertexCoords[j] = coords[0] * scale;
+         vertexCoords[j+1] = coords[1] * scale;
+      }
+      this._trianglesVertexIndices = earcut(vertexCoords, null);
+      //console.log('tulapera', we);
+
+      //   const j = i*3;
+      //   vertexCoords[j] = coords[0];
+      //   vertexCoords[j+1] = coords[1];
+      //   vertexCoords[j+2] = coords[2];
+      //}
+      //this._trianglesVertexIndices = earcut(vertexCoords, null, 3);
+
       //const vertices = this.vertices;
       //const vertexCoords = new Float32Array(3*vertices.length);
       //for (let i = 0; i < vertices.length; i++) {
@@ -109,7 +134,7 @@ class Polygon extends Shape {
       //   vertexCoords[j+2] = coords[2];
       //}
       //this._trianglesVertexIndices = earcut(vertexCoords, null, 3);
-      this._trianglesVertexIndices = [0,1,2];
+      //this._trianglesVertexIndices = [0,1,2];
    }
 
    // Obtiene los índices de los vértices de cada triángulo, cada 3 índices corresponde a un triángulo.
@@ -120,23 +145,24 @@ class Polygon extends Shape {
    }
 
    calculateTrianglesVertexCoords() {
-      //const vertices = this.vertices;
-      //const trianglesVertexIndices = this.trianglesVertexIndices;
-      //const orderedVertexCoords = [];
-      //for (const vertexIndex of trianglesVertexIndices) {
-      //   const coords = vertices[vertexIndex].coords;
-      //   orderedVertexCoords.push(coords[0], coords[1], coords[2]);
-      //}
-      //this._trianglesVertexCoords = orderedVertexCoords;
       const vertices = this.vertices;
-      const vertexCoords = [];
-      
-      for (let i = 0; i < vertices.length; i++) {
-         const coords = vertices[i].coords;
-         const j = i*3;
-         vertexCoords.push(coords[0], coords[1], coords[2]);
+      const trianglesVertexIndices = this.trianglesVertexIndices;
+      const orderedVertexCoords = [];
+      for (const vertexIndex of trianglesVertexIndices) {
+         const coords = vertices[vertexIndex].coords;
+         orderedVertexCoords.push(coords[0], coords[1], coords[2]);
       }
-      this._trianglesVertexCoords = vertexCoords;
+      this._trianglesVertexCoords = orderedVertexCoords;
+
+      //const vertices = this.vertices;
+      //const vertexCoords = [];
+      //
+      //for (let i = 0; i < vertices.length; i++) {
+      //   const coords = vertices[i].coords;
+      //   const j = i*3;
+      //   vertexCoords.push(coords[0], coords[1], coords[2]);
+      //}
+      //this._trianglesVertexCoords = vertexCoords;
    }
 
    // Similar a getTriangleVertexIndices, sólo que cada índice ahora corresponde a las 3 dimensiones del vértice.
