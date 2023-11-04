@@ -38,8 +38,9 @@ class MVPManager {
       this.modelWidth = Math.abs(bounds[3] - bounds[0]);
       this.modelHeight = Math.abs(bounds[4] - bounds[1]);
       this.modelDepth = Math.abs(bounds[5] - bounds[2]);
+      this.modelDepth = this.modelDepth != 0 ? this.modelDepth: Math.max(this.modelWidth, this.modelHeight);
       // Set View Matrix
-      const camera = vec3.fromValues(0, 0, this.modelDepth*2)
+      const camera = vec3.fromValues(0, 0, 2*this.modelDepth)
       const target = vec3.fromValues(0, 0, 0)
       const up = vec3.fromValues(0, 1, 0);
       this.viewMatrix = mat4.create()
