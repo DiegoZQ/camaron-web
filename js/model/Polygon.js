@@ -25,28 +25,10 @@ class Polygon extends Shape {
       const trianglesVertexIndices = this.trianglesVertexIndices;
       // Calcula el plano a partir de los vectores U, V que conforman un triángulo cualquiera del plano.
       // Como es planar, dicho plano es compartido por todos los demás triángulos.
-      vec3.subtract(U, vertices[trianglesVertexIndices[1]].coords, vertices[trianglesVertexIndices[0]].coords); // 1 2 0 good    1   2 1 0
-      vec3.subtract(V, vertices[trianglesVertexIndices[2]].coords, vertices[trianglesVertexIndices[0]].coords); // 1 0 2 malardo  #  2 1 0  120  201   0 1 2     3  1  2     4 1 2 
+      vec3.subtract(U, vertices[trianglesVertexIndices[1]].coords, vertices[trianglesVertexIndices[0]].coords); 
+      vec3.subtract(V, vertices[trianglesVertexIndices[2]].coords, vertices[trianglesVertexIndices[0]].coords);
       vec3.cross(this._normal, U, V);
       vec3.normalize(this._normal, this._normal);
-
-      let inverse = false;
-      if (trianglesVertexIndices[2] - trianglesVertexIndices[0] > 0) {
-         if (trianglesVertexIndices[0] > trianglesVertexIndices[1] || trianglesVertexIndices[1] > trianglesVertexIndices[2])
-            inverse = true;
-      }
-
-      if (inverse) {
-         vec3.negate(this._normal, this._normal);
-         console.log(trianglesVertexIndices[0], trianglesVertexIndices[1], trianglesVertexIndices[2]);
-
-      }
-      
-      //if (!((trianglesVertexIndices[0] < trianglesVertexIndices[1] && trianglesVertexIndices[1] < trianglesVertexIndices[2]) ||  
-      //    (trianglesVertexIndices[0] > trianglesVertexIndices[1] && trianglesVertexIndices[1] > trianglesVertexIndices[2]))) {
-      //      vec3.negate(this._normal, this._normal);
-      //      console.log(trianglesVertexIndices[0], trianglesVertexIndices[1], trianglesVertexIndices[2]);
-      //    }
    }
 
    get normal() {
@@ -128,38 +110,12 @@ class Polygon extends Shape {
          vertexCoords[j+1] = coords[1] * scale;
       }
       this._trianglesVertexIndices = earcut(vertexCoords, null);
-      //if (tulepera[1] == 2 && tulepera[2] != 0)
-         //console.log(tulepera);
 
-      //if (Math.random() <= 0.5)
-      //   this._trianglesVertexIndices = [1,0,2];
-      //else
-      //   this._trianglesVertexIndices = [2,1,0];
-
-
-   
-      return;
-      //this._trianglesVertexIndices = earcut(vertexCoords, null);
-      //console.log('tulapera', we);
-
-      //   const j = i*3;
-      //   vertexCoords[j] = coords[0];
-      //   vertexCoords[j+1] = coords[1];
-      //   vertexCoords[j+2] = coords[2];
-      //}
-      //this._trianglesVertexIndices = earcut(vertexCoords, null, 3);
-
-      //const vertices = this.vertices;
-      //const vertexCoords = new Float32Array(3*vertices.length);
-      //for (let i = 0; i < vertices.length; i++) {
-      //   const coords = vertices[i].coords;
-      //   const j = i*3;
-      //   vertexCoords[j] = coords[0];
-      //   vertexCoords[j+1] = coords[1];
-      //   vertexCoords[j+2] = coords[2];
-      //}
-      //this._trianglesVertexIndices = earcut(vertexCoords, null, 3);
-      this._trianglesVertexIndices = [1,0,2]; // 0 1 2
+      for (let i = 0; i < this._trianglesVertexIndices.length; i += 3) {
+         const group = this._trianglesVertexIndices.slice(i, i + 3);
+         group.sort((a, b) => a - b); // Sort the group in ascending order
+         this._trianglesVertexIndices.splice(i, 3, ...group);
+       }
    }
 
    // Obtiene los índices de los vértices de cada triángulo, cada 3 índices corresponde a un triángulo.
