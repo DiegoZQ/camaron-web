@@ -11,7 +11,7 @@ class EdgesSelectionStrategy extends SelectionStrategy {
 
    // Selecciona un polígono si cumple con el número de lados.
 	selectPolygon(polygon) {
-		const isMatch = polygon.vertices.length === this.edgesNumber;
+		const isMatch = polygon.vertices.length == this.edgesNumber;
 		polygon.isSelected = isMatch;
 	}
 
