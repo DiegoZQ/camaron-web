@@ -31,6 +31,8 @@ const closeLoadingModal = () => {
 const selectLoadingStrategy = (extension, fileArray) => {
    if (extension === 'off') 
       return new OffLoadStrategy(fileArray);
+   if (extension == 'visf')
+      return new VisfLoadStrategy(fileArray);
    alert('Unsupported Format');
    // TODO: Implement a null loader
 };
@@ -104,7 +106,7 @@ const uploadFileHandler = (file) => {
       };
       const reader = new FileReader();
       reader.onloadend = handleFileLoad;
-      reader.readAsBinaryString(file.files[0]);
+      reader.readAsText(file.files[0]);
    }
    return handler;
 }

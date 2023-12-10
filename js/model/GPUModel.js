@@ -32,6 +32,18 @@ class GPUModel {
       this.edgesCount += number;
    }
 
+   load() {
+
+   }
+   
+   loadFromVertexCloud() {
+
+   }
+
+   loadFromPolygonMesh() {
+
+   }
+
    // Por cada polígono del cpuModel, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
    // en un arreglo global. Sirve para dibujar las caras del modelo.
    loadTriangles() {
@@ -54,7 +66,7 @@ class GPUModel {
       const polygons = this.cpuModel.polygons;
       // Agrega una normal para cada vértice del triángulo, 3 vértices 3 dimesiones => 9 espacios
       const trianglesNormals = new Float32Array(this.trianglesCount*9);
-      
+
       let j = 0;
       for (const polygon of polygons) {
          const normal = polygon.normal;

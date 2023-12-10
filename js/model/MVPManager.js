@@ -23,11 +23,12 @@ class MVPManager {
       this._MVP = mat4.create();
       this.recalculateMV = true;
       this.recalculateMVP = true;
-      this.loadDataFromModel(cpuModel);
+
+      this.initModelView(cpuModel);
    }
 
-   // Translada el cpuModel al orígen y asigna una cámara que lo mira a una distancia el doble del modelo en el eje z.
-   loadDataFromPolygonMesh(cpuModel) {
+   // Inicializa los campos para visualizar un modelo, como el centro del modelo y la view Matrix a partir de un cpuModel.
+   initModelView(cpuModel) {
       // Set Canvas
       const bounds = cpuModel.bounds;
       this.center = vec3.fromValues(
@@ -47,11 +48,6 @@ class MVPManager {
       mat4.lookAt(this.viewMatrix, camera, target, up);
    }
    
-   loadDataFromModel(cpuModel) {
-      if (cpuModel.modelType == "PolygonMesh")
-         this.loadDataFromPolygonMesh(cpuModel);
-   }
-
    // Establece una rotación del modelo a partir de una matriz de rotación.
    set rotation(rotationMatrix) {
       this._rotation = rotationMatrix;

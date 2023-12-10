@@ -4,10 +4,10 @@
 
 
 class PolygonMesh extends CPUModel {
-   constructor(polygonsCount, verticesCount) {
+   constructor() {
       super();
       this.modelType = 'PolygonMesh';
-      this.polygons = new Array(polygonsCount);
-      this.vertices = new Array(verticesCount);
+      this.vertices = null;
+      this.polygons = null;
    }
 }

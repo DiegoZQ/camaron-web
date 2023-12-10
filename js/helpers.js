@@ -19,3 +19,11 @@ const radToDeg = (d) => {
 const getLineWords = (line) => {
     return line.match(/\S+/g);
 }
+
+const isPositiveInteger = (str) => {
+    return /^[1-9]\d*$/.test(str);
+}
+
+const isNonNegativeInteger = (str) => {
+    return /^\d+$/.test(str);
+} 

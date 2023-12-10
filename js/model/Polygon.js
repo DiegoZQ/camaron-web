@@ -7,6 +7,7 @@ class Polygon extends Shape {
    constructor(id) {
       super(id);
       this.vertices = [];
+      this.polyhedrons = [];
       this._angles = null;
       this._area = null;
       this._normal = null;
@@ -99,17 +100,28 @@ class Polygon extends Shape {
       return this.neighbours.includes(polygon);
    }
 
+   // este mamawebo tiene el problema con el earcut y la conversión 3 coords a 2 coords 
+   // la idea sería aplicar la triangulación que usaba el men del camarón web original para los convexos 
+   // y para los no convexos realizar el ear_cut considerando solo 2 coordenadas x,y. Voy a asumir que
+   // en el caso de presentarse polígonos no convexos, estos estarán sí o sí en un "plano" 2 dimensión,
+   // aunque no sé si ese plano siempre será xy o pueden haber planos inclinados megalol
    calculateTrianglesVertexIndices() {
       const vertices = this.vertices;
       const vertexCoords = new Float32Array(2*vertices.length);
       for (let i = 0; i < vertices.length; i++) {
          const coords = vertices[i].coords;
+         console.log('init coords', coords);
          const j = i*2;
          const scale = 100.0 / (100.0 + coords[2]);
-         vertexCoords[j] = coords[0] * scale;
-         vertexCoords[j+1] = coords[1] * scale;
+         vertexCoords[j] = (coords[0] + 1) * scale;
+         vertexCoords[j+1] = (coords[1] + 1) * scale;         
+
+         console.log('final coords', vertexCoords[j], vertexCoords[j+1]);
       }
       this._trianglesVertexIndices = earcut(vertexCoords, null);
+      if (this.id == 3) {
+         console.log('NOOOO', this._trianglesVertexIndices, vertexCoords);
+      }
 
       for (let i = 0; i < this._trianglesVertexIndices.length; i += 3) {
          const group = this._trianglesVertexIndices.slice(i, i + 3);
