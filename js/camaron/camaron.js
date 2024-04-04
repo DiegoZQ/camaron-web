@@ -61,52 +61,26 @@ const draw = () => {
 // Upload model button
 const realFileButton = document.getElementById('import_e');
 const fancyFileButton = document.getElementById('import_b');
-
 // The onchange event is triggered on the input when a file is selected.
 realFileButton.onchange = uploadFileHandler(realFileButton);
 // Binds the design button, with the actual input type file button.
 fancyFileButton.onclick = () => realFileButton.click();
-
 
 // view button
 const realViewButton = document.getElementById('view_e');
 const fancyViewButton = document.getElementById('view_b');
 fancyViewButton.onclick = () => realViewButton.click();
 
-// reset button
-const resetViewButton = document.getElementById("reset_view");
-resetViewButton.onclick = () => {
-  if (!this.classList.contains("disabled")) 
-    resetView();
-};
-
-// main renderer buttons
-const realFaceButton = document.getElementById('face_e'); 
-const fancyFaceButton = document.getElementById('face_b'); 
-const realVertexButton = document.getElementById('vertex_e');
-const fancyVertexButton = document.getElementById('vertex_b');
-const realFlatButton = document.getElementById('flat_e');
-const fancyFlatButton = document.getElementById('flat_b');
-const realNoneButton = document.getElementById('none_e');
-const fancyNoneButton = document.getElementById('none_b');
-const fancyMainRenderersButtons = [fancyFaceButton, fancyVertexButton, fancyFlatButton, fancyNoneButton]
-
-function setupMainRendererButton(realButton, fancyButton) {
-  fancyButton.onclick = () => {
-    realButton.click();
-    fancyMainRenderersButtons.forEach(button => {
-      if (button != fancyButton)
-        button.classList.remove("active")
-      else 
-        button.classList.add("active")
-    })
-  };
+// main renderer handler
+function mainRendererOnClick(clickedRenderer) {
+  const activeRenderer = document.querySelector('a[name="main_renderer"].active');
+  if (activeRenderer != clickedRenderer) {
+    activeRenderer.classList.remove('active');
+    clickedRenderer.classList.add('active')
+    setMainRenderer(clickedRenderer);
+    draw();
+  }
 }
-
-setupMainRendererButton(realFaceButton, fancyFaceButton);
-setupMainRendererButton(realVertexButton, fancyVertexButton);
-setupMainRendererButton(realFlatButton, fancyFlatButton);
-setupMainRendererButton(realNoneButton, fancyNoneButton);
 
 // selection button
 const applyButton = document.getElementById("apply_btn");

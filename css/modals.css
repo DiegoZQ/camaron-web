@@ -1,0 +1,164 @@
+/* modals.css */
+
+
+/* Base modal style */
+.modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9;
+    background-color: rgba(255, 255, 255, 0.6); 
+}
+.modal > div {
+    width: 100%;
+    height: 100%;
+    padding: 3%; 
+}
+/* Base modal container */
+.modal-container {
+    width: auto;
+    max-width: 550px;
+    position: relative;
+    background-color: white;
+    box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.15), 0 24px 24px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 10px; 
+}
+/* Base modal close */
+.modal .close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #FFA0B6;
+  transition: color .3s; 
+}
+.modal .close:hover {
+  color: #ff7091; 
+}
+/* Base modal header */
+.modal .modal-header {
+    padding: 10px 15px;
+    padding-right: 40px; 
+}
+.modal .modal-header h3 {
+  text-transform: uppercase;
+  margin: 15px 0;
+  font-size: 20px; 
+}
+.modal .modal-header h4 {
+  margin: 10px 0; 
+}
+/* Base modal body */
+.modal .modal-body {
+  padding: 15px;
+  padding-top: 0; 
+}
+.modal p {
+    font-size: 16px;
+    margin: 0 0 10px;
+    line-height: 1.5; 
+}  
+
+
+/* Modal loader style */
+@-webkit-keyframes sk-bounce {
+    0%, 100% {
+        -webkit-transform: scale(0); 
+    }
+    50% {
+        -webkit-transform: scale(1); 
+    } 
+} 
+@keyframes sk-bounce {
+    0%, 100% {
+        transform: scale(0);
+        -webkit-transform: scale(0); 
+    }
+    50% {
+        transform: scale(1);
+        -webkit-transform: scale(1); 
+    } 
+}
+
+/* Modal loader body */
+.modal.loader .modal-body {
+    padding: 10px 50px 30px; 
+}
+.modal.loader .modal-body h5 {
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 300;
+  letter-spacing: 4px;
+  font-size: 14px;
+  color: #8B8B8B;
+  margin: 20px; 
+}
+.modal.loader .modal-body .spinner {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    margin: 0 auto; 
+}
+.modal.loader .modal-body .double-bounce1, 
+.modal.loader .modal-body .double-bounce2 {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #62C5E8;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+    animation: sk-bounce 2.0s infinite ease-in-out; 
+}
+.modal.loader .modal-body .double-bounce2 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+    background-color: #FFA0B6; 
+}
+    
+/* Modal warning & modal error styles */
+.modal.warning,
+.modal.error {
+    text-align: center; 
+}
+/* Modal warning & modal error containers */
+.modal.warning .modal-container, 
+.modal.error .modal-container {
+    min-width: 250px;
+    padding: 10px; 
+}
+/* Modal warning & modal error headers */
+.modal.warning .modal-header, 
+.modal.error .modal-header {
+    padding: 10px;
+    text-align: center; 
+}
+.modal.warning .modal-header {
+    color: #F6CA90; 
+}
+.modal.error .modal-header {
+    color: #ff7091;
+}
+.modal.warning .modal-header h4, 
+.modal.error .modal-header h4 {
+    font-size: 20px;
+    font-weight: 400;
+    margin: 0; 
+}
+.modal.warning .modal-header .icon:before, 
+.modal.error .modal-header .icon:before {
+    font-family: 'Material icons';
+    font-size: 36px; 
+}
+.modal.warning .modal-header .icon:before {
+    content: 'warning'; 
+  }
+.modal.error .modal-header .icon:before {
+    content: 'error'; 
+}

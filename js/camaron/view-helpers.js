@@ -34,26 +34,26 @@ const updateInfo = () => {
 };
   
 // Creates a main renderer and assigns it to the main renderer variable.
-const setMainRenderer = () => {
+const setMainRenderer = (renderer=null) => {
    
    if (!gpuModel)
       return;
 
-   const main = Array.from(document.getElementsByName("main_renderer"));
+   if (!renderer) 
+      renderer = document.querySelector('a[name="main_renderer"].active');
+
    const rendererMap = {
-      "Face": DirectFaceRenderer,
-      "Vertex": DirectVertexRenderer,
-      "Flat": FlatRenderer,
+      "face_renderer": DirectFaceRenderer,
+      "vertex_renderer": DirectVertexRenderer,
+      "flat_renderer": FlatRenderer,
    };
-   const checkedElement = main.find(element => element.checked);
-   if (checkedElement) {
-      const RendererClass = rendererMap[checkedElement.value];
-      if (RendererClass) {
-         mainRenderer = new RendererClass(gpuModel);
-         mainRenderer.init();
-      } else {
-         mainRenderer = null;
-      }
+
+   const RendererClass = rendererMap[renderer?.id]
+   if (RendererClass) {
+      mainRenderer = new RendererClass(gpuModel);
+      mainRenderer.init();
+   } else {
+      mainRenderer = null;
    }
 }
 
@@ -104,7 +104,7 @@ const resetView = () => {
    rotator.reset();
    translator.reset();
    scalator.reset();
-   scaleInfo.value = scalator.getScaleFactor().toFixed(1);
+   scaleInfo.value = scalator.scaleFactor.toFixed(1);
    gpuModel.MVPManager.reset();
    draw();
 }

@@ -1,5 +1,7 @@
 "use strict";
 
+// requires "../helpers";
+
 
 class ModelLoadStrategy {
    constructor(fileArray) {
@@ -9,7 +11,14 @@ class ModelLoadStrategy {
    }
 
    normalizeFileArray(fileArray) {
-      return fileArray.map(line => line.trim()).filter(line => line && !line.startsWith('#'));
+      const normalizedFileArray = [];
+      for (let i = 0; i < fileArray.length; i++) {
+         const line = fileArray[i].trim();
+         if (!line || line.startsWith('#')) continue;
+         let lineBeforeHash = line.split('#')[0];
+         normalizedFileArray.push(lineBeforeHash);
+      }
+      return normalizedFileArray;
    }
 
    calculateVertexNormals(polygonMesh) {
@@ -25,6 +34,7 @@ class ModelLoadStrategy {
    _load(fun) {
       try {
          fun();
+         this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
       } catch (error) {
          this.isValid = false;
          this.cpuModel = null;
@@ -33,21 +43,36 @@ class ModelLoadStrategy {
       return this.cpuModel;
    }
 
-   // Carga todos los vértices del modelo partiendo por un índice de inicio y una cantidad de vértices a leer.
-   _loadModelVertices(startIndex, numVertices) {
+   // Carga todos los vértices del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
+   _loadModelVertices(numVertices, startIndex, vertexIndices=false) {
       if (startIndex + numVertices > this.fileArray.length) {
          throw new Error('vertexCountError');
       }
       const bounds = new Float32Array(6);
-      const vertices = new Array(numVertices);
+      //const vertices = new Array(numVertices);
+      const vertices = {};
       for (let i = 0; i < numVertices; i++) {
          const line = this.fileArray[startIndex + i];
          const lineWords = getLineWords(line);
-         if (lineWords.length != 3) 
-            throw new Error('VertexDimensionError');
+         let x, y, z;
 
-         const [x, y, z] = lineWords.map(parseFloat);
-         vertices[i] = new Vertex(i + 1, x, y, z);
+         if (vertexIndices) {
+            if (lineWords.length != 4)
+               throw new Error('VertexDimensionError');
+            const [index, _x, _y, _z] = lineWords.map(parseFloat);
+            x = _x;
+            y = _y;
+            z = _z;
+            vertices[parseInt(index)] = new Vertex(parseInt(index), x, y, z);
+         } else {
+            if (lineWords.length != 3)
+               throw new Error('VertexDimensionError');
+            const [_x, _y, _z] = lineWords.map(parseFloat);
+            x = _x;
+            y = _y;
+            z = _z;
+            vertices[i] = new Vertex(i + 1, x, y, z);
+         }
 
          if (bounds.every(value => value === 0)) 
             bounds.set([x, y, z, x, y, z]);       
@@ -60,19 +85,20 @@ class ModelLoadStrategy {
             bounds[5] = Math.max(bounds[5], z);
          }
       }
+      //this.cpuModel.vertices = new Array(...Object.values(vertices));
       this.cpuModel.vertices = vertices;
       this.cpuModel.bounds = bounds;
       return startIndex + numVertices;
    }
 
-   // Carga todos los polígonos del modelo partiendo por un índice de inicio y una cantidad de vértices a leer.
-   _loadModelPolygons(startIndex, numPolygons) {
+   // Carga todos los polígonos del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
+   _loadModelPolygons(numPolygons, startIndex, polygonIndices=null) {
       if (startIndex + numPolygons > this.fileArray.length) {
          throw new Error('polygonCountError');
       }
       const polygons = new Array(numPolygons);
       for (let i = 0; i < numPolygons; i++) {
-         const line = this.fileArray[startIndex + i];
+         const line = polygonIndices ? this.fileArray[polygonIndices[i]] : this.fileArray[startIndex + i];
          const lineWords = getLineWords(line);
          const sidesCount = parseInt(lineWords[0]);
          if (lineWords.length !== sidesCount + 1) 
@@ -92,6 +118,6 @@ class ModelLoadStrategy {
          polygons[i] = polygon;
       }
       this.cpuModel.polygons = polygons;
-      return startIndex + numPolygons;
+      return polygonIndices ? polygonIndices[polygonIndices.length-1] + 1 : startIndex + numPolygons;
    }
 }

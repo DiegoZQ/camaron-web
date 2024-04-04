@@ -27,3 +27,14 @@ const isPositiveInteger = (str) => {
 const isNonNegativeInteger = (str) => {
     return /^\d+$/.test(str);
 } 
+
+
+// Genera un arreglo de números que comienza en 'start', avanza hasta 'end' (sin incluirlo)
+// con incrementos definidos por 'step'.
+const range = (start, end, steps=1) => {
+    const result = [];
+    for (let i = start; i < end; i+=steps) {
+      result.push(i);
+    }
+    return result;
+}

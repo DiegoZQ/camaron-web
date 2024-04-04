@@ -47,7 +47,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
       }
       startIndex++;
       const numVertices = parseInt(vertexLineWords[0]);
-      return super._loadModelVertices(startIndex, numVertices);
+      return super._loadModelVertices(numVertices, startIndex);
    }
 
    // Carga los polígonos del modelo si el número de polígonos es un entero positivo válido y está ubicado al inicio de la lectura,
@@ -59,7 +59,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
       }
       startIndex++;
       const numPolygons = parseInt(polygonLineWords[0]);
-      return super._loadModelPolygons(startIndex, numPolygons);
+      return super._loadModelPolygons(numPolygons, startIndex);
    }
 
    // Carga los poliedros del modelo si el número de poliedros es un entero positivo válido y está ubicado al inicio de la lectura,
@@ -76,9 +76,11 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          throw new Error('polyhedronCountError');
       }
       let numPolyhedrons;
-      
+
+      // Si no hay relaciones se vecindad
       if (startIndex + startNumber == this.fileArray.length) {
          numPolyhedrons = startNumber;
+      // Si hay relaciones se vecindad
       } else {
          startIndex += this.cpuModel.polygons.length;
          const newStartLineWords = getLineWords(this.fileArray[startIndex]);

@@ -10,12 +10,11 @@
 class OffLoadStrategy extends ModelLoadStrategy {
    // https://segeval.cs.princeton.edu/public/off_format.html
    load() {
-      console.log(this.fileArray);
       return this._load(() => {
          this.cpuModel = new PolygonMesh();
          const [numVertices, numPolygons, vertexStartIndex] = this.loadHeaders();
-         const polygonStartIndex = this.loadModelVertices(vertexStartIndex, numVertices);
-         this.loadModelPolygons(polygonStartIndex, numPolygons);
+         const polygonStartIndex = this.loadModelVertices(numVertices, vertexStartIndex);
+         this.loadModelPolygons(numPolygons, polygonStartIndex);
       });
    }
 
@@ -49,18 +48,18 @@ class OffLoadStrategy extends ModelLoadStrategy {
    }
 
    // Carga los vértices del modelo si el número de vértices es un entero positivo válido.
-   loadModelVertices(startIndex, numVertices) {
+   loadModelVertices(numVertices, startIndex) {
       if (!isPositiveInteger(numVertices)) {
          throw new Error('vertexError');
       }
-      return this._loadModelVertices(startIndex, parseInt(numVertices));
+      return this._loadModelVertices(parseInt(numVertices), startIndex);
    }
 
    // Carga los polígonos del modelo si el número de polígonos es un entero positivo válido.
-   loadModelPolygons(startIndex, numPolygons) {
+   loadModelPolygons(numPolygons, startIndex) {
       if (!isPositiveInteger(numPolygons)) {
          throw new Error('polygonError');
       }
-      return this._loadModelPolygons(startIndex, parseInt(numPolygons));
+      return this._loadModelPolygons(parseInt(numPolygons), startIndex);
    }
 }

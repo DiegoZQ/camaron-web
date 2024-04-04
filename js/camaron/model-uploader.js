@@ -14,27 +14,31 @@
 --------------------------------- OPEN FILE/DRAW MODEL ---------------------------------
 --------------------------------------------------------------------------------------*/
 
-// Opens the loading modal.
-const openLoadingModal = () => {
-   const loadingModal = $('#modal-loading');
-   loadingModal.fadeIn().addClass('active');
-   loadingModal.find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
+// Opens a modal by its id.
+const openModal = (id, spanContent=null) => {
+   const modal = $(`#${id}`);
+   modal.fadeIn().addClass('active');
+   if (spanContent)
+      modal.find('.modal-body span').html(spanContent);
+   modal.find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
 };
 
-// Closes the loading modal.
-const closeLoadingModal = () => {
-   const loadingModal = $('#modal-loading');
-   loadingModal.delay(150).fadeOut().removeClass('active').find('.modal-container').toggleClass('bottom-in bottom-out');
+// Closes a modal by its id.
+const closeModal = (id) => {
+   const modal = $(`#${id}`);
+   modal.delay(150).fadeOut().removeClass('active').find('.modal-container').toggleClass('bottom-in bottom-out');
 };
 
 // Selects loading strategy
 const selectLoadingStrategy = (extension, fileArray) => {
    if (extension === 'off') 
       return new OffLoadStrategy(fileArray);
-   if (extension == 'visf')
+   if (extension === 'visf')
       return new VisfLoadStrategy(fileArray);
-   alert('Unsupported Format');
-   // TODO: Implement a null loader
+   if (extension === 'poly')
+      return new PolyLoadStrategy(fileArray);
+   closeModal('modal-loading');
+   openModal('modal-error', 'Unsupported File Format');
 };
 
 // Waits for the gpuModel to be loaded
@@ -47,7 +51,7 @@ const waitForGpuModelLoaded = () => {
       draw();
       enableModelDependant();
       updateEventHandlers();
-      closeLoadingModal();
+      closeModal('modal-loading');
    // else waits 0.5 seconds
    } else {
       setTimeout(waitForGpuModelLoaded, 500);
@@ -80,7 +84,7 @@ const uploadFileHandler = (file) => {
       if (!file.files.length)
          return;
       const extension = file.files[0].name.split('.')[1];
-      openLoadingModal();
+      openModal('modal-loading');
 
       const handleFileLoad = (event) => {
          setTimeout(() => {
@@ -99,7 +103,8 @@ const uploadFileHandler = (file) => {
                   gpuModel = new GPUModel(cpuModel);
                   loadGpuModel(gpuModel);
                } else {
-                  alert('Invalid format');
+                  closeModal('modal-loading');
+                  openModal('modal-error', 'Invalid File Content')
                } 
             }
          }, 400); // 400ms delay after opening the file
