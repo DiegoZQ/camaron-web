@@ -101,9 +101,9 @@ class ModelLoadStrategy {
          const line = polygonIndices ? this.fileArray[polygonIndices[i]] : this.fileArray[startIndex + i];
          const lineWords = getLineWords(line);
          const sidesCount = parseInt(lineWords[0]);
-         if (lineWords.length !== sidesCount + 1) 
-         	throw new Error('polygonSideCountError');
-
+         if (lineWords.length < sidesCount + 1 || lineWords.length > sidesCount + 1 + 3) {
+            throw new Error('polygonSideCountError');
+         }
          const polygon = new Polygon(i+1);
          // para cada índice de vértice
          for(let j = 1; j <= sidesCount; j++) {

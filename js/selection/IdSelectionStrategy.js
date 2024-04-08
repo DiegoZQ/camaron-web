@@ -22,7 +22,7 @@ class IdSelectionStrategy extends SelectionStrategy {
 		// Si no hay cotas, lo selecciona si está en mi whitelist de ids
 		else {
 		  const strId = id.toString();
-		  polygon.setSelected(this.idList.includes(strId));
+		  polygon.isSelected = this.idList.includes(strId);
 		}
 	}
 

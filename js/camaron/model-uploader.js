@@ -83,7 +83,8 @@ const uploadFileHandler = (file) => {
    const handler = () => {
       if (!file.files.length)
          return;
-      const extension = file.files[0].name.split('.')[1];
+      const fileName = file.files[0].name.split('.');
+      const extension = fileName[fileName.length-1];
       openModal('modal-loading');
 
       const handleFileLoad = (event) => {

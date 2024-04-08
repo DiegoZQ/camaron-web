@@ -15,20 +15,21 @@ class Polygon extends Shape {
       this.neighbours = [];
       this._trianglesVertexIndices = [];
       this._trianglesVertexCoords = [];
+      this._isConvex = null;
    }
 
    // Asume que el polígono es planar, ie, todos sus vértices se ubican en un mismo plano.
    calculateNormal() {
       this._normal = vec3.create();
-      const U = vec3.create();
-      const V = vec3.create();
+      const u = vec3.create();
+      const v = vec3.create();
       const vertices = this.vertices;
       const trianglesVertexIndices = this.trianglesVertexIndices;
-      // Calcula el plano a partir de los vectores U, V que conforman un triángulo cualquiera del plano.
+      // Calcula el plano a partir de los vectores u, v que conforman un triángulo cualquiera del plano.
       // Como es planar, dicho plano es compartido por todos los demás triángulos.
-      vec3.subtract(U, vertices[trianglesVertexIndices[1]].coords, vertices[trianglesVertexIndices[0]].coords); 
-      vec3.subtract(V, vertices[trianglesVertexIndices[2]].coords, vertices[trianglesVertexIndices[0]].coords);
-      vec3.cross(this._normal, U, V);
+      vec3.subtract(u, vertices[trianglesVertexIndices[1]].coords, vertices[trianglesVertexIndices[0]].coords); 
+      vec3.subtract(v, vertices[trianglesVertexIndices[2]].coords, vertices[trianglesVertexIndices[0]].coords);
+      vec3.cross(this._normal, u, v);
       vec3.normalize(this._normal, this._normal);
    }
 
@@ -75,18 +76,40 @@ class Polygon extends Shape {
       return this._area;
    }
 
+   // Obtiene los ángulos calculando las direcciones de giro entre los lados del polígono. Si este es convexo, sólo tendrá una dirección de giro
+   // Si es no convexo, tendrá una dirección de giro mayoritaria y una minoritaria. La fórmula del ángulo por arista es:
+   // vec3.angle(vector2, vector1) si el polígono es convexo o la dirección de giro es mayoritaria 
+   // 2*Math.PI - vec3.angle(vector2, vector1) si el polígono es no convexo y la dirección de giro es minoritaria
+   // donde vector 1 corresponde al vector que va del vértice anterior al actual y vector2 corresponde al vector que va desde el vértice actual al siguiente; 
    calculateAngles() {
       const vertices = this.vertices;
       this._angles = new Array(vertices.length);
+   
+      const normals = [];
       for (let i = 0; i < vertices.length; i++) {
-         const vertex1 = vertices[i].coords;
-         const vertex2 = vertices[(i + 1) % vertices.length].coords;
-         const vertex3 = vertices[(i + 2) % vertices.length].coords;
-         const vector1 = vec3.create();
-         const vector2 = vec3.create();
-         vec3.subtract(vector1, vertex1, vertex2);
-         vec3.subtract(vector2, vertex2, vertex3);
-         this._angles[i] = Math.PI - vec3.angle(vector1, vector2);
+         const vertex1 = vertices[(i - 1 + vertices.length) % vertices.length].coords;
+         const vertex2 = vertices[i].coords;
+         const vertex3 = vertices[(i + 1) % vertices.length].coords;
+
+         const vector1 = vec3.subtract(vec3.create(), vertex1, vertex2);
+         const vector2 = vec3.subtract(vec3.create(), vertex3, vertex2);
+         normals.push(vec3.cross(vec3.create(), vector2, vector1));
+         this._angles[i] = vec3.angle(vector2, vector1);
+      }
+      const firstNormal = normals[0];
+      const orientation = normals.map(normal => (firstNormal[0] * normal[0] >= 0 && firstNormal[1] * normal[1] >= 0 && firstNormal[2] * normal[2] >= 0) ? true : false);
+      const positive = orientation.reduce((acc, val) => acc + val, 1); 
+      const negative = vertices.length - positive;
+
+      for (let i = 0; i < vertices.length; i++) {
+         // Si el lado mayoritario es positivo, todos los ángulos cuya normal tenga orientación positiva, tendrán la forma this._angles[i];
+         // Si el lado mayoritario es negativo, todos los ángulos cuya normal tenga orientación negativa, tendrán la forma this._angles[i];
+         if (positive > negative == orientation[i]) {
+            continue;
+         }
+         // Si el lado minoritario es positivo, todos los ángulos cuya normal tenga orientación positiva, tendrán la forma 2*Math.PI - this._angles[i];
+         // Si el lado minoritario es negativo, todos los ángulos cuya normal tenga orientación negativa, tendrán la forma 2*Math.PI - this._angles[i]; 
+         this._angles[i] = 2*Math.PI - this._angles[i];
       }
    }
 
@@ -96,38 +119,56 @@ class Polygon extends Shape {
       return this._angles;
    }
 
+   isConvex() {
+      if (this._isConvex == null) {
+         this._isConvex = true;
+         for (const angle of this.angles) {
+            if (angle > Math.PI) {
+               this._isConvex = false;
+               break;
+            }
+         }      
+      }
+      return this._isConvex;
+   }
+
    isNeighbour(polygon) {
       return this.neighbours.includes(polygon);
    }
 
-   // este mamawebo tiene el problema con el earcut y la conversión 3 coords a 2 coords 
-   // la idea sería aplicar la triangulación que usaba el men del camarón web original para los convexos 
-   // y para los no convexos realizar el ear_cut considerando solo 2 coordenadas x,y. Voy a asumir que
-   // en el caso de presentarse polígonos no convexos, estos estarán sí o sí en un "plano" 2 dimensión,
-   // aunque no sé si ese plano siempre será xy o pueden haber planos inclinados megalol
+   // Calcula los índices de los vértices de cada triángulo del polígono, cada 3 índices corresponde a un triángulo.
+   // Para hacer esto, aplica triangulación de polígonos convexos o no convexos (utilizando earcut) según corresponda.
    calculateTrianglesVertexIndices() {
       const vertices = this.vertices;
-      const vertexCoords = new Float32Array(2*vertices.length);
-      for (let i = 0; i < vertices.length; i++) {
-         const coords = vertices[i].coords;
-         console.log('init coords', coords);
-         const j = i*2;
-         const scale = 100.0 / (100.0 + coords[2]);
-         vertexCoords[j] = (coords[0] + 1) * scale;
-         vertexCoords[j+1] = (coords[1] + 1) * scale;         
-
-         console.log('final coords', vertexCoords[j], vertexCoords[j+1]);
+      // Caso 1: triángulo, no requiere triangulación
+      if (vertices.length === 3) {
+         this._trianglesVertexIndices = [0,1,2];
       }
-      this._trianglesVertexIndices = earcut(vertexCoords, null);
-      if (this.id == 3) {
-         console.log('NOOOO', this._trianglesVertexIndices, vertexCoords);
-      }
+      // Caso 2: polígono convexo
+      else if (this.isConvex()) {
+         for (let i = 1; i < vertices.length - 1; i++) {
+            // Create triangle with base vertex and adjacent vertices
+            const triangle = [0, i, i+1];
+            this._trianglesVertexIndices.push(...triangle);
+        }
+      }  
+      // Caso 3: polígono no convexo
+      else {
+         const points3D = []
+         const [u, v, vertexIndex] = findBasisVectorsFromVertices(vertices);
+         // si los vectores base u, v encontrados, fueron sobre un vértice que comprende un ángulo de +180 grados,
+         // se invierte la dirección de uno de los vectores base ya que el producto cruz de dichos vectores va en la dirección
+         // MINORITARIA, la cual NO es representativa para determinar la orientación real del polígono.
+         if (this.angles[vertexIndex] > Math.PI) {
+            vec3.negate(v, v);
+         }
 
-      for (let i = 0; i < this._trianglesVertexIndices.length; i += 3) {
-         const group = this._trianglesVertexIndices.slice(i, i + 3);
-         group.sort((a, b) => a - b); // Sort the group in ascending order
-         this._trianglesVertexIndices.splice(i, 3, ...group);
-       }
+         for (const vertex of vertices) {
+            points3D.push(...vertex.coords);
+         }
+         const points2D = mapTo2D(points3D, u, v);
+         this._trianglesVertexIndices = earcut(points2D, null);
+      }
    }
 
    // Obtiene los índices de los vértices de cada triángulo, cada 3 índices corresponde a un triángulo.
