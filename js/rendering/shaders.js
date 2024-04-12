@@ -103,13 +103,20 @@ void main() {
 const pointVertexShader = `#version 300 es
 
 in vec4 a_position;
+in float vType;
 
 uniform mat4 u_worldViewProjection;
 
+out float type; 
 
 void main() {
   gl_Position = u_worldViewProjection * a_position;
-  gl_PointSize = 5.0;
+  if (vType == 0.0) {
+    gl_PointSize = 5.0;
+  } else if (vType == 1.0) {
+    gl_PointSize = 10.0;
+  }
+  type = vType;
 }
 `;
 
@@ -119,9 +126,20 @@ precision mediump float;
 
 uniform vec4 u_color;
 
+in float type;
+
+uniform sampler2D spriteTexture;
+
 out vec4 outColor;
 
 void main() {
-  outColor = u_color;
+  if (type == 0.0) {
+    // Regular vertex, apply regular rendering logic
+    outColor = u_color;
+  } else if (type == 1.0) {
+    // Hole, apply hole rendering logic
+    outColor = texture(spriteTexture, gl_PointCoord);
+    outColor.rgb *= outColor.a;
+  }
 }
 `;

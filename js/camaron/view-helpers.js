@@ -26,7 +26,7 @@ const updateInfo = () => {
    const depthInfo = document.getElementById("depth_info");
 
    verticesInfo.innerHTML = `Vertices: ${cpuModel.vertices.length}`;
-   polygonsInfo.innerHTML = `Polygons: ${cpuModel.polygons.length}`;
+   polygonsInfo.innerHTML = `Polygons: ${cpuModel.polygons?.length}`;
    widthInfo.innerHTML = `Width: ${Math.round(gpuModel.MVPManager.modelWidth)}`;
    heightInfo.innerHTML = `Height: ${Math.round(gpuModel.MVPManager.modelHeight)}`;
    depthInfo.innerHTML = `Depth: ${Math.round(gpuModel.MVPManager.modelDepth)}`;

@@ -1,3 +1,5 @@
+"use strict";
+
 // requires './Shape';
 // requires '../external/gl-matrix';
 // requires "../external/earcut";
@@ -82,7 +84,7 @@ class Polygon extends Shape {
    // 2*Math.PI - vec3.angle(vector2, vector1) si el polígono es no convexo y la dirección de giro es minoritaria
    // donde vector 1 corresponde al vector que va del vértice anterior al actual y vector2 corresponde al vector que va desde el vértice actual al siguiente; 
    calculateAngles() {
-      const vertices = this.vertices;
+      const vertices = this.vertices; 
       this._angles = new Array(vertices.length);
    
       const normals = [];
@@ -135,10 +137,10 @@ class Polygon extends Shape {
    isNeighbour(polygon) {
       return this.neighbours.includes(polygon);
    }
-
+            
    // Calcula los índices de los vértices de cada triángulo del polígono, cada 3 índices corresponde a un triángulo.
    // Para hacer esto, aplica triangulación de polígonos convexos o no convexos (utilizando earcut) según corresponda.
-   calculateTrianglesVertexIndices() {
+      calculateTrianglesVertexIndices() {
       const vertices = this.vertices;
       // Caso 1: triángulo, no requiere triangulación
       if (vertices.length === 3) {

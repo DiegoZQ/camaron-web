@@ -21,7 +21,7 @@ class GPUModel {
       this.trianglesCount = 0;
       this.edgesCount = 0;
       // Configuration
-      this.loaded = 0;
+      this.loaded = false;
    }
 
    // Count increasers
@@ -33,15 +33,23 @@ class GPUModel {
    }
 
    load() {
-
-   }
-   
-   loadFromVertexCloud() {
-
-   }
-
-   loadFromPolygonMesh() {
-
+      if (this.cpuModel.modelType === 'VertexCloud') {
+         this.loadVertices();
+      }
+      else if (this.cpuModel.modelType === 'PSLG') {
+         this.loadEdges();
+         this.loadVertices();
+      }
+      else if (this.cpuModel.modelType === 'PolygonMesh' || this.cpuModel.modelType === 'PolyhedronMesh') {
+         this.loadTriangles();
+         this.loadTrianglesNormals();
+         this.loadVertexNormals();
+         this.loadEdgesFromPolygons();
+         this.loadVertices();
+         this.loadVertexNormalsLines();
+         this.loadFaceNormalsLines();
+      }
+      this.loaded = true;
    }
 
    // Por cada polígono del cpuModel, lo descompone en un conjunto de triángulos y agrega las coordenadas de dichos triángulos
@@ -53,11 +61,9 @@ class GPUModel {
          polygonTrianglesVertexCoords = polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
          this.increaseTriangleCounts(polygon.trianglesCount);
       }
-      const triangles = new Float32Array(polygonTrianglesVertexCoords);
-      //const triangles = new Float32Array(this.trianglesCount*9);
+      const triangleData = new Float32Array(polygonTrianglesVertexCoords);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, triangleData, gl.STATIC_DRAW);
    }
 
    // Por cada vértice de cada triángulo de cada polígono, agrega la normal del polígono que comprende cada subconjunto de triángulos.
@@ -65,23 +71,22 @@ class GPUModel {
    loadTrianglesNormals() {
       const polygons = this.cpuModel.polygons;
       // Agrega una normal para cada vértice del triángulo, 3 vértices 3 dimesiones => 9 espacios
-      const trianglesNormals = new Float32Array(this.trianglesCount*9);
+      const triangleNormalData = new Float32Array(this.trianglesCount*9);
 
       let j = 0;
       for (const polygon of polygons) {
          const normal = polygon.normal;
          const polygonTrianglesCount = polygon.trianglesCount;
          for (let i = 0; i < polygonTrianglesCount; i++) {
-            trianglesNormals[j] = normal[0]; trianglesNormals[j+1] = normal[1]; trianglesNormals[j+2] = normal[2];
-            trianglesNormals[j+3] = normal[0]; trianglesNormals[j+4] = normal[1]; trianglesNormals[j+5] = normal[2];
-            trianglesNormals[j+6] = normal[0]; trianglesNormals[j+7] = normal[1]; trianglesNormals[j+8] = normal[2];
+            triangleNormalData[j] = normal[0]; triangleNormalData[j+1] = normal[1]; triangleNormalData[j+2] = normal[2];
+            triangleNormalData[j+3] = normal[0]; triangleNormalData[j+4] = normal[1]; triangleNormalData[j+5] = normal[2];
+            triangleNormalData[j+6] = normal[0]; triangleNormalData[j+7] = normal[1]; triangleNormalData[j+8] = normal[2];
 
             j += 9;
          }
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.trianglesNormalsBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, trianglesNormals, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, triangleNormalData, gl.STATIC_DRAW);
    }
 
    // Por cada normal de cada vértice de cada triángulo de cada polígono, agrega dicha normal a un array global con todas las normales del cpuModel.
@@ -89,116 +94,148 @@ class GPUModel {
    // Sirve para representar la iluminación sobre los vértices.
    loadVertexNormals() {
       const polygons = this.cpuModel.polygons;
-      const verticesNormals = new Float32Array(this.trianglesCount*9);
+      const vertexNormalData = new Float32Array(this.trianglesCount*9);
 
       let j = 0;
       for (const polygon of polygons) {
-         const polygonVertices = polygon.vertices;
          const polygonTrianglesVertexIndices = polygon.trianglesVertexIndices;
          for (let i = 0; i < polygonTrianglesVertexIndices.length; i++) {
-            const polygonVertex = polygonVertices[polygonTrianglesVertexIndices[i]];
+            const polygonVertex = polygon.vertices[polygonTrianglesVertexIndices[i]];
             const vertexNormal = polygonVertex.normal;
-            verticesNormals[j] = vertexNormal[0]; 
-            verticesNormals[j+1] = vertexNormal[1]; 
-            verticesNormals[j+2] = vertexNormal[2];
+            vertexNormalData[j] = vertexNormal[0]; 
+            vertexNormalData[j+1] = vertexNormal[1]; 
+            vertexNormalData[j+2] = vertexNormal[2];
 
             j += 3;
          }
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesNormalsBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, verticesNormals, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, vertexNormalData, gl.STATIC_DRAW);
+   }
+
+   loadEdges() {
+      const edges = this.cpuModel.edges;
+
+      this.increaseEdgesCounts(edges.length);
+      const edgeData = new Float32Array(this.edgesCount*6);
+
+      let j = 0;
+      for (const edge of edges) {
+         const vertex1 = edge.startVertex.coords;
+         const vertex2 = edge.endVertex.coords;
+         edgeData[j] = vertex1[0]; edgeData[j+1] = vertex1[1]; edgeData[j+2] = vertex1[2];
+         edgeData[j+3] = vertex2[0]; edgeData[j+4] = vertex2[1]; edgeData[j+5] = vertex2[2];
+         j += 6;
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, edgeData, gl.STATIC_DRAW);
    }
 
    // Por cada par de vértices consecutivos de cada polígono, agrega las dos coordenadas de ambos vértices 
    // para representar una "línea" entre ambos puntos. Este cálculo es necesario para representar el wireframe de un modelo.
-   loadEdges() {
+   loadEdgesFromPolygons() {
       const polygons = this.cpuModel.polygons;
+
       for (const polygon of polygons) {
          const polygonVertices = polygon.vertices;
          this.increaseEdgesCounts(polygonVertices.length);
       }
-      const edges = new Float32Array(this.edgesCount*6);
-    
+      const edgeData = new Float32Array(this.edgesCount*6);
+   
       let j = 0;
       for (const polygon of polygons) {
         const polygonVertices = polygon.vertices;
         for (let i = 0; i < polygonVertices.length; i++) {
             const vertex1 = polygonVertices[i].coords;
             const vertex2 = polygonVertices[(i + 1) % polygonVertices.length].coords;
-
-            edges[j] = vertex1[0]; edges[j+1] = vertex1[1]; edges[j+2] = vertex1[2];
-            edges[j+3] = vertex2[0]; edges[j+4] = vertex2[1]; edges[j+5] = vertex2[2];
-
+            edgeData[j] = vertex1[0]; edgeData[j+1] = vertex1[1]; edgeData[j+2] = vertex1[2];
+            edgeData[j+3] = vertex2[0]; edgeData[j+4] = vertex2[1]; edgeData[j+5] = vertex2[2];
             j += 6;
          }
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, edges, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, edgeData, gl.STATIC_DRAW);
    }
 
    // Por cada vértice del cpuModel, obtiene sus coordenadas y las almacena en un arreglo global.
    // Sirve para representar nubes de puntos.
    loadVertices() {
-      const modelVertices = this.cpuModel.vertices;
-      const vertices = new Float32Array(modelVertices.length*3);
- 
-      for (let i = 0; i < modelVertices.length; i++) {
-         const j = i*3;
-         const vertex1 = modelVertices[i].coords;
-     
-         vertices[j] = vertex1[0]; vertices[j+1] = vertex1[1]; vertices[j+2] = vertex1[2];
+      const vertices = this.cpuModel.vertices;
+      const holes = this.cpuModel.holes;
+
+      const vertexDataSize = holes ? 4*(vertices.length + holes.length) : vertices.length*3;
+
+      const vertexData = new Float32Array(vertexDataSize);
+
+      if (holes) {
+         for (let i = 0; i < vertices.length; i++) {
+            const j = i*4;
+            const vertex = vertices[i].coords;
+        
+            vertexData[j] = vertex[0]; vertexData[j+1] = vertex[1]; vertexData[j+2] = vertex[2];
+            vertexData[j+3] = 0.0;
+         }
+         for (let i = 0; i < holes.length; i++) {
+            const j = 4*vertices.length + i*4;
+            const hole = holes[i].coords;
+        
+            vertexData[j] = hole[0]; vertexData[j+1] = hole[1]; vertexData[j+2] = hole[2];
+            vertexData[j+3] = 1.0;
+         }
+      } else {
+         for (let i = 0; i < vertices.length; i++) {
+            const j = i*3;
+            const vertex = vertices[i].coords;
+        
+            vertexData[j] = vertex[0]; vertexData[j+1] = vertex[1]; vertexData[j+2] = vertex[2];
+         }
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, vertexData, gl.STATIC_DRAW);
    }
 
    // Por cada vértice del cpuModel, obtiene sus coordenadas y su vector normal, suma la normal a cada vértice,
    // obteniendo así 2 puntos: el vértice y el vértice desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de los vértices. 
    loadVertexNormalsLines() {
-      const modelVertices = this.cpuModel.vertices;
-      const vertexNormalsLines = new Float32Array(modelVertices.length*6);
+      const vertices = this.cpuModel.vertices;
+      const vertexNormalLineData = new Float32Array(vertices.length*6);
 
-      for (let i = 0; i < modelVertices.length; i++) {
+      for (let i = 0; i < vertices.length; i++) {
          const j = i*6;
-         const vertex1 = modelVertices[i].coords;
-         const normal = modelVertices[i].normal;
+         const vertex = vertices[i].coords;
+         const normal = vertices[i].normal;
      
          vec3.scale(normal, normal, this.MVPManager.modelHeight/50);
-         vec3.add(normal, vertex1, normal);
+         vec3.add(normal, vertex, normal);
      
-         vertexNormalsLines[j] = vertex1[0]; vertexNormalsLines[j+1] = vertex1[1]; vertexNormalsLines[j+2] = vertex1[2];
-         vertexNormalsLines[j+3] = normal[0]; vertexNormalsLines[j+4] = normal[1]; vertexNormalsLines[j+5] = normal[2];
+         vertexNormalLineData[j] = vertex[0]; vertexNormalLineData[j+1] = vertex[1]; vertexNormalLineData[j+2] = vertex[2];
+         vertexNormalLineData[j+3] = normal[0]; vertexNormalLineData[j+4] = normal[1]; vertexNormalLineData[j+5] = normal[2];
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexNormalsLinesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, vertexNormalsLines, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, vertexNormalLineData, gl.STATIC_DRAW);
    }
 
    // Por cada polígono del cpuModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
    // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
    // representando así una línea entre ambos puntos. Sirve para visualizar las normales de las caras. 
    loadFaceNormalsLines() {
-      const modelPolygons = this.cpuModel.polygons;
-      const faceNormalsLines = new Float32Array(modelPolygons.length*6);
+      const polygons = this.cpuModel.polygons;
+      const faceNormalLineData = new Float32Array(polygons.length*6);
 
-      for(let i = 0; i < modelPolygons.length; i++){
+      for(let i = 0; i < polygons.length; i++){
          const j = i*6;
-         const normal = modelPolygons[i].normal;
-         const center = modelPolygons[i].geometricCenter;
+         const normal = polygons[i].normal;
+         const center = polygons[i].geometricCenter;
      
          vec3.scale(normal, normal, this.MVPManager.modelHeight/50);
          vec3.add(normal, center, normal);
      
-         faceNormalsLines[j] = center[0]; faceNormalsLines[j+1] = center[1]; faceNormalsLines[j+2] = center[2];
-         faceNormalsLines[j+3] = normal[0]; faceNormalsLines[j+4] = normal[1]; faceNormalsLines[j+5] = normal[2];
+         faceNormalLineData[j] = center[0]; faceNormalLineData[j+1] = center[1]; faceNormalLineData[j+2] = center[2];
+         faceNormalLineData[j+3] = normal[0]; faceNormalLineData[j+4] = normal[1]; faceNormalLineData[j+5] = normal[2];
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, faceNormalsLines, gl.STATIC_DRAW);
-      this.loaded += 1;
+      gl.bufferData(gl.ARRAY_BUFFER, faceNormalLineData, gl.STATIC_DRAW);
    }
   
    get color() {
@@ -209,7 +246,7 @@ class GPUModel {
    // Si están seleccionados, marca el triángulo de un color distinto.
    get colorMatrix() {
       const polygons = this.cpuModel.polygons;
-      const colors = new Float32Array(this.trianglesCount*9);
+      const colorData = new Float32Array(this.trianglesCount*9);
    
       let j = 0;
       for (const polygon of polygons) {
@@ -220,13 +257,13 @@ class GPUModel {
             else 
                color = colorConfig.baseColor;
 
-            colors[j] = color[0]; colors[j+1] = color[1]; colors[j+2] = color[2];
-            colors[j+3] = color[0]; colors[j+4] = color[1]; colors[j+5] = color[2];
-            colors[j+6] = color[0]; colors[j+7] = color[1]; colors[j+8] = color[2];
+            colorData[j] = color[0]; colorData[j+1] = color[1]; colorData[j+2] = color[2];
+            colorData[j+3] = color[0]; colorData[j+4] = color[1]; colorData[j+5] = color[2];
+            colorData[j+6] = color[0]; colorData[j+7] = color[1]; colorData[j+8] = color[2];
 
             j += 9;
          }
       }
-      return new Float32Array(colors);
+      return new Float32Array(colorData);
    }
 }

@@ -44,7 +44,7 @@ const selectLoadingStrategy = (extension, fileArray) => {
 // Waits for the gpuModel to be loaded
 const waitForGpuModelLoaded = () => {
    // If its fully loaded, sets the renderers
-   if (gpuModel && gpuModel.loaded === 7) {
+   if (gpuModel && gpuModel.loaded) {
       setMainRenderer();
       setSecondaryRenderers();
       updateInfo();
@@ -61,13 +61,7 @@ const waitForGpuModelLoaded = () => {
 // Initializes gpuModel loading and waits for it to be loaded
 const loadGpuModel = () => {
    setTimeout(() => {
-      gpuModel.loadTriangles();
-      gpuModel.loadTrianglesNormals();
-      gpuModel.loadVertexNormals();
-      gpuModel.loadEdges();
-      gpuModel.loadVertices();
-      gpuModel.loadVertexNormalsLines();
-      gpuModel.loadFaceNormalsLines();
+      gpuModel.load();
    }, 0);
    changeViewType();
    rotator = new Rotator();

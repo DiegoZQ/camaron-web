@@ -16,10 +16,10 @@ class Renderer {
    }
 
    // Una vez inicializado el vao (gl.bindVertexArray(this.vao)), asigna un buffer cargado con floats a una variable dentro de un shader.
-   setupAttributePointer(attributeLocation, buffer) {
+   setupAttributePointer(attributeLocation, buffer, size=3, stride=0, offset=0) {
       gl.enableVertexAttribArray(attributeLocation);
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.vertexAttribPointer(attributeLocation, 3, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(attributeLocation, size, gl.FLOAT, false, stride, offset);
    }
 
   init() {

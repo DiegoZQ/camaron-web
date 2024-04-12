@@ -12,6 +12,10 @@ class VisfLoadStrategy extends ModelLoadStrategy {
    load() {
       return this._load(() => {
          const meshType = this.loadModelHeaders();
+         if (meshType == '0') {
+            this.cpuModel = new VertexCloud();
+            this.loadModelVertices(1);
+         }
          if (meshType == '1') {
             this.cpuModel = new PolygonMesh();
             const polygonStartIndex = this.loadModelVertices(1);

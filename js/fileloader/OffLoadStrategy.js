@@ -23,7 +23,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
    loadHeaders() {
       const headerLineWords = getLineWords(this.fileArray[0]);
       if (headerLineWords[0] != 'OFF') {
-         throw new Error('headerError');
+         throw new Error('header format error');
       }
       let numVertices, numPolygons, vertexStartIndex;
       // Formato 1: OFF
@@ -32,7 +32,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
          const line = this.fileArray[1];
          const lineWords = getLineWords(line);
          if (lineWords.length != 3) 
-            throw new Error('headerError');
+            throw new Error('header format error');
          numVertices = lineWords[0];
          numPolygons = lineWords[1];
          vertexStartIndex = 2;
@@ -42,7 +42,7 @@ class OffLoadStrategy extends ModelLoadStrategy {
          numPolygons = headerLineWords[2];
          vertexStartIndex = 1;
       } else {
-         throw new Error('headerError');
+         throw new Error('header format error');
       }
       return [numVertices, numPolygons, vertexStartIndex];
    }

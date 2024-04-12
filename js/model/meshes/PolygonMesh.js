@@ -3,11 +3,10 @@
 // requires "./CPUModel";
 
 
-class PolygonMesh extends CPUModel {
+class PolygonMesh extends VertexCloud {
    constructor() {
       super();
       this.modelType = 'PolygonMesh';
-      this.vertices = null;
       this.polygons = null;
    }
 }

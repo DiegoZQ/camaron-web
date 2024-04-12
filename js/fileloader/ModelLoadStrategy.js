@@ -35,6 +35,10 @@ class ModelLoadStrategy {
       try {
          fun();
          this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
+         if (this.cpuModel.modelType === 'PSLG') {
+            this.cpuModel.edges = new Array(...Object.values(this.cpuModel.edges));
+            this.cpuModel.holes = new Array(...Object.values(this.cpuModel.holes));
+         }
       } catch (error) {
          this.isValid = false;
          this.cpuModel = null;
@@ -90,6 +94,9 @@ class ModelLoadStrategy {
       this.cpuModel.bounds = bounds;
       return startIndex + numVertices;
    }
+
+   // Carga todos los lados del modelo partiendo por una cantidad de lados a leer y un índice de inicio.
+
 
    // Carga todos los polígonos del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
    _loadModelPolygons(numPolygons, startIndex, polygonIndices=null) {

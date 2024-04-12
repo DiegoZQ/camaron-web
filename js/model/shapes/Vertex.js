@@ -4,11 +4,10 @@
 // requires '../external/gl-matrix'; 
 
 
-class Vertex extends Shape {
+class Vertex extends Hole {
    // Crea un vértice a partir de un id entero positivo y 3 floats.
    constructor(id, x, y, z) {
-      super(id);
-      this.coords = vec3.fromValues(x, y, z);
+      super(id, x, y, z);
       this._normal = null;
       this.polygons = [];
    }
