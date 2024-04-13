@@ -113,7 +113,7 @@ void main() {
   gl_Position = u_worldViewProjection * a_position;
   if (vType == 0.0) {
     gl_PointSize = 5.0;
-  } else if (vType == 1.0) {
+  } else {
     gl_PointSize = 10.0;
   }
   type = vType;
@@ -136,7 +136,7 @@ void main() {
   if (type == 0.0) {
     // Regular vertex, apply regular rendering logic
     outColor = u_color;
-  } else if (type == 1.0) {
+  } else {
     // Hole, apply hole rendering logic
     outColor = texture(spriteTexture, gl_PointCoord);
     outColor.rgb *= outColor.a;

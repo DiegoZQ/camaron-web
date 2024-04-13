@@ -4,12 +4,12 @@
 
 
 class SecondaryRenderer extends Renderer {
-	constructor(gpuModel, vertexShader, fragmentShader, positionBuffer, color, drawingPrimitive, numVertices) {
+	constructor(gpuModel, vertexShader, fragmentShader, positionBuffer, color, drawingPrimitive, numPrimitives) {
 	   super(gpuModel, vertexShader, fragmentShader);
        this.positionBuffer = positionBuffer;
        this.color = color;
        this.drawingPrimitive = drawingPrimitive;
-       this.numVertices = numVertices
+       this.numPrimitives = numPrimitives
 	}
 
 	init() {
@@ -37,6 +37,6 @@ class SecondaryRenderer extends Renderer {
 		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, this.color);
 
-		gl.drawArrays(this.drawingPrimitive, 0, this.numVertices);
+		gl.drawArrays(this.drawingPrimitive, 0, this.numPrimitives);
 	}
 }

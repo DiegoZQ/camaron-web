@@ -7,6 +7,8 @@
 
 class VCloudRenderer extends SecondaryRenderer {
 	constructor(gpuModel) {
+		const numVertices = gpuModel.cpuModel.vertices.length;
+		const numHoles = gpuModel.cpuModel.holes ? gpuModel.cpuModel.holes.length : 0;
 		super(
 			gpuModel,
 			pointVertexShader, 
@@ -14,9 +16,9 @@ class VCloudRenderer extends SecondaryRenderer {
 			gpuModel.verticesBuffer, 
         	colorConfig.vertexCloudColor, 
 			gl.POINTS, 
-			gpuModel.cpuModel.holes ? gpuModel.cpuModel.vertices.length + gpuModel.cpuModel.holes.length : gpuModel.cpuModel.vertices.length
+			numVertices + numHoles
 		);
-		this.holes = gpuModel.cpuModel.holes ? true : false;
+		this.holes = !!numHoles;
 	}
 
 	init() {
@@ -32,7 +34,7 @@ class VCloudRenderer extends SecondaryRenderer {
 		gl.bindVertexArray(this.vao);
 
 		if (this.holes) {
-			const stride = 4 * Float32Array.BYTES_PER_ELEMENT
+			const stride = 4 * Float32Array.BYTES_PER_ELEMENT;
 			this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer, 3, stride, 0);
 			this.setupAttributePointer(typeAttributeLocation, this.positionBuffer, 1, stride, 3 * Float32Array.BYTES_PER_ELEMENT);
 			this.loadTexture();
@@ -41,19 +43,6 @@ class VCloudRenderer extends SecondaryRenderer {
 			this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer);
 			gl.vertexAttrib1f(typeAttributeLocation, 0.0);
 		}
-	}
-
-	draw() {
-		gl.useProgram(this.program);
-
-		// Inicializa el Vertex Array Object (VAO)
-		gl.bindVertexArray(this.vao);
-
-		// Asigna los valores de MVP y color a las variables u_worldViewProjection y u_color del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
-		gl.uniform4fv(this.colorAttributeLocation, this.color);
-
-		gl.drawArrays(this.drawingPrimitive, 0, this.numVertices);
 	}
 
 	loadTexture() {
