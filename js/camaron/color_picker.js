@@ -110,12 +110,8 @@ const returnPickedColor = () => {
 
     const rgb_color = hslToRgb(color[0], color[1], color[2]);
     const hex_color = rgbToHex(rgb_color[0], rgb_color[1], rgb_color[2]);
-
-    const modelView = document.getElementById("model-view");
-    modelView.style.backgroundColor = elements.background_color_indicator.style.backgroundColor;
         
     document.querySelector(".bottom input").value = hex_color.toUpperCase();
-    updateColorConfig();
 }
 
 const setHuePickerValue = (e) => {
@@ -270,6 +266,10 @@ $('#modal-colors').on('shown', function() {
 
 
 $('#modal-colors').on('hidden', function() {
+    updateColorConfig();
+    const modelView = document.getElementById("model-view");
+    modelView.style.backgroundColor = elements.background_color_indicator.style.backgroundColor;
+
     // Remove all event listeners when the modal is hidden
     elements.hue_bar.removeEventListener('mousedown', hueBarHandleMouseDown);
     elements.sat_rect.removeEventListener('mousedown', satRectHandleMouseDown);
