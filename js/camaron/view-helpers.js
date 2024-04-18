@@ -35,7 +35,6 @@ const updateInfo = () => {
   
 // Creates a main renderer and assigns it to the main renderer variable.
 const setMainRenderer = (renderer=null) => {
-   
    if (!gpuModel)
       return;
 
@@ -57,42 +56,42 @@ const setMainRenderer = (renderer=null) => {
    }
 }
 
-// Creates a list of  every secondary renderer selected created and 
+// Creates a new list of  every secondary renderer selected created and 
 // adds it to the secondary renderers variable.
 const setSecondaryRenderers = () => {
-
    if (!gpuModel)
       return;
 
    secondaryRenderers = [];
-   const secondary = Array.from(document.getElementsByName("secondary_renderer"));
+   const elements = Array.from(document.querySelectorAll('[name="secondary_renderer"].active'));
    const rendererMap = {
-      "WireFrame": WireRenderer,
-      "VertexNormals": VNormalsRenderer,
-      "FaceNormals": FNormalsRenderer,
-      "VertexCloud": VCloudRenderer
+      "wireframe_renderer": WireRenderer,
+      "vertex_normals_renderer": VNormalsRenderer,
+      "face_normals_renderer": FNormalsRenderer,
+      "vertex_cloud_renderer": VCloudRenderer,
+      //"vertex_id_renderer": VertexIdRenderer
    };
-   secondary.filter(element => element.checked).map(checkedElement => {
-      const RendererClass = rendererMap[checkedElement.value];
+
+   for (const element of elements) {
+      const RendererClass = rendererMap[element?.id]
       if (RendererClass) {
          const secondaryRenderer = new RendererClass(gpuModel);
          secondaryRenderer.init();
          secondaryRenderers.push(secondaryRenderer);
-      }
-   });
+      } 
+   }
 }
 
 // Changes the viewtype between perspective and orthogonal.
-const changeViewType = () => {
-
+const changeViewType = (viewType=null) => {
    if (!gpuModel)
       return;
-    
-   const viewType = document.getElementsByName("view_type");
-   if (viewType[0].checked)
-      gpuModel.MVPManager.viewType ="perspective";
-   else
-      gpuModel.MVPManager.viewType = "ortho";
+   
+   if (!viewType) {
+      const sceneElement = document.querySelector("[name='view_type'] .scene");
+      viewType = Array.from(sceneElement.classList).find(className => className !== 'scene');
+   }
+   gpuModel.MVPManager.viewType = viewType;
 }
   
 // Resets the model to its original position.

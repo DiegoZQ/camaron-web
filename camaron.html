@@ -13,29 +13,33 @@
     <link rel="stylesheet" type="text/css" href="css/main_renderers.css">
     <link rel="stylesheet" type="text/css" href="css/secondary_renderers.css">
     <link rel="stylesheet" type="text/css" href="css/modals.css">
+    <link rel="stylesheet" type="text/css" href="css/color_picker.css">
     <link rel="stylesheet" type="text/css" href="css/main_view.css">
+    <link rel="stylesheet" type="text/css" href="css/view_type.css">
     <link rel="stylesheet" type="text/css" href="css/anim.css">
 </head>
-
 
 <body onresize="rescaleView()">
     <header>
         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJiSURBVEhLtZa9ixNRFEcnmSSzSYgG1EJNCEhIwE6CRhAiqAgBEUXQUqwstLFSQfCPkAVTCxY2Yh3QQizSKQgqdjZaLYr4TTaeG8bdzLs3TmYze+Dw2528d998vDfzPKHdbt8hJq6tVqtPbpWj2WxW1cQnuInv+88Iq+EhTMRgMCgRqlapVPpARul0OrsJ1bhcLj8lkyJXpWphE02KuI5uhxe4EEEQPCfc/qLUnk+j0XhIqI6j0WgXGUsmk/lNRPpy7KP8hLG8wkhn/IUBziNgAGnj9pNai8Nk+0K4ReQxmGdeKBQeEW77SaVSOUYuDgOfJ1QhXMUILJt7hNVWaiQnl8vdIlRBlsUZckqxWKwTqg0nMyKX4h26RSX34d7Z4zNKn1RQS4yJ9IMTuOseDz2Hy8MtP0FYA1iexPTgDXaKsAbaMJ/Py51JnZU563Rq+NsKbhvmwMPhcCeZPrVaTd61c6+YiXaN3BYuoznoP+v1+mkyPXhJXCDMwQzlW5wKPhPHGuAnx/8Yx8XYL5Ef5lwovjaZTKzZWuXb+3k8Hqvby3v+LX1eh/8mp1qt3iDUFXHrZ1/+N1G1YU1fIZPDLL1KqIJ4Gzfodrs7wnd3RO7GezI5XJVszCLFGGCdjVyev132YKRt6EtcHJ6r+iLhNyygCVtk85Y3m82LZDz9fv8SoQr0er2zZByPUfXleR8m/8sBVB1RCi4Ej+Mr4fb/hPYSY/rnJFzZS70hkyAbQlWHE/pOmsgsVB1wPyaCQe4TVq2DuAlTX56fasizuU5uFXN/jkdwynG0GjzAZbG2TGue53l/AY8BXW4K+eFpAAAAAElFTkSuQmCC" id="icon" hidden />
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAoCAYAAABOzvzpAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wYMBSMf30D2PQAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAL4SURBVGje7VrtjuMgDMygvP8jn+9Hj8QYf0LaXd1upErdGBtjjGdMF8f9EPsO470mj8ZF+po80s/YQcb+2QcRvcYB6EqX8S6z5FyfjTmy+lwe6WtyY/5rDiK6dPj34ziOsysrAwYnHTlJo2qok/YjfS3zjPl9gywAapSVWaQjSKRl+onsZ+bPZrEaAL5DKzuYqCXVHS5lSB+T8V8NwMYOAYBbAyo7nFgs5rWN81ceLFbhr0QBKzpLKHD89CeKUkZOC/bh1Axa8H+ZxzR+BvvHqgGWnL/z9KP60p2VYxP2SfhGge80BaAXHqMAQZE/en66cwsBvHiAQAGSKKDJz2SxoewCVgPUnbOgzIO4HRRrzgJJo5neArwdUGxTge2luUDkn1sDjFTDbvTlWXwYli7/BCVOMdUsClSr7CqKfAIFfrH/qR1Gkgnu8ogdebj+toijcgy9k0dU5FUesXMfUOrHOcx9p6dVK7jRDUYZgk80Il4rrPg/B8CDKAfnyZA/V6geIEGWf+duP13s5cMFGkeJlCMEi0VWfNi+Vd1AierNMxURqNKt/mwe8I57+cytTSVDsoyOqhncsjgb4LzLIxJNFWV5hhMQ0wfP/zNbpJwADT+qGDyCMv18hmcYRY68Vtopri8YNHB8SjWvwm60sggWZ8kRELFUJ9q6IedGiKLFJ3hEWG0V+7AyzKPrVoAtHgOH0prp640x+nHrdwNs2FcLnbIG7zcLPMEDPoXTVRSo8pTf+wAjwnB2iJi+HEciwlxOhehLPctOZF/3rzk4yw7wn+GjGZ9lfEIpR6nxkHqzD/K9tH/Pf/sBGoqE3c+DpDO471HQjfd3dbkXkHvHu56lz4Pyks8y7kP/e/r/ABaIf0RmNDRPTgDaNIklj3f5UOyA7MVnO86mZm9z+v0phfTJb9k4yXgmu9xzkH+09BaLIC1g3hzaM90H1Pt5KwPmAOoZEu8mD/6YCTRliWVPHsMizkYVftpxBWffjwIsMLA2QNaJ/4gMrMHgXz+7YdShBBm4AAAAAElFTkSuQmCC" id="alfa" hidden />
         <div class="autogrid">
             <!-- Import-Export buttons -->
             <div class="autogrid">
                 <!-- Import model -->
-                <a id="import_b" class="tooltiped" data-tooltip="Import Model">
-                    <input id="import_e" hidden type="file" id="model_file" multiple accept=".off, .poly, .node, .ele, .face, .visf"/>
-                    <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <g id="icon_export" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <polygon id="Fill-1" fill="#0F9DDD" points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
-                            <path d="M33.9530607,15 L25.5745235,15 L25.5745235,17.1066911 L32.9061214,17.1066911 L32.9061214,33.8943227 L13.0928709,33.8943227 L13.0928709,17.1066911 L21.0119238,17.1066911 L21.0119238,15 L12.0459316,15 C11.4685532,15 11,15.4714203 11,16.0533456 L11,34.9466544 C11,35.5295935 11.4685532,36 12.0459316,36 L33.9530607,36 C34.5304392,36 35,35.5295935 35,34.9466544 L35,16.0533456 C35,15.4714203 34.5304392,15 33.9530607,15" id="Fill-1" fill="#0F9DDD"></path>
-                        </g>
-                    </svg>
+                <a class="tooltiped" data-tooltip="Import Model">
+                    <label>
+                        <input hidden type="file" multiple accept=".off, .poly, .node, .ele, .face, .visf" onchange="uploadFileHandler(this)"/>
+                        <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="icon_export" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <polygon id="Fill-1" fill="#0F9DDD" points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
+                                <path d="M33.9530607,15 L25.5745235,15 L25.5745235,17.1066911 L32.9061214,17.1066911 L32.9061214,33.8943227 L13.0928709,33.8943227 L13.0928709,17.1066911 L21.0119238,17.1066911 L21.0119238,15 L12.0459316,15 C11.4685532,15 11,15.4714203 11,16.0533456 L11,34.9466544 C11,35.5295935 11.4685532,36 12.0459316,36 L33.9530607,36 C34.5304392,36 35,35.5295935 35,34.9466544 L35,16.0533456 C35,15.4714203 34.5304392,15 33.9530607,15" id="Fill-1" fill="#0F9DDD"></path>
+                            </g>
+                        </svg>
+                    </label>
                 </a>
                 <!-- Export model -->
-                <a class="tooltiped hidden" data-tooltip="Export Model">
+                <a id="export_button" class="tooltiped" data-tooltip="Export Model">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <g id="icon_import" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <polygon id="Fill-1" fill="#0F9DDD" transform="translate(23.250500, 16.889000) scale(1, -1) translate(-23.250500, -16.889000) " points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
@@ -114,66 +118,48 @@
             <!-- Secondary Renderers -->
             <div class="autogrid">
                 <a class="open-menu">
-                    <i class="material-icons tooltiped" data-tooltip="Show">keyboard_arrow_down</i>
+                    <i class="tooltiped material-icons" data-tooltip="Show">keyboard_arrow_down</i>
                     <ul class="submenu">
                         <!-- Wire Renderer -->
-                        <li class="active">
-                            <label class="checkmenu">
-                                <input class="hidden" type="checkbox" name="secondary_renderer" value="WireFrame" onchange="setSecondaryRenderers(); draw();">
-                                <div class="label">
-                                    <img src="img/icon-wireframe.svg"/>
-                                    <span>Wireframe</span>
-                                </div>
-                            </label>
+                        <li id="wireframe_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                            <div class="label">
+                                <img src="img/icon-wireframe.svg"/>
+                                <span>Wireframe</span>
+                            </div>
                         </li>
                         <!-- Vertex Cloud Renderer -->
-                        <li>
-                            <label class="checkmenu">
-                                <input class="hidden" type="checkbox" name="secondary_renderer" value="VertexCloud" onchange="setSecondaryRenderers(); draw();">
-                                <div class="label">
-                                    <img src="img/icon-vertex-cloud.svg"/>
-                                    <span>Vertex cloud</span>
-                                </div>
-                            </label>
+                        <li id="vertex_cloud_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                            <div class="label">
+                                <img src="img/icon-vertex-cloud.svg"/>
+                                <span>Vertex cloud</span>
+                            </div>
                         </li>
                         <!-- Face Normals Renderer -->
-                        <li>
-                            <label class="checkmenu">
-                                <input class="hidden" type="checkbox" name="secondary_renderer" value="FaceNormals" onchange="setSecondaryRenderers(); draw();">
-                                <div class="label">
-                                    <img src="img/icon-face-normals.svg"/>
-                                    <span>Face normals</span>
-                                </div>
-                            </label>
+                        <li id="face_normals_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                            <div class="label">
+                                <img src="img/icon-face-normals.svg"/>
+                                <span>Face normals</span>
+                            </div>  
                         </li>
                         <!-- Vertex Normals Renderer -->
-                        <li>
-                            <label class="checkmenu">
-                                <input class="hidden" type="checkbox" name="secondary_renderer" value="VertexNormals" onchange="setSecondaryRenderers(); draw();">
-                                <div class="label">
-                                    <img src="img/icon-vertex-normals.svg"/>
-                                    <span>Vertex normals</span>
-                                </div>
-                            </label>
+                        <li id="vertex_normals_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">   
+                            <div class="label">
+                                <img src="img/icon-vertex-normals.svg"/>
+                                <span>Vertex normals</span>
+                            </div>
                         </li>
                         <!-- Not finished renderers -->
                         <li class="hidden">
-                            <label class="checkmenu">
-                                <input class="hidden" type="checkbox" name="render">
-                                <div class="label">
-                                    <img src="img/icon-face-id.svg"/>
-                                    <span>Face IDs</span>
-                                </div>
-                            </label>
+                            <div class="label">
+                                <img src="img/icon-face-id.svg"/>
+                                <span>Face IDs</span>
+                            </div>
                         </li>
-                        <li class="hidden">
-                            <label class="checkmenu">
-                                <input class="hidden" type="checkbox" name="render">
-                                <div class="label">
-                                    <img src="img/icon-vertex-id.svg"/>
-                                    <span>Vertex IDs</span>
-                                </div>
-                            </label>
+                        <li class="hidden" id="vertex_id_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                            <div class="label">
+                                <img src="img/icon-vertex-id.svg"/>
+                                <span>Vertex IDs</span>
+                            </div>
                         </li>  
                     </ul>
                 </a>
@@ -181,7 +167,7 @@
             <!-- View buttons -->
             <div class="autogrid">
                 <!-- Set colors button -->
-                <a class="tooltiped modal-trigger hidden" data-tooltip="Set Colors" data-modal="modal-colors">
+                <a class="tooltiped modal-trigger" data-tooltip="Set Colors" data-modal="modal-colors">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <g id="icon_colors" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <path d="M15.7,9 L30.6,23.7111846 C31.575,24.6738292 31.575,26.237124 30.6,27.1997686 L21.4332812,36.2502479 C20.95,36.7357355 20.3082812,36.974314 19.6666406,36.974314 C19.025,36.974314 18.3833594,36.7356584 17.9,36.2502479 L8.73335937,27.1997686 C7.75835937,26.237124 7.75835937,24.6738292 8.73335937,23.7111846 L17.3082812,15.2448485 L13.3416406,11.3284738 L15.7,9 Z M11.675,25.455438 L27.6582812,25.455438 L19.6666406,17.5732452 L11.675,25.455438 Z M34.6666406,27.9237576 C34.6666406,27.9237576 38,31.4863912 38,33.6831956 C38,35.5014986 36.5083594,36.974314 34.6666406,36.974314 C32.8249219,36.974314 31.3332812,35.5014986 31.3332812,33.6831956 C31.3332812,31.4863912 34.6666406,27.9237576 34.6666406,27.9237576 Z" id="Shape" fill="#0F9DDD" fill-rule="nonzero"></path>
@@ -225,8 +211,8 @@
             <div class="model-opt">
                 <!-- Model projection -->
                 <div class="tooltiped" data-tooltip="Projection">
-                    <a id="view_b" class="view-opt">
-                        <div class="scene pers">
+                    <a name="view_type" class="view-opt" onclick="togglePerspective(this)">
+                        <div class="scene perspective">
                             <div class="cube">
                                 <div class="face top"></div>
                                 <div class="face left"></div>
@@ -424,11 +410,6 @@
                 <button class="btn min">Evaluate</button>
             </div>
         </div>
-
-        <div hidden>
-            
-            <input id="view_e" hidden name="view_type" value="perspective" onchange="changeViewType(); draw();" type="checkbox" checked />
-        </div>
     </section>
     
     <div id="modal-colors" class="modal">
@@ -441,36 +422,57 @@
                 <div class="modal-body">
                     <div class="grid g2 flex-top">
                         <ul class="ui-list">
-                            <li class="active">
+                            <li id="background_color" name="interface_color" class="active">
                                 <span>Background</span>
-                                <div class="color-indicator" style="background-color:#FFA0B6;"></div>
+                                <div class="color-indicator" style="background-color:#EDEDED;"></div>
                             </li>
-                            <li>
+                            <li id="main_render_color" name="interface_color">
                                 <span>Main render</span>
-                                <div class="color-indicator" style="background-color:#666;"></div>
+                                <div class="color-indicator" style="background-color:rgb(179,179,179);"></div>
                             </li>
-                            <li>
+                            <li id="wireframe_color" name="interface_color">
                                 <span>Wireframe</span>
-                                <div class="color-indicator" style="background-color:#bba0ef;"></div>
+                                <div class="color-indicator" style="background-color:rgb(0,0,0);"></div>
                             </li>
-                            <li>
+                            <li id="face_normals_color" name="interface_color">
                                 <span>Face normals</span>
-                                <div class="color-indicator" style="background-color:#a0fff4;"></div>
+                                <div class="color-indicator" style="background-color:rgb(37,158,28);"></div>
                             </li>
-                            <li>
+                            <li id="vertex_normals_color" name="interface_color">
                                 <span>Vertex normals</span>
-                                <div class="color-indicator" style="background-color:#ffd7a0;"></div>
+                                <div class="color-indicator" style="background-color:rgb(255, 0, 0);"></div>
                             </li>
-                            <li>
-                                <span>Face ID</span>
-                                <div class="color-indicator" style="background-color:#a0c5ff;"></div>
+                            <li id="vertex_cloud_color" name="interface_color">
+                                <span>Vertex cloud</span>
+                                <div class="color-indicator" style="background-color:rgb(0,0,255);"></div>
                             </li>
-                            <li>
-                                <span>Vertes ID</span>
-                                <div class="color-indicator" style="background-color:#fff;"></div>
-                            </li>
+                            <div hidden>
+                                <li id="face_id_color" name="interface_color"> 
+                                    <span>Face ID</span>
+                                    <div class="color-indicator" style="background-color:#a0c5ff;"></div>
+                                </li>
+                                <li id="vertex_id_color" name="interface_color">
+                                    <span>Vertex ID</span>
+                                    <div class="color-indicator" style="background-color:#fff;"></div>
+                                </li>
+                            </div>
                         </ul>
-                        <div class="picker"></div>
+                        <div class="picker">
+                            <div class="color_picker_dialog" draggable="false">
+                                <div class="hue_bar">
+                                    <div class="hue_picker">  </div>
+                                </div>
+                                <div class="sat_rect" draggable="false">
+                                    <div class="white"></div>
+                                    <div class="black"></div>
+                                    <div class="sat_picker"></div>
+                                </div>
+                                <div class="bottom">
+                                    <div class="color_preview"></div>
+                                    <input type="text" onkeyup="changeHex(this.value)" value="#FF0000" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -578,6 +580,7 @@
     <script type="text/javascript" src="js/rendering/secondary-renderers/VCloudRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/VNormalsRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/WireRenderer.js"></script>
+    <!-- <script type="text/javascript" src="js/rendering/secondary-renderers/VertexIdRenderer.js"></script>  -->
     <!-- Selection -->
     <script type="text/javascript" src="js/selection/SelectionStrategy.js"></script>
     <script type="text/javascript" src="js/selection/AngleSelectionStrategy.js"></script>
@@ -598,6 +601,8 @@
     <script type="text/javascript" src="js/camaron/selection.js"></script>
     <script type="text/javascript" src="js/camaron/evaluation.js"></script>
     <script type="text/javascript" src="js/camaron/model-uploader.js"></script>
+    <script type="text/javascript" src="js/camaron/model-downloader.js"></script>
+    <script type="text/javascript" src="js/camaron/color_picker.js"></script>
     <script type="text/javascript" src="js/camaron/camaron.js"></script>
     <script type="text/javascript" src="js/camaron/sitio.js"></script>
     

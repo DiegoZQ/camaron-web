@@ -7,6 +7,6 @@ class PolygonMesh extends VertexCloud {
    constructor() {
       super();
       this.modelType = 'PolygonMesh';
-      this.polygons = null;
+      this.polygons = [];
    }
 }

@@ -55,8 +55,8 @@ header .submenu .label {
     transition: all .3s; 
 }
 
-/* Adds a check icon at the end of label class when checkbox is checked */
-header .submenu .checkmenu input[type="checkbox"]:checked ~ .label:after {
+/* Adds a check icon at the end of label class when renderer is active */
+header .submenu .active .label:after {
     content: 'check';
     font-family: 'Material Icons';
     text-transform: none;
@@ -78,8 +78,8 @@ header .submenu .label img {
     margin-right: 13px; 
 }
 
-/* Adds a selected style to a selectable renderer and selectable renderer on hover when the hidden checkbox input is checked */
-header .submenu .checkmenu input[type="checkbox"]:checked ~ .label, header .submenu .checkmenu input[type="checkbox"]:checked ~ .label:hover {
+/* Adds a selected style to a selectable renderer and selectable renderer on hover when renderer is active */
+header .submenu .active .label, header .submenu .active .label:hover {
     background-color: #ffedf1;
     color: #666666; 
 }

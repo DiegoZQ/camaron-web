@@ -6,7 +6,7 @@
 class ModelLoadStrategy {
    constructor(fileArray) {
       this.fileArray = this.normalizeFileArray(fileArray);
-      this.isValid = true;
+      this.isValid = null;
       this.cpuModel = null;
    }
 
@@ -31,14 +31,10 @@ class ModelLoadStrategy {
       // this.calculateVertexNormals(polygonMesh);
    }
 
-   _load(fun) {
+   load(fun) {
       try {
          fun();
-         this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
-         if (this.cpuModel.modelType === 'PSLG') {
-            this.cpuModel.edges = new Array(...Object.values(this.cpuModel.edges));
-            this.cpuModel.holes = new Array(...Object.values(this.cpuModel.holes));
-         }
+         this.isValid = true;
       } catch (error) {
          this.isValid = false;
          this.cpuModel = null;
@@ -48,35 +44,42 @@ class ModelLoadStrategy {
    }
 
    // Carga todos los vértices del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
-   _loadModelVertices(numVertices, startIndex, vertexIndices=false) {
+   loadModelVertices(numVertices, startIndex, dimensions=3, vertexIndices=false) {
       if (startIndex + numVertices > this.fileArray.length) {
          throw new Error('vertexCountError');
       }
-      const bounds = new Float32Array(6);
-      //const vertices = new Array(numVertices);
-      const vertices = {};
-      for (let i = 0; i < numVertices; i++) {
-         const line = this.fileArray[startIndex + i];
-         const lineWords = getLineWords(line);
-         let x, y, z;
+      if (![2, 3].includes(dimensions)) {
+         throw new Error('vertex invalid dimensions');
+     }
 
-         if (vertexIndices) {
-            if (lineWords.length != 4)
-               throw new Error('VertexDimensionError');
-            const [index, _x, _y, _z] = lineWords.map(parseFloat);
-            x = _x;
-            y = _y;
-            z = _z;
-            vertices[parseInt(index)] = new Vertex(parseInt(index), x, y, z);
-         } else {
-            if (lineWords.length != 3)
-               throw new Error('VertexDimensionError');
-            const [_x, _y, _z] = lineWords.map(parseFloat);
-            x = _x;
-            y = _y;
-            z = _z;
-            vertices[i] = new Vertex(i + 1, x, y, z);
+      const bounds = new Float32Array(6);
+      const vertices = {};
+
+      for (let i = 0; i < numVertices; i++) {
+         const lineWords = getLineWords(this.fileArray[startIndex + i]);
+         if ((vertexIndices && lineWords.length < dimensions + 1) || (!vertexIndices && lineWords.length < dimensions)) {
+            throw new Error('VertexDimensionError');
          }
+
+         let index, id, x, y, z = 0;
+         if (vertexIndices) {
+            index = parseInt(lineWords[0]);
+            id = index;
+            if (dimensions === 2) {
+               [x, y] = lineWords.slice(1, dimensions + 1).map(parseFloat);
+            } else {
+               [x, y, z] = lineWords.slice(1, dimensions + 1).map(parseFloat);
+            }
+         } else {
+            if (dimensions === 2) {
+               [x, y] = lineWords.slice(0, dimensions).map(parseFloat);
+            } else {
+               [x, y, z] = lineWords.slice(0, dimensions).map(parseFloat);
+            }
+            index = i;
+            id = index + 1;
+         }
+         vertices[index] = new Vertex(id, x, y, z);
 
          if (bounds.every(value => value === 0)) 
             bounds.set([x, y, z, x, y, z]);       
@@ -89,17 +92,13 @@ class ModelLoadStrategy {
             bounds[5] = Math.max(bounds[5], z);
          }
       }
-      //this.cpuModel.vertices = new Array(...Object.values(vertices));
       this.cpuModel.vertices = vertices;
       this.cpuModel.bounds = bounds;
       return startIndex + numVertices;
    }
 
-   // Carga todos los lados del modelo partiendo por una cantidad de lados a leer y un índice de inicio.
-
-
    // Carga todos los polígonos del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
-   _loadModelPolygons(numPolygons, startIndex, polygonIndices=null) {
+   loadModelPolygons(numPolygons, startIndex, polygonIndices=null) {
       if (startIndex + numPolygons > this.fileArray.length) {
          throw new Error('polygonCountError');
       }
@@ -116,7 +115,6 @@ class ModelLoadStrategy {
          for(let j = 1; j <= sidesCount; j++) {
             const vertexIndex = parseInt(lineWords[j]);
             const vertex = this.cpuModel.vertices[vertexIndex];
-
             // agrega cada vértice a los vértices del polígono
             polygon.vertices.push(vertex);
             // y agrega el nuevo polígono como parte de los polígonos de cada vértice
@@ -126,5 +124,37 @@ class ModelLoadStrategy {
       }
       this.cpuModel.polygons = polygons;
       return polygonIndices ? polygonIndices[polygonIndices.length-1] + 1 : startIndex + numPolygons;
+   }
+
+   _exportToOff() {
+      return this.fileArray.join('\n');
+   }
+
+   _exportToPoly() {
+      return this.fileArray.join('\n');
+   }
+
+   _exportToVisf() {
+      return this.fileArray.join('\n');
+   }
+
+   export(format) {
+      if (!this.isValid) {
+         throw new Error('Model is not valid');
+      }
+
+      let header = '# Generated by Camaron Web\n';
+
+      if (format === 'off') {
+         return header + this._exportToOff();
+      }
+      if (format === 'poly') {
+         return header + this._exportToPoly();
+      }
+      if (format === 'visf') {
+         return header + this._exportToVisf();
+      }
+
+      throw new Error('Unknown export format');
    }
 }

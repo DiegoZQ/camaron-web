@@ -7,6 +7,6 @@ class PolyhedronMesh extends PolygonMesh {
    constructor() {
       super();
       this.modelType = 'PolyhedronMesh';
-      this.polyhedrons = null;
+      this.polyhedrons = [];
    }
 }

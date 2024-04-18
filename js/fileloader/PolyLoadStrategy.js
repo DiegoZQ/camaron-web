@@ -11,44 +11,33 @@ class PolyLoadStrategy extends ModelLoadStrategy {
     // https://wias-berlin.de/software/tetgen/fformats.poly.html
     // https://people.sc.fsu.edu/~jburkardt/data/poly/poly.html
     load() {
-        return this._load(() => {
-            let [startIndex, dimensions] = this.loadModelVertices();
-            if (this.cpuModel.modelType === 'PSLG') {
+        return super.load(() => {
+            const [numVertices, dimensions] = this.loadModelHeader();
+            if (dimensions == 2) {
+                this.cpuModel = new PSLG();
+                let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
                 startIndex = this.loadModelEdges(startIndex);
                 this.loadModelHoles(startIndex, dimensions);
             } else {
+                this.cpuModel = new PolygonMesh();
+                let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
                 this.loadModelPolygons(startIndex);
             }
+            this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
         });
     }
 
-   // Carga los vértices del modelo tomando sus coordenadas x, y, z. Si tiene 2 dimensiones, agrega z=0 como la tercera dimensión.
-    loadModelVertices() {
+    loadModelHeader() {
         const vertexLineWords = getLineWords(this.fileArray[0]);
-        if ((vertexLineWords.length < 2 || vertexLineWords.length > 4) || !isPositiveInteger(vertexLineWords[0]) || !['2', '3'].includes(vertexLineWords[1])) {
+        if (![2,3,4].includes(vertexLineWords.length) || !isPositiveInteger(vertexLineWords[0]) || !['2', '3'].includes(vertexLineWords[1])) {
             throw new Error('Vertex format error');
         }
+        return [parseInt(vertexLineWords[0]), parseInt(vertexLineWords[1])];
+    }
 
-        const [numVertices, dimensions] = [parseInt(vertexLineWords[0]), parseInt(vertexLineWords[1])];
-
-        if (dimensions == 2) {
-            this.cpuModel = new PSLG();
-        } else {
-            this.cpuModel = new PolygonMesh();
-        }
-        const startIndex = 1;
-        if (startIndex + numVertices > this.fileArray.length) {
-            throw new Error('vertexCountError');
-        }
-
-        for (let i = 0; i < numVertices; i++) {
-            let vertexData = getLineWords(this.fileArray[startIndex + i]).slice(0, dimensions+1);
-            if (dimensions === 2) {
-                vertexData.push(0);
-            }
-            this.fileArray[startIndex + i] = vertexData.join(' ');
-        }        
-        return [super._loadModelVertices(numVertices, startIndex, true), dimensions];
+   // Carga los vértices del modelo tomando sus coordenadas x, y, z. Si tiene 2 dimensiones, agrega z=0 como la tercera dimensión.
+    loadModelVertices(numVertices, startIndex, dimensions) {  
+        return super.loadModelVertices(numVertices, startIndex, dimensions, true);
     }
 
     // Carga todos los lados del modelo partiendo por un índice de inicio.
@@ -81,7 +70,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
    
             edges[parseInt(index)] = new Edge(parseInt(index), vertex1, vertex2);
         }
-        this.cpuModel.edges = edges;
+        this.cpuModel.edges = new Array(...Object.values(edges));
         return startIndex + numEdges;
     }
 
@@ -89,7 +78,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
     // sin ningún valor adicional en la misma línea.
     loadModelPolygons(startIndex) {
         const polygonLineWords = getLineWords(this.fileArray[startIndex]);
-        if (polygonLineWords.length != 2 || !isPositiveInteger(polygonLineWords[0])) {
+        if (![1,2].includes(polygonLineWords.length) || !isPositiveInteger(polygonLineWords[0])) {
             throw new Error('polygonError');
         }
         const numFacets = parseInt(polygonLineWords[0]);
@@ -103,15 +92,17 @@ class PolyLoadStrategy extends ModelLoadStrategy {
                 throw new Error('Facet format error');
             }
             if (facetLineWords[1] && facetLineWords[1] != '0') {
-                console.warn('Warning: Holes not supported');
+                console.warn('Warning: Facet Holes not supported');
             }
             const facetPolygonCount = parseInt(facetLineWords[0]);
             const facetHoleCount = facetLineWords[1] ? parseInt(facetLineWords[1]) : 0;
 
+
+
             polygonIndices.push(...range(startIndex + offset + 1, startIndex + offset + 1 + facetPolygonCount));
             offset += 1 + facetPolygonCount + facetHoleCount;
         }
-        return super._loadModelPolygons(polygonIndices.length, null, polygonIndices);
+        return super.loadModelPolygons(polygonIndices.length, null, polygonIndices);
     }
 
     loadModelHoles(startIndex, dimensions) {
@@ -140,7 +131,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             }
             holes[id] = new Hole(id, ...holeCoords);;
         }
-        this.cpuModel.holes = holes;
+        this.cpuModel.holes = new Array(...Object.values(holes));
         return startIndex + numHoles;
     }
 } 

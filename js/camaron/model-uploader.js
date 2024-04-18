@@ -73,8 +73,6 @@ const loadGpuModel = () => {
 
 // Here is were everything gets initialized.
 const uploadFileHandler = (file) => {
-    
-   const handler = () => {
       if (!file.files.length)
          return;
       const fileName = file.files[0].name.split('.');
@@ -90,7 +88,7 @@ const uploadFileHandler = (file) => {
             updateActiveSelections();
 
             const fileArray = event.target.result.split('\n');
-            const loader = selectLoadingStrategy(extension, fileArray);
+            loader = selectLoadingStrategy(extension, fileArray);
 
             if (loader) {
                cpuModel = loader.load();
@@ -107,6 +105,5 @@ const uploadFileHandler = (file) => {
       const reader = new FileReader();
       reader.onloadend = handleFileLoad;
       reader.readAsText(file.files[0]);
-   }
-   return handler;
+   
 }

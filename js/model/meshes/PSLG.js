@@ -6,7 +6,7 @@ class PSLG extends VertexCloud {
     constructor() {
         super();
         this.modelType = 'PSLG';
-        this.edges = null;
-        this.holes = null;
+        this.edges = [];
+        this.holes = [];
     }
 }

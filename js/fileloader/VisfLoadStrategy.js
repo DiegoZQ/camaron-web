@@ -10,36 +10,40 @@
 class VisfLoadStrategy extends ModelLoadStrategy {
    // https://repositorio.uchile.cl/bitstream/handle/2250/191821/Generador-de-mallas-de-poliedros-en-tres-dimensiones.pdf?sequence=5&isAllowed=y
    load() {
-      return this._load(() => {
-         const meshType = this.loadModelHeaders();
-         if (meshType == '0') {
+      return super.load(() => {
+         const meshType = this.loadModelHeader();
+         // Vertex cloud
+         if (meshType === 0) {
             this.cpuModel = new VertexCloud();
             this.loadModelVertices(1);
          }
-         if (meshType == '1') {
+         // Polygonal mesh
+         else if (meshType === 1) {
             this.cpuModel = new PolygonMesh();
             const polygonStartIndex = this.loadModelVertices(1);
             this.loadModelPolygons(polygonStartIndex);
-         } else if (meshType == '2') {
+         }
+         // Polyhedral mesh
+         else if (meshType === 2) {
             this.cpuModel = new PolyhedronMesh();
             const polygonStartIndex = this.loadModelVertices(1);
             const polyhedronStartIndex = this.loadModelPolygons(polygonStartIndex);
             this.loadModelPolyhedrons(polyhedronStartIndex);
          } else {
-            // Si es 0 no lo soporta pq no está diseñado para renderizar sólo nubes de puntos
-            throw new Error('meshTypeError');
+            throw new Error('mesh type error');
          }
+         this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
       });
    }
 
    // Lee el header del .ViSF y si no encuentra el formato conocido para la lectura del modelo en ASCII (primer valor == 2),
    // arroja un error.
-   loadModelHeaders() {
+   loadModelHeader() {
       const headerLineWords = getLineWords(this.fileArray[0]);
-      if (headerLineWords[0] != '2' || headerLineWords.length != 2) {
+      if (headerLineWords.length != 2 || headerLineWords[0] != '2' || !['0', '1', '2'].includes(headerLineWords[1])) {
          throw new Error('headerError');
       }
-      return headerLineWords[1];
+      return parseInt(headerLineWords[1]);
    }
 
    // Carga los vértices del modelo si el número de vértices es un entero positivo válido y está ubicado al inicio de la lectura,
@@ -51,7 +55,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
       }
       startIndex++;
       const numVertices = parseInt(vertexLineWords[0]);
-      return super._loadModelVertices(numVertices, startIndex);
+      return super.loadModelVertices(numVertices, startIndex);
    }
 
    // Carga los polígonos del modelo si el número de polígonos es un entero positivo válido y está ubicado al inicio de la lectura,
@@ -63,7 +67,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
       }
       startIndex++;
       const numPolygons = parseInt(polygonLineWords[0]);
-      return super._loadModelPolygons(numPolygons, startIndex);
+      return super.loadModelPolygons(numPolygons, startIndex);
    }
 
    // Carga los poliedros del modelo si el número de poliedros es un entero positivo válido y está ubicado al inicio de la lectura,

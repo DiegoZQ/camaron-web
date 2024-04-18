@@ -12,6 +12,7 @@
 
 let cpuModel = null;
 let gpuModel = null;
+let loader = null;
 let mainRenderer = null;
 let secondaryRenderers = [];
 
@@ -48,28 +49,36 @@ const draw = () => {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
-  if (mainRenderer)
+  if (mainRenderer) {
     mainRenderer.draw();
-  for (const secondaryRenderer of secondaryRenderers)
+  }
+  for (const secondaryRenderer of secondaryRenderers) {
     secondaryRenderer.draw();
+  }
 }
 
 /*--------------------------------------------------------------------------------------
 --------------------------------- BUTTONS INTERACTIONS ---------------------------------
 --------------------------------------------------------------------------------------*/
 
-// Upload model button
-const realFileButton = document.getElementById('import_e');
-const fancyFileButton = document.getElementById('import_b');
-// The onchange event is triggered on the input when a file is selected.
-realFileButton.onchange = uploadFileHandler(realFileButton);
-// Binds the design button, with the actual input type file button.
-fancyFileButton.onclick = () => realFileButton.click();
+// Download model button
+const exportFileButton = document.getElementById('export_button');
+exportFileButton.onclick = downloadFileHandler;
 
 // view button
-const realViewButton = document.getElementById('view_e');
-const fancyViewButton = document.getElementById('view_b');
-fancyViewButton.onclick = () => realViewButton.click();
+function togglePerspective(e) {
+  const scene = e.querySelector('.scene');
+  if (scene.classList.contains('perspective')) {
+    scene.classList.remove('perspective');
+    scene.classList.add('ortho');
+    changeViewType('ortho');
+  } else {
+    scene.classList.remove('ortho');
+    scene.classList.add('perspective');
+    changeViewType('perspective');
+  }
+  draw();
+}
 
 // main renderer handler
 function mainRendererOnClick(clickedRenderer) {
@@ -80,6 +89,16 @@ function mainRendererOnClick(clickedRenderer) {
     setMainRenderer(clickedRenderer);
     draw();
   }
+}
+
+function secondaryRendererOnClick(clickedRenderer) {
+  if (clickedRenderer.classList.contains('active')) {
+    clickedRenderer.classList.remove('active');
+  } else {
+    clickedRenderer.classList.add('active');
+  }
+  setSecondaryRenderers();
+  draw();
 }
 
 // selection button

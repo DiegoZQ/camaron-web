@@ -133,21 +133,18 @@ $( document ).ready(function() {
     $('#tab-history i.material-icons').on('click', function(){
         $(this).parent().remove();
     });
-    
-    $('.view-opt').on('click', function(){ 
-        $(this).find('.scene').toggleClass('pers');
-    });  
-    
     // Modal
     
 	$('.modal-trigger').click(function(){
 		var href = $(this).attr('data-modal');
 		$('#' + href).fadeIn().addClass('active');
 		$('#' + href).find('.modal-container').removeClass('bottom-out').addClass('bottom-in');
+        $('#' + href).trigger('shown');
 	});
     $('.modal').click(function(){
         if ($(this).hasClass('active')) {
             $(this).delay(150).fadeOut().removeClass('active');$('.modal-container').toggleClass('bottom-in bottom-out');
+            $(this).trigger('hidden');
         }
     }).find('.modal-container').click(function(e) {
             return false;
@@ -155,6 +152,7 @@ $( document ).ready(function() {
 	$('.modal-close').click(function(){
 		$('.modal.active').delay(150).fadeOut().removeClass('active');
 		$('.modal-container').toggleClass('bottom-in bottom-out');
+        $(this).trigger('hidden');
 	});
     
 });// fin del document ready

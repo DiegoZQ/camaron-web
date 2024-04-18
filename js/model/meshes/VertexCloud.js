@@ -7,6 +7,6 @@ class VertexCloud extends CPUModel {
     constructor() {
         super();
         this.modelType = 'VertexCloud';
-        this.vertices = null;
+        this.vertices = [];
     }
 }
