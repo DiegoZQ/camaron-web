@@ -45,6 +45,7 @@ const selectLoadingStrategy = (extension, fileArray) => {
 const waitForGpuModelLoaded = () => {
    // If its fully loaded, sets the renderers
    if (gpuModel && gpuModel.loaded) {
+      setUIStartConfiguration();
       setMainRenderer();
       setSecondaryRenderers();
       updateInfo();

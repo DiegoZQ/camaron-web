@@ -1,0 +1,87 @@
+/* base.css */
+
+
+/* Base header properties */
+header {
+    background-color: white;
+    box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.03);
+    display: grid;
+    grid-template-columns: repeat(9, 1fr) repeat(3, 100px);
+    padding: 15px;
+    grid-gap: 15px; 
+}
+
+header .tooltiped:before {
+    transform: translate(-50%, 100%); 
+} 
+header .tooltiped:hover:before {
+    transform: translate(-50%, 150%); 
+}
+
+/* Add style to direct autogrid children of header */
+header > .autogrid {
+    grid-column: 1/10;
+    grid-gap: 0; 
+}
+header > .autogrid .autogrid:not(:last-child) {
+  border-right: 2px solid #e2e2e2; }
+header > .autogrid .autogrid {
+  justify-content: space-evenly;
+  padding: 0 15px; 
+}
+/* Add position relative to all autogrids */
+header .autogrid {
+    position: relative; 
+}
+
+/* Add anchor style and hover style */ 
+header a {
+    font-size: 32px;
+    line-height: 0;
+    padding: 0px;
+    border-radius: 10px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+header a:hover {
+    background-color: #E4F7FF;
+    opacity: 1; 
+}
+/* Make every svg inside of anchor color light blue and blue on hover except btn-faces and btn-vertex */ 
+header a:not(.btn-faces):not(.btn-vertex) polygon,
+header a:not(.btn-faces):not(.btn-vertex) path {
+    fill: #62C5E8; 
+}
+header a:not(.btn-faces):not(.btn-vertex):hover polygon,
+header a:not(.btn-faces):not(.btn-vertex):hover path {
+    fill: #0F9DDD; 
+}
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover polygon,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover path {
+    fill: #62C5E8; 
+}
+
+/* Add style for disabled anchors */ 
+header a.disabled, 
+header .btn-vertex.disabled, 
+header .btn-faces.disabled {
+  cursor: default;
+  background-color: transparent !important; 
+}
+/* Reduce disabled anchors opacity */ 
+header a.disabled > *:not(.submenu) {
+    opacity: .6; 
+}
+/* Make disabled anchor use light blue instead of blue on hover */ 
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover polygon,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover path {
+    fill: #62C5E8; 
+}
+/* Apply a grayscale filter to all disabled anchor svgs */ 
+header a.disabled path, 
+header a.disabled polygon {
+    filter: grayscale(100%);
+}

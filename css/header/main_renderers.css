@@ -1,9 +1,24 @@
 /* main_renderers.css */
 
 
+/* Add style for active main renderer anchors and svgs */
+header a[name="main_renderer"].active, 
+header a[name="main_renderer"].active:hover {
+    background-color: #ffedf1;
+    opacity: 1; 
+}
+header a[name="main_renderer"].active polygon, 
+header a[name="main_renderer"].active path, 
+header a[name="main_renderer"].active:hover polygon, 
+header a[name="main_renderer"].active:hover path {
+    fill: #ff7091; 
+}
+
 /* Reduce opacity of Direct Face Renderer and Direct Vertex Renderer */
 header .btn-vertex,
-header .btn-faces {
+header .btn-faces,
+header .btn-vertex.disabled,
+header .btn-faces.disabled {
     opacity: .8; 
 }
 

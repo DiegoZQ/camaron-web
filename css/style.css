@@ -53,70 +53,7 @@ button {
   display: none; }
 
 /* Home */
-header {
-  background-color: white;
-  box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.03);
-  display: grid;
-  grid-template-columns: repeat(9, 1fr) repeat(3, 100px);
-  padding: 15px;
-  grid-gap: 15px; }
-  header a {
-    font-size: 32px;
-    line-height: 0;
-    padding: 0px;
-    border-radius: 10px;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    justify-content: center;
-    align-items: center; }
-  header a:not(.btn-faces):not(.btn-vertex) polygon, header a:not(.btn-faces):not(.btn-vertex) path {
-    fill: #62C5E8; }
-  header a:not(.btn-faces):not(.btn-vertex):hover polygon, header a:not(.btn-faces):not(.btn-vertex):hover path {
-    fill: #0F9DDD; }
-  header a:not(.btn-faces):not(.btn-vertex).active polygon, header a:not(.btn-faces):not(.btn-vertex).active path, header a:not(.btn-faces):not(.btn-vertex).active:hover polygon, header a:not(.btn-faces):not(.btn-vertex).active:hover path {
-    fill: #ff7091; }
-  header a.active, header a:hover.active {
-    color: #ff7091;
-    background-color: #ffedf1;
-    opacity: 1; }
-    header a.active polygon, header a.active path, header a:hover.active polygon, header a:hover.active path {
-      fill: #ff7091; }
-  header a:hover {
-    color: #0F9DDD;
-    background-color: #E4F7FF;
-    fill: #0F9DDD;
-    opacity: 1; }
-  header a.disabled, header .btn-vertex.disabled, header .btn-faces.disabled {
-    cursor: default;
-    color: black;
-    background-color: transparent; }
-    header a.disabled > *:not(.submenu), header .btn-vertex.disabled > *:not(.submenu), header .btn-faces.disabled > *:not(.submenu) {
-      opacity: .2; }
-    header a.disabled path, header a.disabled polygon, header .btn-vertex.disabled path, header .btn-vertex.disabled polygon, header .btn-faces.disabled path, header .btn-faces.disabled polygon {
-      fill: black !important; }
-  header > .autogrid {
-    grid-column: 1/10;
-    grid-gap: 0; }
-    header > .autogrid .autogrid:not(:last-child) {
-      border-right: 2px solid #e2e2e2; }
-    header > .autogrid .autogrid {
-      justify-content: space-evenly;
-      padding: 0 15px; }
-  header .logo {
-    grid-column: 10/13;
-    text-transform: uppercase; }
-    header .logo span {
-      color: #e2e2e2; }
-    header .logo a {
-      all: unset;
-      cursor: pointer;
-      color: #62C5E8;
-      font-weight: 600; }
-    header .logo a:hover {
-      color: #0F9DDD; }
-  header .autogrid {
-    position: relative; }
+
 h1 {
   margin: 0; }
 
@@ -173,12 +110,6 @@ body {
   visibility: visible;
   opacity: 1;
   transition-delay: .6s; }
-
-header .tooltiped:before {
-  transform: translate(-50%, 100%); }
-
-header .tooltiped:hover:before {
-  transform: translate(-50%, 150%); }
 
 .tabs {
   display: flex;

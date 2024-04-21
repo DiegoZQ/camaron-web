@@ -125,4 +125,8 @@ class VisfLoadStrategy extends ModelLoadStrategy {
       }
       this.cpuModel.polyhedrons = polyhedrons;
    }
+
+   _exportToVisf() {
+      return this.fileArray.join('\n');
+   }
 }

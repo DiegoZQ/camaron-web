@@ -35,8 +35,8 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         return [parseInt(vertexLineWords[0]), parseInt(vertexLineWords[1])];
     }
 
-   // Carga los vértices del modelo tomando sus coordenadas x, y, z. Si tiene 2 dimensiones, agrega z=0 como la tercera dimensión.
-    loadModelVertices(numVertices, startIndex, dimensions) {  
+    // Carga los vértices del modelo tomando sus coordenadas x, y, z. Si tiene 2 dimensiones, agrega z=0 como la tercera dimensión.
+    loadModelVertices(numVertices, startIndex, dimensions) {
         return super.loadModelVertices(numVertices, startIndex, dimensions, true);
     }
 
@@ -97,8 +97,6 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             const facetPolygonCount = parseInt(facetLineWords[0]);
             const facetHoleCount = facetLineWords[1] ? parseInt(facetLineWords[1]) : 0;
 
-
-
             polygonIndices.push(...range(startIndex + offset + 1, startIndex + offset + 1 + facetPolygonCount));
             offset += 1 + facetPolygonCount + facetHoleCount;
         }
@@ -133,5 +131,9 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         }
         this.cpuModel.holes = new Array(...Object.values(holes));
         return startIndex + numHoles;
+    }
+
+    _exportToPoly() {
+        return this.fileArray.join('\n');
     }
 } 

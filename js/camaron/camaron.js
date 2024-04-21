@@ -83,7 +83,7 @@ function togglePerspective(e) {
 // main renderer handler
 function mainRendererOnClick(clickedRenderer) {
   const activeRenderer = document.querySelector('a[name="main_renderer"].active');
-  if (activeRenderer != clickedRenderer) {
+  if (activeRenderer != clickedRenderer && !clickedRenderer.classList.contains('disabled')) {
     activeRenderer.classList.remove('active');
     clickedRenderer.classList.add('active')
     setMainRenderer(clickedRenderer);
@@ -92,13 +92,15 @@ function mainRendererOnClick(clickedRenderer) {
 }
 
 function secondaryRendererOnClick(clickedRenderer) {
-  if (clickedRenderer.classList.contains('active')) {
-    clickedRenderer.classList.remove('active');
-  } else {
-    clickedRenderer.classList.add('active');
+  if (!clickedRenderer.classList.contains('disabled')) {
+    if (clickedRenderer.classList.contains('active')) {
+      clickedRenderer.classList.remove('active');
+    } else {
+      clickedRenderer.classList.add('active');
+    }
+    setSecondaryRenderers();
+    draw();
   }
-  setSecondaryRenderers();
-  draw();
 }
 
 // selection button

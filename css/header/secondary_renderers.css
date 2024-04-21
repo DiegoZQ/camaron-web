@@ -46,25 +46,13 @@ header .submenu .label {
     height: auto;
     padding: 5px 10px;
     padding-right: 30px;
-    background: #F5F5F5;
+    background-color: #F5F5F5;
     border-radius: 10px;
     font-size: 13px;
     text-transform: uppercase;
     color: #666666;
     font-weight: 600;
     transition: all .3s; 
-}
-
-/* Adds a check icon at the end of label class when renderer is active */
-header .submenu .active .label:after {
-    content: 'check';
-    font-family: 'Material Icons';
-    text-transform: none;
-    position: absolute;
-    right: 10px;
-    font-size: 20px;
-    color: #ff7091;
-    display: block; 
 }
 
 /* Changes the background color and text color on selectable renderer hover */
@@ -78,8 +66,42 @@ header .submenu .label img {
     margin-right: 13px; 
 }
 
+
+/* Adds a check icon at the end of label class when renderer is active */
+header .submenu .active .label:after {
+    content: 'check';
+    font-family: 'Material Icons';
+    text-transform: none;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+    color: #ff7091;
+    display: block; 
+}
+
 /* Adds a selected style to a selectable renderer and selectable renderer on hover when renderer is active */
-header .submenu .active .label, header .submenu .active .label:hover {
+header .submenu .active .label, 
+header .submenu .active .label:hover {
     background-color: #ffedf1;
     color: #666666; 
+}
+
+/* Add style for disabled labels */
+header .submenu .disabled .label {
+    background-color: #F5F5F5;
+    cursor: default;
+}
+header .submenu .disabled .label:after {
+    content: 'block';
+    font-family: 'Material Icons';
+    text-transform: none;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+    color: #a09f9f;
+    display: block; 
+}
+header .submenu .disabled .label:hover {
+    background-color: #F5F5F5;
+    color: #666666;
 }

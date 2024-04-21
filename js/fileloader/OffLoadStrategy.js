@@ -13,16 +13,16 @@ class OffLoadStrategy extends ModelLoadStrategy {
    load() {
       return super.load(() => {
          const [numVertices, numPolygons, vertexStartIndex] = this.loadHeader();
-         // Polygonal mesh
-         if (numPolygons) {
+         // Vertex cloud
+         if (!numPolygons) {
+            this.cpuModel = new VertexCloud();
+            this.loadModelVertices(numVertices, vertexStartIndex);
+         }
+         // Polygon mesh
+         else {
             this.cpuModel = new PolygonMesh();
             const polygonStartIndex = this.loadModelVertices(numVertices, vertexStartIndex);
             this.loadModelPolygons(numPolygons, polygonStartIndex);
-         }
-         // Vertex cloud
-         else {
-            this.cpuModel = new VertexCloud();
-            this.loadModelVertices(numVertices, vertexStartIndex);
          }
          this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
       });
@@ -61,55 +61,8 @@ class OffLoadStrategy extends ModelLoadStrategy {
       }
       return [parseInt(numVertices), parseInt(numPolygons), vertexStartIndex];
    }
-
-   _exportToVisf() {
-      let content = '';
-      if (this.cpuModel.modelType === 'PolygonMesh') {
-         content += '2 1\n';
-         const vertices = this.cpuModel.vertices;
-         const polygons = this.cpuModel.polygons;
-
-         content += `${vertices.length}\n`;
-         for (const vertex of vertices) {
-            content += `${vertex.coords.join(' ')}\n`;
-         }
-
-         content += `${polygons.length}\n`;
-         for (const polygon of polygons) {
-            const vertexIndices = polygon.vertices.map(vertex => vertex.id - 1);
-            content += `${vertexIndices.length} ${vertexIndices.join(' ')}\n`;
-         }
-
-      } else if (this.cpuModel.modelType === 'VertexCloud') {
-         content += '2 0\n';
-         const vertices = this.cpuModel.vertices;
-
-         content += `${vertices.length}\n`;
-         for (const vertex of vertices) {
-            content += `${vertex.coords.join(' ')}\n`;
-         }
-      }
-      return content;
-   }
-
-   _exportToPoly() {
-      if (this.cpuModel.modelType === 'PolygonMesh') {
-         const vertices = this.cpuModel.vertices;
-         const polygons = this.cpuModel.polygons;
-         
-         let content = `${vertices.length} 3\n`;
-         for (const vertex of vertices) {
-            content += `${vertex.id} ${vertex.coords.join(' ')}\n`;
-         }
-
-         content += `${polygons.length}\n`;
-         for (const polygon of polygons) {
-            content += '1\n';
-            const vertexIndices = polygon.vertices.map(vertex => vertex.id);
-            content += `${vertexIndices.length} ${vertexIndices.join(' ')}\n`;
-         }
-      
-         return content;
-      }
+   
+   _exportToOff() {
+      return this.fileArray.join('\n');
    }
 }
