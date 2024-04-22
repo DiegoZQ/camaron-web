@@ -69,7 +69,8 @@ const setSecondaryRenderers = () => {
       "vertex_normals_renderer": VNormalsRenderer,
       "face_normals_renderer": FNormalsRenderer,
       "vertex_cloud_renderer": VCloudRenderer,
-      //"vertex_id_renderer": VertexIdRenderer
+      "vertex_id_renderer": VertexIdRenderer,
+      "face_id_renderer": FaceIdRenderer,
    };
 
    for (const element of elements) {
@@ -103,43 +104,16 @@ const setUIStartConfiguration = () => {
    const secondaryRenderers = document.querySelectorAll('li[name="secondary_renderer"]');
    const renderers = [...mainRenderers, ...secondaryRenderers];
 
-   // Clean up previous configuration
    for (const renderer of renderers) {
-      if (renderer.classList.contains('active')) {
-         renderer.classList.remove('active');
-      }
-      if (renderer.classList.contains('disabled')) {
+      if (!gpuModel.cpuModel.availableRenderers.includes(renderer.id)) {
+         renderer.classList.add('disabled');
+      } else {
          renderer.classList.remove('disabled');
       }
-   }
-   if (['PolygonMesh', 'PolyhedronMesh'].includes(gpuModel.cpuModel.modelType)) {
-      // Make all renderers available and activate face_renderer.
-      const mainRenderer = document.getElementById('face_renderer');
-      mainRenderer.classList.add('active');
-   } else {
-      // Disable all main renderers except for 'none_renderer'
-      for (const renderer of mainRenderers) {
-         if (renderer.id !== 'none_renderer') {
-            renderer.classList.add('disabled');
-         } else {
-            renderer.classList.add('active');
-         }
-      }
-      // Determine available secondary renderers based on model type
-      let availableRendererIds;
-      if (gpuModel.cpuModel.modelType === 'PSLG') {
-         availableRendererIds = ['wireframe_renderer', 'vertex_cloud_renderer'];
-      } else if (gpuModel.cpuModel.modelType === 'VertexCloud') {
-         availableRendererIds = ['vertex_cloud_renderer'];
-      }
-      // Disable secondary renderers that are not in availableRendererIds
-      // and activate the ones that are in the list
-      for (const renderer of secondaryRenderers) {
-         if (!availableRendererIds.includes(renderer.id)) {
-            renderer.classList.add('disabled');
-         } else {
-            renderer.classList.add('active');
-         }
+      if (gpuModel.cpuModel.activeRenderers.includes(renderer.id)) {
+         renderer.classList.add('active');
+      } else {
+         renderer.classList.remove('active');
       }
    }
 }

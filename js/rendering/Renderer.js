@@ -9,7 +9,6 @@ class Renderer {
       this.program = webglUtils.createProgramFromSources(gl, [vertexShader, fragmentShader]);
       this.vao = gl.createVertexArray(); // Vertex Array Object: se utiliza para agrupar las configuraciones de atributos de vértice
       this.positionBuffer = null;
-  
 	   this.positionAttributeLocation = null;
 	   this.colorAttributeLocation = null;
 	   this.MVPLocation = null;
@@ -27,10 +26,6 @@ class Renderer {
    }   
 
    draw() {
-	   // ...
-   }
-
-   updateColor() {
 	   // ...
    }
 }

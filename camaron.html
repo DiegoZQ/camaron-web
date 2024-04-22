@@ -53,7 +53,7 @@
             <!-- Main renderers -->
             <div class="autogrid">
                 <!-- Direct Face Renderer -->
-                <a id="face_renderer" class="tooltiped btn-faces" data-tooltip="Face Light" name="main_renderer" onclick="mainRendererOnClick(this)">
+                <a id="face_renderer" class="tooltiped btn-faces disabled" data-tooltip="Face Light" name="main_renderer" onclick="mainRendererOnClick(this)">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <g id="icon_faces" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <polygon id="Fill-1" fill="#1E9CD8" points="7.08253308 31.3916684 21.5333658 39.6607194 21.5805141 23.8304397 7.00002357 15.2130951"></polygon>
@@ -63,7 +63,7 @@
                     </svg>
                 </a>
                 <!-- Direct Vertex Renderer -->
-                <a id="vertex_renderer" class="tooltiped btn-vertex" data-tooltip="Vertex Light" name="main_renderer" onclick="mainRendererOnClick(this)">
+                <a id="vertex_renderer" class="tooltiped btn-vertex disabled" data-tooltip="Vertex Light" name="main_renderer" onclick="mainRendererOnClick(this)">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <defs>
                         <!-- base colors -->
@@ -101,7 +101,7 @@
                     </svg>
                 </a>
                 <!-- Flat Renderer -->
-                <a id="flat_renderer" class="tooltiped" data-tooltip="Flat" name="main_renderer" onclick="mainRendererOnClick(this)">
+                <a id="flat_renderer" class="tooltiped disabled" data-tooltip="Flat" name="main_renderer" onclick="mainRendererOnClick(this)">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <g id="icon_flat" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <path d="M7.08250951,31.2793718 L21.5333422,39.5484228 L21.5804905,23.7181432 L7,15.1007986 L7.08250951,31.2793718 Z M22.5352905,6 L37.0216023,13.6398756 L22.4056327,22.2908137 L7.7426327,13.5275228 L22.5352905,6 Z M23.348846,23.7855548 L37.9174316,15.1007986 L37.7641996,31.3467834 L23.3016977,39.6270698 L23.348846,23.7855548 Z" id="Fill-3" fill="#1E9CD8"></path>
@@ -109,7 +109,7 @@
                     </svg>
                 </a>
                 <!-- No Main Renderer -->
-                <a id="none_renderer" class="tooltiped" data-tooltip="None" name="main_renderer" onclick="mainRendererOnClick(this)">
+                <a id="none_renderer" class="tooltiped disabled" data-tooltip="None" name="main_renderer" onclick="mainRendererOnClick(this)">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <g id="icon_none" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <path d="M33.9233869,12.4374717 L30.3372299,10.5180468 L30.9644708,9.44937067 L34.5506277,11.3687956 L33.9233869,12.4374717 Z M37.9477299,15.7666719 L36.6649635,15.7555432 L36.6782007,14.357761 L36.2244015,13.6691883 L35.2713212,13.1589983 L35.898562,12.0903222 L36.9940839,12.6766841 C37.0874234,12.726709 37.1661679,12.798235 37.2231898,12.8847793 L37.8641204,13.8572951 C37.9296277,13.9565888 37.9637956,14.0717651 37.9626642,14.1891023 L37.9477299,15.7666719 Z M37.896365,21.168073 L36.6135985,21.1569443 L36.6510474,17.231226 L37.9338139,17.2423547 L37.896365,21.168073 Z M37.8448869,26.5694741 L36.5622336,26.5583454 L36.5996825,22.6326271 L37.8824489,22.6437558 L37.8448869,26.5694741 Z M24.0551704,7.15552553 L22.5448821,6.34723857 L21.022488,7.13434865 L20.4117653,6.05702887 L22.2449515,5.10925542 C22.4383055,5.00920546 22.6719369,5.01071809 22.8639332,5.11357723 L24.6824113,6.08684938 L24.0551704,7.15552553 Z M35.7118719,31.5786167 L35.0527259,30.5276599 L36.5325799,29.6811249 L36.5483062,28.0338662 L37.8309595,28.0451029 L37.8119522,30.0358377 C37.8100288,30.2491191 37.691912,30.4460857 37.5002551,30.5556437 L35.7118719,31.5786167 Z M14.0491285,34.293147 L10.5118474,32.2703227 L11.1709934,31.219366 L14.7081613,33.2420823 L14.0491285,34.293147 Z M30.8385701,34.3658615 L30.1795372,33.3147967 L33.7167051,31.2918644 L34.375738,32.3428211 L30.8385701,34.3658615 Z M18.9224642,37.0800677 L15.3852964,35.0571354 L16.0443292,34.0061787 L19.5814971,36.029003 L18.9224642,37.0800677 Z M25.9656869,37.1531064 L25.3065409,36.1021496 L28.8434825,34.0791093 L29.5026285,35.1299579 L25.9656869,37.1531064 Z M23.0659423,38.7101473 C23.0527051,38.7101473 23.0394679,38.7098232 23.0262307,38.7089588 L21.7818182,38.6352719 C21.6793146,38.6292214 21.5799788,38.599725 21.4919569,38.5494839 L20.2586321,37.8440561 L20.9175518,36.7930994 L22.0170336,37.421707 L22.9070956,37.4744331 L23.970373,36.8662461 L24.6296321,37.9172028 L23.3955153,38.6230628 C23.2958401,38.6802188 23.1817964,38.7101473 23.0659423,38.7101473 Z M9.17582664,31.5063452 L7.38733029,30.4836963 C7.19476825,30.3735981 7.07642518,30.175335 7.07540693,29.9608651 L7.06601642,27.9701302 L8.34878285,27.9646199 L8.35658942,29.6100419 L9.83485949,30.4552804 L9.17582664,31.5063452 Z M16.0242584,9.71869521 L15.4135358,8.64137543 L19.0406489,6.76592495 L19.6514847,7.84324473 L16.0242584,9.71869521 Z M11.0259044,12.303031 L10.4151818,11.2258192 L14.042408,9.35036875 L14.6531307,10.4276885 L11.0259044,12.303031 Z M7.00699197,15.6253162 L6.99997737,14.1863687 C6.99963796,14.1016612 7.01762701,14.0178181 7.05292628,13.9400254 L7.5431562,12.8594643 C7.60029124,12.7335915 7.69996642,12.6296519 7.82634234,12.5642845 L9.04405401,11.9347045 L9.65488978,13.0119162 L8.63211606,13.540798 L8.28353577,14.3092163 L8.28975839,15.6196978 L7.00699197,15.6253162 Z M7.03278759,21.0532964 L7.01400657,17.1142886 L8.29688613,17.1086702 L8.31566715,21.0476781 L7.03278759,21.0532964 Z M7.05880949,26.4812767 L7.03991533,22.5421608 L8.32279489,22.5365424 L8.34168905,26.4756583 L7.05880949,26.4812767 Z M28.9892956,9.79652024 L25.4031387,7.87709532 L26.0303796,6.80841917 L29.6165365,8.72784409 L28.9892956,9.79652024 Z" id="Fill-4" fill="#1D9CD7"></path>
@@ -123,41 +123,42 @@
                     <i class="tooltiped material-icons" data-tooltip="Show">keyboard_arrow_down</i>
                     <ul class="submenu">
                         <!-- Wire Renderer -->
-                        <li id="wireframe_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                        <li id="wireframe_renderer" class="disabled" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
                             <div class="label">
                                 <img src="img/icon-wireframe.svg"/>
                                 <span>Wireframe</span>
                             </div>
                         </li>
                         <!-- Vertex Cloud Renderer -->
-                        <li id="vertex_cloud_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                        <li id="vertex_cloud_renderer" class="disabled" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
                             <div class="label">
                                 <img src="img/icon-vertex-cloud.svg"/>
                                 <span>Vertex cloud</span>
                             </div>
                         </li>
                         <!-- Face Normals Renderer -->
-                        <li id="face_normals_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                        <li id="face_normals_renderer" class="disabled" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
                             <div class="label">
                                 <img src="img/icon-face-normals.svg"/>
                                 <span>Face normals</span>
                             </div>  
                         </li>
                         <!-- Vertex Normals Renderer -->
-                        <li id="vertex_normals_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">   
+                        <li id="vertex_normals_renderer" class="disabled" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">   
                             <div class="label">
                                 <img src="img/icon-vertex-normals.svg"/>
                                 <span>Vertex normals</span>
                             </div>
                         </li>
-                        <!-- Not finished renderers -->
-                        <li class="hidden">
+                        <!-- Face Id Renderer -->
+                        <li id="face_id_renderer" class="disabled" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
                             <div class="label">
                                 <img src="img/icon-face-id.svg"/>
                                 <span>Face IDs</span>
                             </div>
                         </li>
-                        <li class="hidden" id="vertex_id_renderer" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
+                         <!-- Vertex Id Renderer -->
+                        <li id="vertex_id_renderer" class="disabled" name="secondary_renderer" onclick="secondaryRendererOnClick(this)">
                             <div class="label">
                                 <img src="img/icon-vertex-id.svg"/>
                                 <span>Vertex IDs</span>
@@ -558,7 +559,7 @@
     <script type="text/javascript" src="js/model/shapes/Hole.js"></script>
     <script type="text/javascript" src="js/model/shapes/Vertex.js"></script>
     <script type="text/javascript" src="js/model/shapes/Polyhedron.js"></script>
-    <script type="text/javascript" src="js/model/CPUModel.js"></script>
+    <script type="text/javascript" src="js/model/model-types/CPUModel.js"></script>
     <script type="text/javascript" src="js/model/model-types/VertexCloud.js"></script>
     <script type="text/javascript" src="js/model/model-types/PSLG.js"></script>
     <script type="text/javascript" src="js/model/model-types/PolygonMesh.js"></script>
@@ -579,10 +580,13 @@
     <script type="text/javascript" src="js/rendering/main-renderers/FlatRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/SecondaryRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/FNormalsRenderer.js"></script>
-    <script type="text/javascript" src="js/rendering/secondary-renderers/VCloudRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/VNormalsRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/WireRenderer.js"></script>
-    <!-- <script type="text/javascript" src="js/rendering/secondary-renderers/VertexIdRenderer.js"></script>  -->
+    <script type="text/javascript" src="js/rendering/secondary-renderers/texture-renderers/TextureRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/texture-renderers/VCloudRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/texture-renderers/BillboardIdRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/texture-renderers/VertexIdRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/secondary-renderers/texture-renderers/FaceIdRenderer.js"></script>
     <!-- Selection -->
     <script type="text/javascript" src="js/selection/SelectionStrategy.js"></script>
     <script type="text/javascript" src="js/selection/AngleSelectionStrategy.js"></script>

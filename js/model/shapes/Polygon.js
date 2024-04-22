@@ -140,7 +140,7 @@ class Polygon extends Shape {
             
    // Calcula los índices de los vértices de cada triángulo del polígono, cada 3 índices corresponde a un triángulo.
    // Para hacer esto, aplica triangulación de polígonos convexos o no convexos (utilizando earcut) según corresponda.
-      calculateTrianglesVertexIndices() {
+   calculateTrianglesVertexIndices() {
       const vertices = this.vertices;
       // Caso 1: triángulo, no requiere triangulación
       if (vertices.length === 3) {

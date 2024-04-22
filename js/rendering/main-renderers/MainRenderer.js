@@ -27,6 +27,9 @@ class MainRenderer extends Renderer {
    }
 
 	updateColor() {
+      gl.useProgram(this.program);
+      gl.bindVertexArray(this.vao);
+
 		// Modifica el valor del color buffer con información actualizada de la color matrix del gpuModel
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, this.gpuModel.colorMatrix, gl.STATIC_DRAW);

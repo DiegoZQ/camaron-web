@@ -17,11 +17,13 @@ class GPUModel {
       this.verticesNormalsBuffer = gl.createBuffer();
       this.faceNormalsLinesBuffer = gl.createBuffer();
       this.vertexNormalsLinesBuffer = gl.createBuffer();
-      //this.vertexIdsBuffer = {position: gl.createBuffer(), texcoord: gl.createBuffer()};
+      this.vertexIdsBuffer = {position: gl.createBuffer(), texcoord: gl.createBuffer()};
+      this.faceIdsBuffer = {position: gl.createBuffer(), texcoord: gl.createBuffer()};
       // Shape Quantities
       this.trianglesCount = 0;
       this.edgesCount = 0;
-      //this.vertexIdsLength = 0;
+      this.vertexIdsLength = 0;
+      this.polygonIdsLength = 0;
       // Configuration
       this.loaded = false;
    }
@@ -37,12 +39,12 @@ class GPUModel {
    load() {
       if (this.cpuModel.modelType === 'VertexCloud') {
          this.loadVertices();
-         //this.loadVertexIdsBuffer();
+         this.loadVertexIds();
       }
       else if (this.cpuModel.modelType === 'PSLG') {
          this.loadEdges();
          this.loadVertices();
-         //this.loadVertexIdsBuffer();
+         this.loadVertexIds();
       }
       else if (this.cpuModel.modelType === 'PolygonMesh' || this.cpuModel.modelType === 'PolyhedronMesh') {
          this.loadTriangles();
@@ -52,7 +54,8 @@ class GPUModel {
          this.loadVertices();
          this.loadVertexNormalsLines();
          this.loadFaceNormalsLines();
-         //this.loadVertexIdsBuffer();
+         this.loadVertexIds();
+         this.loadFaceIds();
       }
       this.loaded = true;
    }
@@ -221,88 +224,64 @@ class GPUModel {
       gl.bufferData(gl.ARRAY_BUFFER, vertexNormalLineData, gl.STATIC_DRAW);
    }
 
-   //loadVertexIdsBuffer() {
-   //   const vertices = this.cpuModel.vertices;
-   //   const positions = [];
-   //   const texcoords = [];
-//
-   //   const maxX = fontInfo.textureWidth;
-   //   const maxY = fontInfo.textureHeight;
-//
-   //   for (const vertex of vertices) {
-   //      const id = `${vertex.id}`;
-   //      this.vertexIdsLength += id.length;
-   //      const idWidth = id.length*(fontInfo.width + fontInfo.spacing);
-   //      const idHeight = fontInfo.letterHeight;
-   //      const scale = 0.01;
-   //      const idCenter = {x: idWidth/2 * scale, y: idHeight/2 * scale};
-   //      const [vx, vy, vz] = vertex.coords;
-   //      const vertexIdCenter = [idCenter.x + vx, idCenter.y + vy, vz];
-   //      console.log(vertexIdCenter);
-   //      let x = 0;
-   //      for (const number of id) {
-   //         const glyphInfo = fontInfo.glyphInfos[number];
-   //         if (glyphInfo) {
-   //            const x2 = x + glyphInfo.width;
-   //            const u1 = glyphInfo.x / maxX;
-   //            const v1 = (glyphInfo.y + fontInfo.letterHeight - 1) / maxY;
-   //            const u2 = (glyphInfo.x + glyphInfo.width - 1) / maxX;
-   //            const v2 = glyphInfo.y / maxY;
-//
-   //            console.log(vertexIdCenter, 'bro,,,');
-//
-   //            positions.push(...vertexIdCenter, x*scale, 0);
-   //            texcoords.push(u1, v1);
-//
-   //            positions.push(...vertexIdCenter, x2*scale, 0);
-   //            texcoords.push(u2, v1);
-//
-   //            positions.push(...vertexIdCenter, x*scale, fontInfo.letterHeight*scale);
-   //            texcoords.push(u1, v2);
-//
-   //            positions.push(...vertexIdCenter, x*scale, fontInfo.letterHeight*scale);
-   //            texcoords.push(u1, v2);
-//
-   //            positions.push(...vertexIdCenter, x2*scale, 0);
-   //            texcoords.push(u2, v1);               
-//
-   //            positions.push(...vertexIdCenter, x2*scale, fontInfo.letterHeight*scale);
-   //            texcoords.push(u2, v2);
-   //            console.log(positions, 'DAAFUC')
-   //            x += glyphInfo.width + fontInfo.spacing;
-   //         } else {
-   //            x += fontInfo.spaceWidth;
-   //         }
-   //      }
-   //   }
-   //   const positionData = new Float32Array(positions);
-   //   const texcoordData = new Float32Array(texcoords);
-//
-   //   console.log(positionData);
-//
-   //   const u_view = this.MVPManager.viewMatrix;
-//
-	//	const camera_right = vec3.fromValues(u_view[0], u_view[4] , u_view[8] );
-	//	const camera_up = vec3.fromValues( u_view[1] , u_view[5] , u_view[9] );
-//
-   //   for (let i=0; i < vertices.length*6; i++) {
-   //      const a_center = vec3.fromValues(positionData[5*i], positionData[5*i+1], positionData[5*i+2])
-   //      const a_position = vec2.fromValues(positionData[5*i+3], positionData[5*i+4]);
-//
-   //      console.log(a_center, a_position);
-//
-   //   }
-	//  
-	//	//const vertexPosition_worldspace = a_center + camera_right * a_position.x * 0.5 + camera_up * a_position.y * 0.5;
-//
-//
-   //   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexIdsBuffer.position);
-   //   gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
-//
-   //   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexIdsBuffer.texcoord);
-   //   gl.bufferData(gl.ARRAY_BUFFER, texcoordData, gl.STATIC_DRAW);
-   //}
+   loadVertexIds() {
+      const vertices = this.cpuModel.vertices;
+      const positions = [];
+      const texcoords = [];
 
+      const maxX = fontInfo.textureWidth;
+      const maxY = fontInfo.textureHeight;
+
+      for (const vertex of vertices) {
+         const id = `${vertex.id}`;
+         this.vertexIdsLength += id.length;
+         const scale = this.MVPManager.modelDepth/200;
+         const idWidth = id.length*(fontInfo.width)*scale;
+         const idHeight = fontInfo.letterHeight*scale;
+         const vertexIdCenter = vertex.coords;
+         let x = -idWidth/2;
+         for (const number of id) {
+            const glyphInfo = fontInfo.glyphInfos[number];
+            if (glyphInfo) {
+               const x2 = x + glyphInfo.width*scale;
+               const u1 = glyphInfo.x / maxX;
+               const v1 = (glyphInfo.y + fontInfo.letterHeight - 1) / maxY;
+               const u2 = (glyphInfo.x + glyphInfo.width - 1) / maxX;
+               const v2 = glyphInfo.y / maxY;
+            
+               // triangle 1
+               positions.push(...vertexIdCenter, x, idHeight/2);
+               texcoords.push(u1, v2);
+
+               positions.push(...vertexIdCenter, x2, -idHeight/2);
+               texcoords.push(u2, v1);
+            
+               positions.push(...vertexIdCenter, x, -idHeight/2);
+               texcoords.push(u1, v1);
+
+               // triangle 2
+               positions.push(...vertexIdCenter, x2, idHeight/2);
+               texcoords.push(u2, v2);
+            
+               positions.push(...vertexIdCenter, x2, -idHeight/2);
+               texcoords.push(u2, v1);               
+            
+               positions.push(...vertexIdCenter, x, idHeight/2);
+               texcoords.push(u1, v2);
+
+               x += glyphInfo.width*scale;
+            } 
+         }
+      }
+      const positionData = new Float32Array(positions);
+      const texcoordData = new Float32Array(texcoords);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexIdsBuffer.position);
+      gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexIdsBuffer.texcoord);
+      gl.bufferData(gl.ARRAY_BUFFER, texcoordData, gl.STATIC_DRAW);
+   }
 
    // Por cada polígono del cpuModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
    // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
@@ -325,9 +304,64 @@ class GPUModel {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, faceNormalLineData, gl.STATIC_DRAW);
    }
-  
-   get color() {
-      return vec4.fromValues(0.7, 0.7, 0.7, 1);
+
+   loadFaceIds() {
+      const polygons = this.cpuModel.polygons;
+      const positions = [];
+      const texcoords = [];
+
+      const maxX = fontInfo.textureWidth;
+      const maxY = fontInfo.textureHeight;
+
+      for (const polygon of polygons) {
+         const id = `${polygon.id}`;
+         this.polygonIdsLength += id.length;
+         const scale = this.MVPManager.modelDepth/200;
+         const idWidth = id.length*(fontInfo.width)*scale;
+         const idHeight = fontInfo.letterHeight*scale;
+         const polygonIdCenter = polygon.geometricCenter;
+         let x = -idWidth/2;
+         for (const number of id) {
+            const glyphInfo = fontInfo.glyphInfos[number];
+            if (glyphInfo) {
+               const x2 = x + glyphInfo.width*scale;
+               const u1 = glyphInfo.x / maxX;
+               const v1 = (glyphInfo.y + fontInfo.letterHeight - 1) / maxY;
+               const u2 = (glyphInfo.x + glyphInfo.width - 1) / maxX;
+               const v2 = glyphInfo.y / maxY;
+            
+               // triangle 1
+               positions.push(...polygonIdCenter, x, idHeight/2);
+               texcoords.push(u1, v2);
+
+               positions.push(...polygonIdCenter, x2, -idHeight/2);
+               texcoords.push(u2, v1);
+            
+               positions.push(...polygonIdCenter, x, -idHeight/2);
+               texcoords.push(u1, v1);
+
+               // triangle 2
+               positions.push(...polygonIdCenter, x2, idHeight/2);
+               texcoords.push(u2, v2);
+            
+               positions.push(...polygonIdCenter, x2, -idHeight/2);
+               texcoords.push(u2, v1);               
+            
+               positions.push(...polygonIdCenter, x, idHeight/2);
+               texcoords.push(u1, v2);
+
+               x += glyphInfo.width*scale;
+            } 
+         }
+      }
+      const positionData = new Float32Array(positions);
+      const texcoordData = new Float32Array(texcoords);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.faceIdsBuffer.position);
+      gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.faceIdsBuffer.texcoord);
+      gl.bufferData(gl.ARRAY_BUFFER, texcoordData, gl.STATIC_DRAW);
    }
 
    // Obtiene un arreglo general con los colores de cada vértice de los triángulos que conforman el cpuModel. 

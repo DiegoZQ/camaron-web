@@ -9,4 +9,19 @@ class VertexCloud extends CPUModel {
         this.modelType = 'VertexCloud';
         this.vertices = [];
     }
+
+    get availableRenderers() {
+        return [
+            'none_renderer', 
+            'vertex_cloud_renderer', 
+            'vertex_id_renderer'
+        ] 
+    }
+  
+    get activeRenderers() {
+        return [
+            'none_renderer',
+            'vertex_cloud_renderer'
+        ]
+    }
 }

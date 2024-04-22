@@ -128,7 +128,7 @@ uniform vec4 u_color;
 
 in float type;
 
-uniform sampler2D spriteTexture;
+uniform sampler2D u_texture;
 
 out vec4 outColor;
 
@@ -138,48 +138,53 @@ void main() {
     outColor = u_color;
   } else {
     // Hole, apply hole rendering logic
-    outColor = texture(spriteTexture, gl_PointCoord);
+    outColor = texture(u_texture, gl_PointCoord);
     outColor.rgb *= outColor.a;
   }
 }
 `;
 
-//// VER ROTACIÓN EN http://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/billboards/
-//const pointIdVertexShader = `#version 300 es
-//
-//in vec2 a_position;
-//in vec3 a_center;
-//in vec2 a_texcoord;
-//
-//uniform mat4 u_view;
-//uniform vec4 u_viewProjection;
-//
-//out vec2 v_texcoord;
-//
-//void main() {
-//  vec3 camera_right = vec3( u_view[0][0] , u_view[1][0] , u_view[2][0] );
-//  vec3 camera_up = vec3( u_view[0][1] , u_view[1][1] , u_view[2][1] );
-//
-//  vec3 vertexPosition_worldspace = a_center + camera_right * a_position.x * 0.5 + camera_up * a_position.y * 0.5;
-//
-//  gl_Position = vec4( vertexPosition_worldspace , 1.0 );
-//
-//  // Pass the texcoord to the fragment shader.
-//  v_texcoord = a_texcoord;
-//}
-//`;
-//
-//const pointIdFragmentShader = `#version 300 es
-//
-//precision mediump float;
-//
-//in vec2 v_texcoord;
-//
-//uniform sampler2D u_texture;
-//
-//out vec4 outColor;
-//
-//void main() {
-//  outColor = texture(u_texture, v_texcoord);
-//}
-//`;
+// VERTEX SHADER: http://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/billboards/
+// BLENDING PROBLEM: https://stackoverflow.com/questions/59205157/why-are-the-transparent-pixels-not-blending-correctly-in-webgl
+// VERTEX SHAMDER 2: https://www.chinedufn.com/webgl-particle-effect-billboard-tutorial/
+const billboardVertexShader = `#version 300 es
+
+in vec2 a_position;
+in vec3 a_center;
+in vec2 a_texcoord;
+
+uniform mat4 u_view;
+uniform mat4 u_projection;
+uniform mat4 u_worldView;
+
+out vec2 v_texcoord;
+
+void main() {
+  vec3 camera_right = vec3(u_view[0][0], u_view[1][0], u_view[2][0]);
+  vec3 camera_up = vec3(u_view[0][1], u_view[1][1], u_view[2][1]);
+
+  vec3 position = (u_worldView * vec4(a_center, 1.0)).xyz + (camera_right * a_position.x) + (camera_up * a_position.y);
+  gl_Position = u_projection * vec4(position, 1.0);
+
+  v_texcoord = a_texcoord;
+}
+`;
+
+// BLENDING PROBLEM 2: https://stackoverflow.com/questions/7067492/sprite-quads-depth-testing-correctly-in-opengl-es-2
+const billboardFragmentShader = `#version 300 es
+
+precision mediump float;
+
+in vec2 v_texcoord;
+
+uniform sampler2D u_texture;
+
+out vec4 outColor;
+
+void main() {
+  vec4 texColor = texture(u_texture, v_texcoord);
+  if (texColor.a <= 0.5) discard;
+  outColor = texColor;
+  outColor.rgb *= outColor.a;
+}
+`;
