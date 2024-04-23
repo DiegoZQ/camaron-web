@@ -153,7 +153,8 @@ in vec2 a_position;
 in vec3 a_center;
 in vec2 a_texcoord;
 
-uniform vec3 scale;
+uniform float font_scale;
+uniform float scale;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 uniform mat4 u_worldView;
@@ -164,7 +165,16 @@ void main() {
   vec3 camera_right = vec3(u_view[0][0], u_view[1][0], u_view[2][0]);
   vec3 camera_up = vec3(u_view[0][1], u_view[1][1], u_view[2][1]);
 
-  vec3 position = (u_worldView * vec4(a_center, 1.0)).xyz + (camera_right * a_position.x * scale.x) + (camera_up * a_position.y * scale.y);
+  vec3 position = (u_worldView * vec4(a_center, 1.0)).xyz;
+
+  // Direction from vertex position to the camera (always at the origin)
+  vec3 cameraDir = normalize(-position);
+  
+  // Translate the vertex position towards the camera a specific distance
+  position += cameraDir * font_scale * scale * 10.0;
+
+  // Translate the vertex from the center to its relative position (a_position) in the billboard
+  position += (camera_right * a_position.x * scale) + (camera_up * a_position.y * scale);
   gl_Position = u_projection * vec4(position, 1.0);
 
   v_texcoord = a_texcoord;

@@ -26,6 +26,7 @@ class GPUModel {
       this.polygonIdsLength = 0;
       // Configuration
       this.loaded = false;
+      this._fontScale = null; 
    }
 
    // Count increasers
@@ -224,6 +225,36 @@ class GPUModel {
       gl.bufferData(gl.ARRAY_BUFFER, vertexNormalLineData, gl.STATIC_DRAW);
    }
 
+   // Por cada polígono del cpuModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
+   // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
+   // representando así una línea entre ambos puntos. Sirve para visualizar las normales de las caras. 
+   loadFaceNormalsLines() {
+      const polygons = this.cpuModel.polygons;
+      const faceNormalLineData = new Float32Array(polygons.length*6);
+
+      for(let i = 0; i < polygons.length; i++){
+         const j = i*6;
+         const normal = polygons[i].normal;
+         const center = polygons[i].geometricCenter;
+     
+         vec3.scale(normal, normal, this.MVPManager.modelHeight/50);
+         vec3.add(normal, center, normal);
+     
+         faceNormalLineData[j] = center[0]; faceNormalLineData[j+1] = center[1]; faceNormalLineData[j+2] = center[2];
+         faceNormalLineData[j+3] = normal[0]; faceNormalLineData[j+4] = normal[1]; faceNormalLineData[j+5] = normal[2];
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, faceNormalLineData, gl.STATIC_DRAW);
+   }
+
+   get fontScale() {
+      if (this._fontScale == null) {
+         const maxArea = Math.max(this.MVPManager.modelWidth, this.MVPManager.modelHeight) * this.MVPManager.modelDepth;
+         this._fontScale = (Math.sqrt(maxArea/this.cpuModel.vertices.length)/fontInfo.letterHeight) * 0.1; 
+      }
+      return this._fontScale;
+   }
+
    loadVertexIds() {
       const vertices = this.cpuModel.vertices;
       const positions = [];
@@ -231,9 +262,7 @@ class GPUModel {
 
       const maxX = fontInfo.textureWidth;
       const maxY = fontInfo.textureHeight;
-
-      const maxArea = Math.max(this.MVPManager.modelWidth, this.MVPManager.modelHeight) * this.MVPManager.modelDepth;
-      const scale = (Math.sqrt(maxArea/this.cpuModel.vertices.length)/fontInfo.letterHeight) * 0.1; 
+      const scale = this.fontScale; 
 
       for (const vertex of vertices) {
          const id = `${vertex.id}`;
@@ -285,28 +314,6 @@ class GPUModel {
       gl.bufferData(gl.ARRAY_BUFFER, texcoordData, gl.STATIC_DRAW);
    }
 
-   // Por cada polígono del cpuModel, obtiene las coordenadas de su centro y su vector normal, suma la normal al centro,
-   // obteniendo así 2 puntos: el centro y el centro desplazado por la normal, que se agregan al arreglo global 
-   // representando así una línea entre ambos puntos. Sirve para visualizar las normales de las caras. 
-   loadFaceNormalsLines() {
-      const polygons = this.cpuModel.polygons;
-      const faceNormalLineData = new Float32Array(polygons.length*6);
-
-      for(let i = 0; i < polygons.length; i++){
-         const j = i*6;
-         const normal = polygons[i].normal;
-         const center = polygons[i].geometricCenter;
-     
-         vec3.scale(normal, normal, this.MVPManager.modelHeight/50);
-         vec3.add(normal, center, normal);
-     
-         faceNormalLineData[j] = center[0]; faceNormalLineData[j+1] = center[1]; faceNormalLineData[j+2] = center[2];
-         faceNormalLineData[j+3] = normal[0]; faceNormalLineData[j+4] = normal[1]; faceNormalLineData[j+5] = normal[2];
-      }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.faceNormalsLinesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, faceNormalLineData, gl.STATIC_DRAW);
-   }
-
    loadFaceIds() {
       const polygons = this.cpuModel.polygons;
       const positions = [];
@@ -314,10 +321,8 @@ class GPUModel {
 
       const maxX = fontInfo.textureWidth;
       const maxY = fontInfo.textureHeight;
-
-      const maxArea = Math.max(this.MVPManager.modelWidth, this.MVPManager.modelHeight) * this.MVPManager.modelDepth;
-      const scale = (Math.sqrt(maxArea/this.cpuModel.vertices.length)/fontInfo.letterHeight) * 0.1; 
-
+      const scale = this.fontScale; 
+      
       for (const polygon of polygons) {
          const id = `${polygon.id}`;
          this.polygonIdsLength += id.length;
