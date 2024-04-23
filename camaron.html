@@ -41,16 +41,48 @@
                     </label>
                 </a>
                 <!-- Export model -->
-                <a id="export_button" class="tooltiped" data-tooltip="Export Model">
+                <a id="export_button" class="open-menu tooltiped" data-tooltip="Export Model">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <g id="icon_import" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <polygon id="Fill-1" fill="#0F9DDD" transform="translate(23.250500, 16.889000) scale(1, -1) translate(-23.250500, -16.889000) " points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
                             <path d="M33.9530607,15 L25.5745235,15 L25.5745235,17.1066911 L32.9061214,17.1066911 L32.9061214,33.8943227 L13.0928709,33.8943227 L13.0928709,17.1066911 L21.0119238,17.1066911 L21.0119238,15 L12.0459316,15 C11.4685532,15 11,15.4714203 11,16.0533456 L11,34.9466544 C11,35.5295935 11.4685532,36 12.0459316,36 L33.9530607,36 C34.5304392,36 35,35.5295935 35,34.9466544 L35,16.0533456 C35,15.4714203 34.5304392,15 33.9530607,15" id="Fill-1" fill="#0F9DDD"></path>
                         </g>
                     </svg>  
+                    <ul class="submenu">
+                        <li>
+                            <div class="label">
+                                <span>.off</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="label">
+                                <span>.visf</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="label">
+                                <span>.poly</span>
+                            </div>  
+                        </li>
+                        <li>   
+                            <div class="label">
+                                <span>.node</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="label">
+                                <span>.node + .ele</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="label">
+                                <span>.node + .face</span>
+                            </div>
+                        </li>  
+                    </ul>
                 </a>
                 <!-- Take Screenshot -->
-                <a id="screenshot_button" class="tooltiped" data-tooltip="Take Screenshot">
+                <a id="screenshot_button" class="tooltiped" data-tooltip="Take Screenshot" onclick="takeScreenshot()">
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 24 24">
                         <path d="M12,10.2c1.4,0,2.6,1.1,2.6,2.6s-1.1,2.6-2.6,2.6-2.6-1.1-2.6-2.6,1.1-2.6,2.6-2.6M12,8.5c-2.4,0-4.3,1.9-4.3,4.3s1.9,4.3,4.3,4.3,4.3-1.9,4.3-4.3-1.9-4.3-4.3-4.3h0Z"/>
                         <circle cx="6.4" cy="9.2" r=".7"/>

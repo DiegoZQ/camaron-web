@@ -65,6 +65,42 @@ const draw = () => {
 const exportFileButton = document.getElementById('export_button');
 exportFileButton.onclick = downloadFileHandler;
 
+
+function takeScreenshot() {
+  draw();
+  const dataUrl = canvas.toDataURL('image/png');
+  const downloadLink = document.createElement('a');
+  downloadLink.href = dataUrl;
+  downloadLink.download = 'screenshot.png';
+
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+
+  document.body.removeChild(downloadLink);
+};
+
+// main renderer handler
+function mainRendererOnClick(clickedRenderer) {
+  const activeRenderer = document.querySelector('a[name="main_renderer"].active');
+  if (activeRenderer != clickedRenderer && !clickedRenderer.classList.contains('disabled')) {
+    activeRenderer.classList.remove('active');
+    clickedRenderer.classList.add('active')
+    setMainRenderer(clickedRenderer);
+    draw();
+  }
+}
+// secondary renderer handler
+function secondaryRendererOnClick(clickedRenderer) {
+  if (!clickedRenderer.classList.contains('disabled')) {
+    if (clickedRenderer.classList.contains('active')) {
+      clickedRenderer.classList.remove('active');
+    } else {
+      clickedRenderer.classList.add('active');
+    }
+    setSecondaryRenderers();
+    draw();
+  }
+}
 // view button
 function togglePerspective(e) {
   const scene = e.querySelector('.scene');
@@ -78,29 +114,6 @@ function togglePerspective(e) {
     changeViewType('perspective');
   }
   draw();
-}
-
-// main renderer handler
-function mainRendererOnClick(clickedRenderer) {
-  const activeRenderer = document.querySelector('a[name="main_renderer"].active');
-  if (activeRenderer != clickedRenderer && !clickedRenderer.classList.contains('disabled')) {
-    activeRenderer.classList.remove('active');
-    clickedRenderer.classList.add('active')
-    setMainRenderer(clickedRenderer);
-    draw();
-  }
-}
-
-function secondaryRendererOnClick(clickedRenderer) {
-  if (!clickedRenderer.classList.contains('disabled')) {
-    if (clickedRenderer.classList.contains('active')) {
-      clickedRenderer.classList.remove('active');
-    } else {
-      clickedRenderer.classList.add('active');
-    }
-    setSecondaryRenderers();
-    draw();
-  }
 }
 
 // selection button
