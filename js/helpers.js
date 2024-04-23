@@ -46,6 +46,12 @@ const range = (start, end, steps=1) => {
     return result;
 }
 
+// Retorna un número si está dentro de un rango min-max, si es menor a min, retorna min y si es
+// mayor a max retorna max.
+const segmentNumber = (number, min, max) => {
+    return Math.max(min, Math.min(number, max));
+}
+
 // Encuentra los vectores base u, v del plano que comprende a una list de vértices, a partir
 // de 3 vértices no colineales. Retorn los vectores u,v además del índice del vértice utilizado
 // para encontrar ambos vectores.

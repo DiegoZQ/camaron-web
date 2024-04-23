@@ -21,10 +21,6 @@ const offset = (elem) => {
     };
 }
 
-const segmentNumber = (number, min, max) => {
-    return Math.max(min, Math.min(number, max));
-}
-
 const changeHex = (hex_val) => {
       
     const rgb_val = hexToRgb(hex_val);
@@ -145,28 +141,9 @@ const setSatPickerValue = (e) => {
 
     color[1] = Math.floor(((position[0] / sat_width) * 100));
 
-    let x = e.pageX - rect_position.left;
-    let y = e.pageY - rect_position.top; // e.pageY = y - rect_position.top
-    //constrain x max
-    if (x > sat_width) {
-        x = sat_width;
-    }
-    if (x < 0) {
-        x = 0;
-    }
-    if (y > sat_height) {
-        y = sat_height;
-    }
-    if (y < 0) {
-        y = 0;
-    }
-
     //convert between hsv and hsl 
-    const xRatio = x / sat_width * 100; 
-    const yRatio = y / sat_height * 100; 
-
-    const hsvValue = 1 - (yRatio / 100); 
-    const hsvSaturation = xRatio / 100; 
+    const hsvValue = 1 - (position[1] / sat_height); 
+    const hsvSaturation = position[0] / sat_width; 
     const lightness = (hsvValue / 2) * (2 - hsvSaturation); 
 
     color[2] = Math.floor(lightness * 100);
