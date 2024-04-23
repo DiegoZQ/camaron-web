@@ -52,15 +52,18 @@ header a:hover {
 }
 /* Make every svg inside of anchor color light blue and blue on hover except btn-faces and btn-vertex */ 
 header a:not(.btn-faces):not(.btn-vertex) polygon,
-header a:not(.btn-faces):not(.btn-vertex) path {
+header a:not(.btn-faces):not(.btn-vertex) path,
+header a:not(.btn-faces):not(.btn-vertex) circle {
     fill: #62C5E8; 
 }
 header a:not(.btn-faces):not(.btn-vertex):hover polygon,
-header a:not(.btn-faces):not(.btn-vertex):hover path {
+header a:not(.btn-faces):not(.btn-vertex):hover path,
+header a:not(.btn-faces):not(.btn-vertex):hover circle {
     fill: #0F9DDD; 
 }
 header a.disabled:not(.btn-faces):not(.btn-vertex):hover polygon,
-header a.disabled:not(.btn-faces):not(.btn-vertex):hover path {
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover path,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover circle {
     fill: #62C5E8; 
 }
 
@@ -77,11 +80,13 @@ header a.disabled > *:not(.submenu) {
 }
 /* Make disabled anchor use light blue instead of blue on hover */ 
 header a.disabled:not(.btn-faces):not(.btn-vertex):hover polygon,
-header a.disabled:not(.btn-faces):not(.btn-vertex):hover path {
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover path,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover circle {
     fill: #62C5E8; 
 }
 /* Apply a grayscale filter to all disabled anchor svgs */ 
+header a.disabled polygon,
 header a.disabled path, 
-header a.disabled polygon {
+header a.disabled circle {
     filter: grayscale(100%);
 }
