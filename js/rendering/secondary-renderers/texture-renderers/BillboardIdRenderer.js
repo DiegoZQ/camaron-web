@@ -18,6 +18,7 @@ class BillboardIdRenderer extends TextureRenderer {
 		this.texcoordBuffer = texcoordBuffer;
 		this.centerAttributeLocation = null;
 		this.texcoordAttributeLocation = null;
+		this.scaleLocation = null;
 		this.VLocation = null;
         this.PLocation = null;
         this.MVLocation = null;
@@ -31,6 +32,7 @@ class BillboardIdRenderer extends TextureRenderer {
 		this.centerAttributeLocation = gl.getAttribLocation(this.program, "a_center");
         this.texcoordAttributeLocation = gl.getAttribLocation(this.program, "a_texcoord");
 
+		this.scaleLocation = gl.getUniformLocation(this.program, "scale");
 		this.VLocation = gl.getUniformLocation(this.program, "u_view");
 		this.PLocation = gl.getUniformLocation(this.program, "u_projection");
 		this.MVLocation = gl.getUniformLocation(this.program, "u_worldView");
@@ -57,6 +59,7 @@ class BillboardIdRenderer extends TextureRenderer {
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
 
+		gl.uniform3fv(this.scaleLocation, this.gpuModel.MVPManager._scale); 
 		gl.uniformMatrix4fv(this.VLocation, false, this.gpuModel.MVPManager.viewMatrix);
         gl.uniformMatrix4fv(this.PLocation, false, this.gpuModel.MVPManager.projectionMatrix);
         gl.uniformMatrix4fv(this.MVLocation, false, this.gpuModel.MVPManager.MV);

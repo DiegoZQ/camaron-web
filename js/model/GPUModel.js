@@ -232,10 +232,12 @@ class GPUModel {
       const maxX = fontInfo.textureWidth;
       const maxY = fontInfo.textureHeight;
 
+      const maxArea = Math.max(this.MVPManager.modelWidth, this.MVPManager.modelHeight) * this.MVPManager.modelDepth;
+      const scale = (Math.sqrt(maxArea/this.cpuModel.vertices.length)/fontInfo.letterHeight) * 0.1; 
+
       for (const vertex of vertices) {
          const id = `${vertex.id}`;
          this.vertexIdsLength += id.length;
-         const scale = this.MVPManager.modelDepth/200;
          const idWidth = id.length*(fontInfo.width)*scale;
          const idHeight = fontInfo.letterHeight*scale;
          const vertexIdCenter = vertex.coords;
@@ -313,10 +315,12 @@ class GPUModel {
       const maxX = fontInfo.textureWidth;
       const maxY = fontInfo.textureHeight;
 
+      const maxArea = Math.max(this.MVPManager.modelWidth, this.MVPManager.modelHeight) * this.MVPManager.modelDepth;
+      const scale = (Math.sqrt(maxArea/this.cpuModel.vertices.length)/fontInfo.letterHeight) * 0.1; 
+
       for (const polygon of polygons) {
          const id = `${polygon.id}`;
          this.polygonIdsLength += id.length;
-         const scale = this.MVPManager.modelDepth/200;
          const idWidth = id.length*(fontInfo.width)*scale;
          const idHeight = fontInfo.letterHeight*scale;
          const polygonIdCenter = polygon.geometricCenter;
