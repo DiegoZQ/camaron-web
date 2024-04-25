@@ -1,74 +1,24 @@
 /* secondary_renderers.css */
 
-
-/* Secondary Renderers submenu hidden by default */
-header .submenu {
-    position: absolute;
-    transition: all .5s;
-    pointer-events: none;
-    z-index: 1;
-    width: auto;
-    left: 50%;
-    top: 100%;
-    transform: translate(-50%, -20%);
-    opacity: 0;
-    visibility: hidden;
-    background: #FEFEFE;
-    box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.03);
-    border-radius: 10px;
-    padding: 10px;
+/* Header dropdown submenu style */ 
+header #secondary_renderers_menu .submenu {
     min-width: 225px; 
 }
 
-/* Adds a margin bottom of 10px to each li element of class submenu excepts by the last one */
-header .submenu li:not(:last-child) {
-    margin-bottom: 10px; 
-}
-
-/* Display the submenu on open-menu hover */
-header .open-menu:hover .submenu {
-    display: block;
-    transform: translate(-50%, 0%);
-    opacity: 1;
-    visibility: visible;
-    transition: all .3s;
-    pointer-events: auto; 
-}
-
-/* Selectable renderers from the submenu */
-header .submenu .label {
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    line-height: normal;
-    width: auto;
-    height: auto;
-    padding: 5px 10px;
-    padding-right: 30px;
-    background-color: #F5F5F5;
-    border-radius: 10px;
-    font-size: 13px;
-    text-transform: uppercase;
-    color: #666666;
-    font-weight: 600;
-    transition: all .3s; 
-}
-
-/* Changes the background color and text color on selectable renderer hover */
-header .submenu .label:hover {
-    background-color: #E4F7FF;
-    color: #0F9DDD; 
-}
 
 /* Adds a margin between the image and the text of selectable renderer */
-header .submenu .label img {
+header #secondary_renderers_menu .submenu .label img {
     margin-right: 13px; 
 }
 
-
+/* Adds a selected style to a secondary renderer and secondary renderer on hover when renderer is active */
+header #secondary_renderers_menu .submenu li.active .label, 
+header #secondary_renderers_menu .submenu li.active .label:hover {
+    background-color: #ffedf1;
+    color: #666666; 
+}
 /* Adds a check icon at the end of label class when renderer is active */
-header .submenu .active .label:after {
+header #secondary_renderers_menu .submenu li.active .label:after {
     content: 'check';
     font-family: 'Material Icons';
     text-transform: none;
@@ -79,19 +29,12 @@ header .submenu .active .label:after {
     display: block; 
 }
 
-/* Adds a selected style to a selectable renderer and selectable renderer on hover when renderer is active */
-header .submenu .active .label, 
-header .submenu .active .label:hover {
-    background-color: #ffedf1;
-    color: #666666; 
-}
-
-/* Add style for disabled labels */
-header .submenu .disabled .label {
+/* Add style for disabled secondary renderer labels */
+header #secondary_renderers_menu .submenu li.disabled .label {
     background-color: #F5F5F5;
     cursor: default;
 }
-header .submenu .disabled .label:after {
+header #secondary_renderers_menu .submenu li.disabled .label:after {
     content: 'block';
     font-family: 'Material Icons';
     text-transform: none;
@@ -101,7 +44,7 @@ header .submenu .disabled .label:after {
     color: #a09f9f;
     display: block; 
 }
-header .submenu .disabled .label:hover {
+header #secondary_renderers_menu .submenu .disabled .label:hover {
     background-color: #F5F5F5;
     color: #666666;
 }

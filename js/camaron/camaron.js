@@ -61,23 +61,37 @@ const draw = () => {
 --------------------------------- BUTTONS INTERACTIONS ---------------------------------
 --------------------------------------------------------------------------------------*/
 
-// Download model button
-const exportFileButton = document.getElementById('export_button');
-exportFileButton.onclick = downloadFileHandler;
+const downloadFileHandler = (exportFormat) => {
+  try {
+    const content = loader.export(exportFormat);
 
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', `model.${exportFormat}`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
 
-function takeScreenshot() {
-  draw();
-  const dataUrl = canvas.toDataURL('image/png');
-  const downloadLink = document.createElement('a');
-  downloadLink.href = dataUrl;
-  downloadLink.download = 'screenshot.png';
+    document.body.removeChild(element);    
+  } catch (error) {
+    openModal('modal-error', error.message);
+  }
+}
 
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
+function takeScreenshot(clickedButton) {
+  if (!clickedButton.classList.contains('disabled')) {
+    draw();
+    const dataUrl = canvas.toDataURL('image/png');
+    const downloadLink = document.createElement('a');
+    downloadLink.href = dataUrl;
+    downloadLink.download = 'screenshot.png';
 
-  document.body.removeChild(downloadLink);
-};
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    document.body.removeChild(downloadLink); 
+  }
+};  
 
 // main renderer handler
 function mainRendererOnClick(clickedRenderer) {

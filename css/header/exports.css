@@ -1,0 +1,25 @@
+/* exports.css */
+
+
+/* Header dropdown submenu style */ 
+header #exports_menu .submenu {
+    min-width: 175px; 
+}
+/* Selectable options of submenu */
+header #exports_menu .submenu .label {
+    padding: 10px 30px 10px 10px;
+}
+header #exports_menu li > span {
+    position: relative;
+    display: flex;
+    align-items: center;
+    line-height: normal;
+    width: auto;
+    height: auto;
+    padding: 14px 0px 2px 0px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #666666;
+    font-weight: 600;
+    transition: all .3s; 
+}

@@ -2,6 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Camaron</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
     
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="css/base.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/header/base.css">
+    <link rel="stylesheet" type="text/css" href="css/header/exports.css">
     <link rel="stylesheet" type="text/css" href="css/header/main_renderers.css">
     <link rel="stylesheet" type="text/css" href="css/header/secondary_renderers.css">
     <link rel="stylesheet" type="text/css" href="css/header/logo.css">
@@ -32,16 +34,13 @@
                 <a class="tooltiped" data-tooltip="Import Model">
                     <label>
                         <input hidden type="file" multiple accept=".off, .poly, .node, .ele, .face, .visf" onchange="uploadFileHandler(this)"/>
-                        <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g id="icon_export" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <polygon id="Fill-1" fill="#0F9DDD" points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
-                                <path d="M33.9530607,15 L25.5745235,15 L25.5745235,17.1066911 L32.9061214,17.1066911 L32.9061214,33.8943227 L13.0928709,33.8943227 L13.0928709,17.1066911 L21.0119238,17.1066911 L21.0119238,15 L12.0459316,15 C11.4685532,15 11,15.4714203 11,16.0533456 L11,34.9466544 C11,35.5295935 11.4685532,36 12.0459316,36 L33.9530607,36 C34.5304392,36 35,35.5295935 35,34.9466544 L35,16.0533456 C35,15.4714203 34.5304392,15 33.9530607,15" id="Fill-1" fill="#0F9DDD"></path>
-                            </g>
-                        </svg>
+                        <svg width="45px" height="45px" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 24 24">
+                            <path d="M3,17.6V7c0-1.4,1.2-2.6,2.7-2.6h2.9c.9,0,1.7.4,2.2,1.2l.9,1.4h5c1.4,0,2.6,1.2,2.6,2.6v.9c.5,0,1,.3,1.3.7.4.5.5,1.1.3,1.7l-1.3,4.7c-.3,1.2-1.3,1.9-2.5,1.9H4.9c-.6,0-1.1-.3-1.5-.8-.3-.4-.4-.8-.4-1.3h0ZM18.2,10.5v-.9c0-.9-.7-1.6-1.6-1.6h-5.3c-.2,0-.3,0-.4-.2l-1.1-1.7c-.3-.5-.8-.7-1.3-.7h-2.9c-.9,0-1.6.7-1.6,1.6v6.5s.2-1,.2-1c.3-1.2,1.3-1.9,2.5-1.9h11.3,0ZM4.9,18.6h12.2c.7,0,1.3-.5,1.5-1.2l1.3-4.7c0-.3,0-.5-.1-.7-.2-.2-.4-.3-.7-.3H6.9c-.7,0-1.3.5-1.5,1.2l-1.3,4.7c0,.3,0,.5.1.7.2.2.4.3.7.3h0Z"/>
+                          </svg>
                     </label>
                 </a>
                 <!-- Export model -->
-                <a id="export_button" class="open-menu tooltiped" data-tooltip="Export Model">
+                <a id="exports_menu" class="open-menu disabled">
                     <svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <g id="icon_import" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <polygon id="Fill-1" fill="#0F9DDD" transform="translate(23.250500, 16.889000) scale(1, -1) translate(-23.250500, -16.889000) " points="23.2510004 25.778 28.1510004 20.878 24.4760004 20.878 24.4760004 8 22.0260004 8 22.0260004 20.878 18.3500004 20.878"></polygon>
@@ -50,16 +49,19 @@
                     </svg>  
                     <ul class="submenu">
                         <li>
+                            <span>Export Model</span>
+                        </li>
+                        <li onclick="downloadFileHandler('off')">
                             <div class="label">
                                 <span>.off</span>
                             </div>
                         </li>
-                        <li>
+                        <li onclick="downloadFileHandler('visf')">
                             <div class="label">
                                 <span>.visf</span>
                             </div>
                         </li>
-                        <li>
+                        <li onclick="downloadFileHandler('poly')">
                             <div class="label">
                                 <span>.poly</span>
                             </div>  
@@ -82,7 +84,7 @@
                     </ul>
                 </a>
                 <!-- Take Screenshot -->
-                <a id="screenshot_button" class="tooltiped" data-tooltip="Take Screenshot" onclick="takeScreenshot()">
+                <a id="screenshot_button" class="tooltiped disabled" data-tooltip="Take Screenshot" onclick="takeScreenshot()">
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 24 24">
                         <path d="M12,10.2c1.4,0,2.6,1.1,2.6,2.6s-1.1,2.6-2.6,2.6-2.6-1.1-2.6-2.6,1.1-2.6,2.6-2.6M12,8.5c-2.4,0-4.3,1.9-4.3,4.3s1.9,4.3,4.3,4.3,4.3-1.9,4.3-4.3-1.9-4.3-4.3-4.3h0Z"/>
                         <circle cx="6.4" cy="9.2" r=".7"/>
@@ -159,7 +161,7 @@
             </div>
             <!-- Secondary Renderers -->
             <div class="autogrid">
-                <a class="open-menu">
+                <a id="secondary_renderers_menu" class="open-menu disabled">
                     <i class="tooltiped material-icons" data-tooltip="Show">keyboard_arrow_down</i>
                     <ul class="submenu">
                         <!-- Wire Renderer -->
@@ -238,7 +240,28 @@
         <!-- About Camaron -->
         <div class="logo flex center">
             <div>
-                <h1>CAMARON</h1>
+                <svg width="124px" height="36px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 36">
+                    <g>
+                      <rect x="0" width="124" height="36"/>
+                      <g>
+                        <path d="M7.97,8.65S-.97,10.19.09,19.71c-.08-.04,3.97.84,5.29-1.5,0,0,0,.47-2.48-.52,0,0,2.4.24,2.7-1.04,0,0-.2.38-2.11-1.4,0,0,2.35.82,3.04-.19,0,0-1.01.27-1.57-1.93,0,0,1.15.92,2.61.98,0,0-1.94-1.87.41-5.46Z"/>
+                        <path d="M9.05,13.38c2.31.2,3.08-1.11,4.46-1.1,0,0,4.09-.7,6.5,3.08,0,0,.06-4.47-9.15-3.73,0,0,.56-.8,3.45-.62,2.89.18,6.47.39,6.67-3.09,0,0-.46,2.28-4.99,2.21l1.84-1.26s-8.72-1.97-9.9.6c-1.18,2.57-.91,3.73,1.13,3.9ZM14.1,9.78c0-.28.26-.5.57-.49s.55.24.54.52-.26.5-.57.49-.54-.24-.54-.52Z"/>
+                        <path d="M16.9,11.71s3.51,1.69,4.96-.39c-.77.56-1.65,1.07-4.96.39Z"/>
+                        <path d="M.21,20.48s.66,2.19,1.8,3.37c.24.27,4.42-2.03,3.85-3.18,0,0-.43-.95-.43-1.35-.52-.37-2.71,1.73-5.23,1.16Z"/>
+                        <path d="M2.38,24.24s1.47,1.69,2.57,2.32c0,0,2.89-3.18,2.77-3.52s-1.22-1.04-1.45-1.57c-1.65,1.1-1.99,1.73-3.89,2.77Z"/>
+                        <path d="M5.22,26.76s1.37.67,3.55.83c0,0,.58-3.26,1.32-3.62,0,0-1.11-.24-1.88-.76l-3,3.55Z"/>
+                        <path d="M10.26,24.17s-1.07,1.59-1.02,3.42c0,0,1.28.42,3.35-.18,0,0-1.41-1.25-.73-3.1,0,0-1.11-.02-1.6-.14Z"/>
+                        <path d="M12.6,25.87s-1.21-3.35,7.11-4.04c0,0-2.04,7.29-7.13,4.36,0,0,3.07-.23,3.87-1.27,0,0-.69-.4-2.69.46,0,0,2.07-2.01,2.85-2.28,0,0-2.86.83-4.01,2.78Z"/>
+                        <path d="M14.6,13.25s3.39,1.02,2.68,4.73c0,0,1.83-4.22-2.68-4.73Z"/>
+                        <path d="M27.04,9.52h3.79l5.94,18.22h-3.42l-2.77-9.7c-.58-1.93-1.11-4.01-1.65-6.01h-.11c-.5,2.02-1.04,4.08-1.62,6.01l-2.8,9.7h-3.3l5.94-18.22ZM24.61,20.26h8.58v2.54h-8.58v-2.54Z"/>
+                        <path d="M38.86,9.52h3.65l3.22,8.9c.4,1.16.77,2.39,1.17,3.58h.11c.4-1.19.75-2.42,1.15-3.58l3.15-8.9h3.65v18.22h-2.96v-8.34c0-1.68.26-4.11.41-5.79h-.11l-1.47,4.23-3,8.19h-1.92l-3.01-8.19-1.45-4.23h-.11c.16,1.69.41,4.11.41,5.79v8.34h-2.91V9.52Z"/>
+                        <path d="M63.19,9.52h3.79l5.94,18.22h-3.42l-2.77-9.7c-.58-1.93-1.11-4.01-1.65-6.01h-.11c-.5,2.02-1.04,4.08-1.62,6.01l-2.8,9.7h-3.3l5.94-18.22ZM60.76,20.26h8.58v2.54h-8.58v-2.54Z"/>
+                        <path d="M75.01,9.52h6.14c3.79,0,6.71,1.34,6.71,5.4s-2.92,5.69-6.71,5.69h-2.91v7.12h-3.23V9.52ZM80.82,18.03c2.5,0,3.86-1.04,3.86-3.11s-1.36-2.82-3.86-2.82h-2.57v5.93h2.57ZM80.55,19.75l2.34-1.93,5.69,9.91h-3.63l-4.4-7.99Z"/>
+                        <path d="M90.55,18.55c0-5.89,3.29-9.37,8.03-9.37s8.03,3.49,8.03,9.37-3.29,9.52-8.03,9.52-8.03-3.62-8.03-9.52ZM103.3,18.55c0-4.09-1.85-6.56-4.71-6.56s-4.71,2.47-4.71,6.56,1.85,6.71,4.71,6.71,4.71-2.62,4.71-6.71Z"/>
+                        <path d="M110.3,9.52h3.32l5.66,10.24,1.88,3.89h.11c-.16-1.88-.41-4.19-.41-6.22v-7.91h3.08v18.22h-3.32l-5.66-10.26-1.88-3.87h-.11c.16,1.93.41,4.12.41,6.15v7.98h-3.08V9.52Z"/>
+                      </g>
+                    </g>
+                </svg>
                 <div class="autogrid center">
                     <a class="modal-trigger" data-modal="modal-about">About</a>
                     <span>|</span>
@@ -647,10 +670,9 @@
     <script type="text/javascript" src="js/camaron/selection.js"></script>
     <script type="text/javascript" src="js/camaron/evaluation.js"></script>
     <script type="text/javascript" src="js/camaron/model-uploader.js"></script>
-    <script type="text/javascript" src="js/camaron/model-downloader.js"></script>
     <script type="text/javascript" src="js/camaron/color_picker.js"></script>
     <script type="text/javascript" src="js/camaron/camaron.js"></script>
     <script type="text/javascript" src="js/camaron/sitio.js"></script>
-    
+
 </body>
 </html>

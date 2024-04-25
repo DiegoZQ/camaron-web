@@ -103,6 +103,13 @@ const setUIStartConfiguration = () => {
    const mainRenderers = document.querySelectorAll('a[name="main_renderer"]');
    const secondaryRenderers = document.querySelectorAll('li[name="secondary_renderer"]');
    const renderers = [...mainRenderers, ...secondaryRenderers];
+   const exportsMenu = document.getElementById('exports_menu');
+   const screenshootButton = document.getElementById('screenshot_button');
+   const secondaryRenderersMenu = document.getElementById('secondary_renderers_menu');
+
+   exportsMenu.classList.remove('disabled');
+   screenshootButton.classList.remove('disabled');   
+   secondaryRenderersMenu.classList.remove('disabled'); 
 
    for (const renderer of renderers) {
       if (!gpuModel.cpuModel.availableRenderers.includes(renderer.id)) {

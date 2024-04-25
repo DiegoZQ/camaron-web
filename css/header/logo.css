@@ -18,3 +18,9 @@ header .logo a {
 header .logo a:hover {
     color: #0F9DDD; 
 }
+header .logo path {
+    fill: #666666
+}
+header .logo rect {
+    fill: #fff
+}
