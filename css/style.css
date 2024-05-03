@@ -381,30 +381,6 @@ textarea {
     justify-content: flex-start;
     grid-gap: 5px;
     color: #8B8B8B; }
-.ui-list {
-  min-width: 200px; }
-  .ui-list li {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer; }
-  .ui-list li:hover {
-    background-color: #E4F7FF; }
-  .ui-list li.active {
-    background-color: #ffedf1;
-    border-left: 2px solid #ff7091;
-    cursor: default; }
-  .ui-list .color-indicator {
-    width: 24px;
-    height: 24px;
-    border: 1px solid #AFAFAF;
-    background: white; }
 
-.picker {
-  min-width: 100px;
-  min-height: 100px;
-  background: #F5F5F5;
-  background-clip: content-box; }
 
 /*# sourceMappingURL=style.css.map */

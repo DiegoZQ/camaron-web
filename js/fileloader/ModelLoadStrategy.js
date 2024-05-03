@@ -21,16 +21,6 @@ class ModelLoadStrategy {
       return normalizedFileArray;
    }
 
-   calculateVertexNormals(polygonMesh) {
-      const vertices = polygonMesh.getVertices();
-      for (const vertex of vertices) 
-         vertex.calculateNormal();
-   }
-
-   completeMesh(polygonMesh) {
-      // this.calculateVertexNormals(polygonMesh);
-   }
-
    load(fun) {
       try {
          fun();
@@ -38,7 +28,7 @@ class ModelLoadStrategy {
       } catch (error) {
          this.isValid = false;
          this.cpuModel = null;
-         console.log(error);
+         console.warn(error);
       }
       return this.cpuModel;
    }
@@ -131,8 +121,8 @@ class ModelLoadStrategy {
       if (allowedTypes.includes(this.cpuModel.modelType)) {
          this.cpuModel.vertices.sort((a, b) => a.id - b.id);
          const vertices = this.cpuModel.vertices;
+         const vertexIds = vertices.map(vertex => vertex.id);
          const polygons = this.cpuModel.polygons ? this.cpuModel.polygons : [];
-         const minVertexid = vertices[0]?.id; 
 
          // OFF Header
          let content = `OFF\n${vertices.length} ${polygons.length} 0\n`;
@@ -140,9 +130,17 @@ class ModelLoadStrategy {
          for (const vertex of vertices) {
             content += `${vertex.coords.join(' ')}\n`;
          }
+         // NO SE VE BIEN PORQUE CREO QUE EL FORMATO OFF ES INCAPAZ DE REPRESENTAR UN POLÍGONO QUE TIENE UN AGUJERO.
+         // CREO QUE DEBERÍA LANZAR UN ERROR YA QUE NO SE PUEDE EXPORTAR CORRECTAMENTE 
+         console.log(vertices);
          // Polygons
          for (const polygon of polygons) {
-            const vertexIndices = polygon.vertices.map(vertex => vertex.id - minVertexid);
+            console.log(polygon.vertices);
+            if (polygon.holes.length) {
+               throw new Error('Cannot export .poly with holes to .off');
+            }
+            const vertexIndices = polygon.vertices.map(vertex => vertexIds.indexOf(vertex.id));
+            console.log(vertexIndices);
             content += `${vertexIndices.length} ${vertexIndices.join(' ')}\n`;
          }
          return content;
@@ -177,9 +175,9 @@ class ModelLoadStrategy {
       if (allowedTypes.includes(this.cpuModel.modelType)) {
          this.cpuModel.vertices.sort((a, b) => a.id - b.id);
          const vertices = this.cpuModel.vertices;
+         const vertexIds = vertices.map(vertex => vertex.id);
          const polygons = this.cpuModel.polygons ? this.cpuModel.polygons : [];
          const polyhedrons = this.cpuModel.polyhedrons ? this.cpuModel.polyhedrons : [];
-         const minVertexid = vertices[0]?.id; 
 
          // ViSF Header
          let content = `2 ${allowedTypes.indexOf(this.cpuModel.modelType)}\n`
@@ -191,7 +189,10 @@ class ModelLoadStrategy {
          // Polygons
          content += polygons.length ? `${polygons.length}\n` : '';
          for (const polygon of polygons) {
-            const vertexIndices = polygon.vertices.map(vertex => vertex.id - minVertexid);
+            if (polygon.holes.length) {
+               throw new Error('Cannot export .poly with holes to .visf');
+            }
+            const vertexIndices = polygon.vertices.map(vertex => vertexIds.indexOf(vertex.id));
             content += `${vertexIndices.length} ${vertexIndices.join(' ')}\n`;
          }
          // Polyhedrons

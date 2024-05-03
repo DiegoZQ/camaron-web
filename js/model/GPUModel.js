@@ -150,16 +150,36 @@ class GPUModel {
          this.increaseEdgesCounts(polygonVertices.length);
       }
       const edgeData = new Float32Array(this.edgesCount*6);
-   
-      let j = 0;
+      let k = 0;
       for (const polygon of polygons) {
-        const polygonVertices = polygon.vertices;
-        for (let i = 0; i < polygonVertices.length; i++) {
-            const vertex1 = polygonVertices[i].coords;
-            const vertex2 = polygonVertices[(i + 1) % polygonVertices.length].coords;
-            edgeData[j] = vertex1[0]; edgeData[j+1] = vertex1[1]; edgeData[j+2] = vertex1[2];
-            edgeData[j+3] = vertex2[0]; edgeData[j+4] = vertex2[1]; edgeData[j+5] = vertex2[2];
-            j += 6;
+         const polygonVertices = polygon.vertices;
+         const polygonHoles = polygon.holes;
+         // Si el polígono no tiene agujero, une cada vértice consecutivo con una línea
+         if (!polygonHoles.length) {
+            for (let i = 0; i < polygonVertices.length; i++) {
+               const vertex1 = polygonVertices[i].coords;
+               const vertex2 = polygonVertices[(i + 1) % polygonVertices.length].coords;
+               edgeData[k] = vertex1[0]; edgeData[k+1] = vertex1[1]; edgeData[k+2] = vertex1[2];
+               edgeData[k+3] = vertex2[0]; edgeData[k+4] = vertex2[1]; edgeData[k+5] = vertex2[2];
+               k += 6;
+            }
+         }
+         // Si tiene uno o más agujeros, une cada segmento continuo del polígono con una línea,
+         // esto es, une los puntos consecutivos del polígono exterior y los puntos consecutivos de cada
+         // agujero contenido. Ej: si holes es [4], une de 0 a 3 los vértices (polígono exterior) y de 
+         // 4 a polygonVertices.length los vértices correspondiente al agujero que empieza con el vértice 4.
+         else {
+            for (let i = 0; i <= polygonHoles.length; i++) {
+               const start = i === 0 ? 0 : polygonHoles[i-1];
+               const end = i === polygonHoles.length ? polygonVertices.length : polygonHoles[i]; 
+               for (let j = start; j < end; j++) {
+                  const vertex1 = polygonVertices[j].coords;
+                  const vertex2 = polygonVertices[Math.max(start, (j + 1) % end)].coords;
+                  edgeData[k] = vertex1[0]; edgeData[k+1] = vertex1[1]; edgeData[k+2] = vertex1[2];
+                  edgeData[k+3] = vertex2[0]; edgeData[k+4] = vertex2[1]; edgeData[k+5] = vertex2[2];
+                  k += 6;
+               }
+            }
          }
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, this.edgesBuffer);

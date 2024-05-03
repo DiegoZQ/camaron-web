@@ -28,22 +28,9 @@ const isNonNegativeInteger = (str) => {
     return /^\d+$/.test(str);
 } 
 
-const isPercentage = (n) => {
-    return typeof n === "string" && n.indexOf('%') != -1;
-}
-
-const isOnePointZero =(n) => {
-    return typeof n == "string" && n.indexOf('.') != -1 && parseFloat(n) === 1;
-}
-
-// Genera un arreglo de números que comienza en 'start', avanza hasta 'end' (sin incluirlo)
-// con incrementos definidos por 'step'.
-const range = (start, end, steps=1) => {
-    const result = [];
-    for (let i = start; i < end; i+=steps) {
-      result.push(i);
-    }
-    return result;
+// Convierte a 0 el número si es muy pequeño
+const smallToZero = (number) => {
+    return Math.abs(number) <= 0.0001 ? 0 : number;
 }
 
 // Retorna un número si está dentro de un rango min-max, si es menor a min, retorna min y si es
@@ -51,6 +38,15 @@ const range = (start, end, steps=1) => {
 const segmentNumber = (number, min, max) => {
     return Math.max(min, Math.min(number, max));
 }
+
+// Verifica que 2 vectores tengan la misma dirección. Retorna true si la tienen, false si no.
+const sameDirection = (vector1, vector2) => {
+    return (
+        smallToZero(vector1[0]) * smallToZero(vector2[0]) >= 0 && 
+        smallToZero(vector1[1]) * smallToZero(vector2[1]) >= 0 && 
+        smallToZero(vector1[2]) * smallToZero(vector2[2]) >= 0
+    )
+};
 
 // Encuentra los vectores base u, v del plano que comprende a una list de vértices, a partir
 // de 3 vértices no colineales. Retorn los vectores u,v además del índice del vértice utilizado
@@ -93,26 +89,6 @@ const mapTo2D = (points3D, v1, v2) => {
         points2D.push(...[x, y]);
     }
     return points2D;
-}
-
-const bound01 = (n, max) => {
-    if (isOnePointZero(n)) { n = "100%"; }
-
-    const processPercent = isPercentage(n);
-    n = Math.min(max, Math.max(0, parseFloat(n)));
-
-    // Automatically convert percentage into number
-    if (processPercent) {
-        n = parseInt(n * max, 10) / 100;
-    }
-
-    // Handle floating point rounding errors
-    if ((Math.abs(n - max) < 0.000001)) {
-        return 1;
-    }
-
-    // Convert into [0, 1] range if it isn't already
-    return (n % max) / parseFloat(max);
 }
 
 const parseRGB = (rgbString) => {
@@ -172,54 +148,5 @@ const rgbToHsl = (rgbArr) => {
     if (H < 0) {
         H += 360;
     }
-    return [H, S, L];
-}
-const hslToRgb = (h, s, l) => {
-    let r, g, b;
-
-    h = bound01(h, 360);
-    s = bound01(s, 100);
-    l = bound01(l, 100);
-
-    const hue2rgb = (p, q, t) => {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1/6) return p + (q - p) * 6 * t;
-        if (t < 1/2) return q;
-        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-    }
-
-    if(s === 0) {
-        r = g = b = l; // achromatic
-    }
-    else {
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3);
-    }
-    return [r * 255, g * 255, b * 255];
-}
-
-// RGB - HSV
-const rgbToHsv = (r, g, b) => {
-    if (arguments.length === 1) {
-        g = r.g, b = r.b, r = r.r;
-    }
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    const d = max - min;
-    let h;
-    const s = (max === 0 ? 0 : d / max);
-    const v = max / 255;
-
-    switch (max) {
-        case min: h = 0; break;
-        case r: h = (g - b) + d * (g < b ? 6: 0); h /= 6 * d; break;
-        case g: h = (b - r) + d * 2; h /= 6 * d; break;
-        case b: h = (r - g) + d * 4; h /= 6 * d; break;
-    }
-
-    return [h, s, v];
+    return [H, S, L].map(value => Math.round(value + 0.05));
 }
