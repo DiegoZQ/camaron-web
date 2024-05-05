@@ -276,9 +276,6 @@ $('#modal-colors').on('shown', function() {
         }
     });
     $('#save_btn').click(function(){
-        updateColorConfig();
-        const backgroundColorIndicator = document.querySelector('#background_color .color-indicator');
-        elements.background.style.backgroundColor = backgroundColorIndicator.style.backgroundColor;
 		$('.modal.active').delay(150).fadeOut().removeClass('active');
 		$('.modal-container').toggleClass('bottom-in bottom-out');
         $(this).trigger('hidden');
@@ -310,6 +307,9 @@ $('#modal-colors').on('shown', function() {
 })
 
 $('#modal-colors').on('hidden', function() {
+    updateColorConfig();
+    const backgroundColorIndicator = document.querySelector('#background_color .color-indicator');
+    elements.background.style.backgroundColor = backgroundColorIndicator.style.backgroundColor;
     // Remove all event listeners when the modal is hidden
     elements.hue_bar.removeEventListener('mousedown', hueBarHandleMouseDown);
     elements.sat_rect.removeEventListener('mousedown', satRectHandleMouseDown);

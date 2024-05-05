@@ -11,11 +11,16 @@ header {
     grid-gap: 15px; 
 }
 
+/* Edit tooltiped base transform */
 header .tooltiped:before {
     transform: translate(-50%, 100%); 
 } 
 header .tooltiped:hover:before {
     transform: translate(-50%, 150%); 
+}
+/* Disable tooltip hover when along open menu and not disabled */
+header .tooltiped.open-menu:not(.disabled):hover:before {
+    visibility: hidden;
 }
 
 /* Add style to direct autogrid children of header */
