@@ -14,16 +14,16 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         return super.load(() => {
             const [numVertices, dimensions] = this.loadModelHeader();
             if (dimensions == 2) {
-                this.cpuModel = new PSLG();
+                this.model = new PSLG();
                 let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
                 startIndex = this.loadModelEdges(startIndex);
                 this.loadModelHoles(startIndex, dimensions);
             } else {
-                this.cpuModel = new PolygonMesh();
+                this.model = new PolygonMesh();
                 let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
                 this.loadModelFacets(startIndex);
             }
-            this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
+            this.model.vertices = new Array(...Object.values(this.model.vertices));
         });
     }
 
@@ -65,12 +65,12 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             }
             
             const [index, vertexIndex1, vertexIndex2] = lineWords.slice(0, 3).map(parseFloat);
-            const vertex1 = this.cpuModel.vertices[parseInt(vertexIndex1)];
-            const vertex2 = this.cpuModel.vertices[parseInt(vertexIndex2)];
+            const vertex1 = this.model.vertices[parseInt(vertexIndex1)];
+            const vertex2 = this.model.vertices[parseInt(vertexIndex2)];
    
             edges[parseInt(index)] = new Edge(parseInt(index), vertex1, vertex2);
         }
-        this.cpuModel.edges = new Array(...Object.values(edges));
+        this.model.edges = new Array(...Object.values(edges));
         return startIndex + numEdges;
     }
 
@@ -108,7 +108,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
                 // para cada índice de vértice
                 for(let k = 1; k <= sidesCount; k++) {
                     const vertexIndex = parseInt(polygonLineWords[k]);
-                    const vertex = this.cpuModel.vertices[vertexIndex];
+                    const vertex = this.model.vertices[vertexIndex];
                     // agrega cada vértice a los vértices del polígono
                     polygon.vertices.push(vertex);
                     // y agrega el nuevo polígono como parte de los polígonos de cada vértice
@@ -194,7 +194,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             offset += 1 + facetPolygonCount + facetHoleCount;
             polygonCount += facetPolygonCount;
         }
-        this.cpuModel.polygons = new Array(...polygons);
+        this.model.polygons = new Array(...polygons);
     }
 
     loadModelHoles(startIndex, dimensions) {
@@ -223,7 +223,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             }
             holes[id] = new Hole(id, ...holeCoords);;
         }
-        this.cpuModel.holes = new Array(...Object.values(holes));
+        this.model.holes = new Array(...Object.values(holes));
         return startIndex + numHoles;
     }
 

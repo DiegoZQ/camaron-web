@@ -15,16 +15,16 @@ class OffLoadStrategy extends ModelLoadStrategy {
          const [numVertices, numPolygons, vertexStartIndex] = this.loadHeader();
          // Vertex cloud
          if (!numPolygons) {
-            this.cpuModel = new VertexCloud();
+            this.model = new VertexCloud();
             this.loadModelVertices(numVertices, vertexStartIndex);
          }
          // Polygon mesh
          else {
-            this.cpuModel = new PolygonMesh();
+            this.model = new PolygonMesh();
             const polygonStartIndex = this.loadModelVertices(numVertices, vertexStartIndex);
             this.loadModelPolygons(numPolygons, polygonStartIndex);
          }
-         this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
+         this.model.vertices = new Array(...Object.values(this.model.vertices));
       });
    }
 

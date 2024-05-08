@@ -4,8 +4,8 @@
 
 
 class AreaSelectionStrategy extends SelectionStrategy {
-	constructor(cpuModel, mode, minArea, maxArea) {
-		super(cpuModel, mode);
+	constructor(model, mode, minArea, maxArea) {
+		super(model, mode);
 	  	this.minArea = minArea;
 	  	this.maxArea = maxArea;
 	}

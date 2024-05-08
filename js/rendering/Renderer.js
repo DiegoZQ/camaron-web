@@ -4,8 +4,8 @@
 
 
 class Renderer {
-   constructor(gpuModel, vertexShader, fragmentShader) {
-      this.gpuModel = gpuModel;
+   constructor(mvpManager, vertexShader, fragmentShader) {
+      this.mvpManager = mvpManager;
       this.program = webglUtils.createProgramFromSources(gl, [vertexShader, fragmentShader]);
       this.vao = gl.createVertexArray(); // Vertex Array Object: se utiliza para agrupar las configuraciones de atributos de vértice
       this.positionBuffer = null;

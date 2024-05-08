@@ -99,21 +99,21 @@ const applyButtonHandler = () => {
          list = document.getElementById("id_list").value.split(',');
       }
       console.log(list)
-      selection = new IdSelectionStrategy(cpuModel, selectionMode, idFrom, idTo, list);
+      selection = new IdSelectionStrategy(model, selectionMode, idFrom, idTo, list);
    } 
    else if (selectionMethod == 'angle') {
       const angleFrom = document.getElementById("angle_from").value;
       const angleTo = document.getElementById("angle_to").value;
-      selection = new AngleSelectionStrategy(cpuModel, selectionMode, angleFrom, angleTo);
+      selection = new AngleSelectionStrategy(model, selectionMode, angleFrom, angleTo);
    }
    else if (selectionMethod == 'area') {
       const areaFrom = document.getElementById("area_from").value;
       const areaTo = document.getElementById("area_to").value;
-      selection = new AreaSelectionStrategy(cpuModel, selectionMode, areaFrom, areaTo);
+      selection = new AreaSelectionStrategy(model, selectionMode, areaFrom, areaTo);
    }
    else if (selectionMethod == 'edges') {
       const edges_number = document.getElementById("edges_number").value;
-      selection = new EdgesSelectionStrategy(cpuModel, selectionMode, edges_number)
+      selection = new EdgesSelectionStrategy(model, selectionMode, edges_number)
    }
    if (selectionMode == 'clean') 
       appliedSelections = [selection];

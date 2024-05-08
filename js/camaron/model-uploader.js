@@ -1,7 +1,6 @@
 "use strict";
 
 // requires "../fileloader/OffLoadStrategy";
-// requires "../model/GPUModel";
 // requires "../ui/rotator";
 // requires "../ui/scalator";
 // requires "../ui/translator";
@@ -41,10 +40,10 @@ const selectLoadingStrategy = (extension, fileArray) => {
    openModal('modal-error', 'Unsupported File Format');
 };
 
-// Waits for the gpuModel to be loaded
-const waitForGpuModelLoaded = () => {
+// Waits for the model to be loaded
+const waitForModelLoaded = () => {
    // If its fully loaded, sets the renderers
-   if (gpuModel && gpuModel.loaded) {
+   if (model && model.loaded) {
       setUIStartConfiguration();
       setMainRenderer();
       setSecondaryRenderers();
@@ -55,21 +54,21 @@ const waitForGpuModelLoaded = () => {
       closeModal('modal-loading');
    // else waits 0.5 seconds
    } else {
-      setTimeout(waitForGpuModelLoaded, 500);
+      setTimeout(waitForModelLoaded, 500);
    } 
 };
 
-// Initializes gpuModel loading and waits for it to be loaded
-const loadGpuModel = () => {
+// Initializes model loading and waits for it to be loaded
+const loadModel = () => {
    setTimeout(() => {
-      gpuModel.load();
+      model.loadBuffers();
    }, 0);
    changeViewType();
    rotator = new Rotator();
    translator = new Translator();
    scalator = new Scalator();
    
-   waitForGpuModelLoaded();
+   waitForModelLoaded();
 };
 
 // Here is were everything gets initialized.
@@ -92,10 +91,10 @@ const uploadFileHandler = (file) => {
             loader = selectLoadingStrategy(extension, fileArray);
 
             if (loader) {
-               cpuModel = loader.load();
+               model = loader.load();
                if (loader.isValid) {
-                  gpuModel = new GPUModel(cpuModel);
-                  loadGpuModel(gpuModel);
+                  loadModel(model);
+                  cuttingPlaneRenderer = initCuttingPlaneRenderer();
                } else {
                   closeModal('modal-loading');
                   openModal('modal-error', 'Invalid File Content')

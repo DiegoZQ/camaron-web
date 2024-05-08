@@ -14,25 +14,25 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          const meshType = this.loadModelHeader();
          // Vertex cloud
          if (meshType === 0) {
-            this.cpuModel = new VertexCloud();
+            this.model = new VertexCloud();
             this.loadModelVertices(1);
          }
          // Polygonal mesh
          else if (meshType === 1) {
-            this.cpuModel = new PolygonMesh();
+            this.model = new PolygonMesh();
             const polygonStartIndex = this.loadModelVertices(1);
             this.loadModelPolygons(polygonStartIndex);
          }
          // Polyhedral mesh
          else if (meshType === 2) {
-            this.cpuModel = new PolyhedronMesh();
+            this.model = new PolyhedronMesh();
             const polygonStartIndex = this.loadModelVertices(1);
             const polyhedronStartIndex = this.loadModelPolygons(polygonStartIndex);
             this.loadModelPolyhedrons(polyhedronStartIndex);
          } else {
             throw new Error('mesh type error');
          }
-         this.cpuModel.vertices = new Array(...Object.values(this.cpuModel.vertices));
+         this.model.vertices = new Array(...Object.values(this.model.vertices));
       });
    }
 
@@ -90,7 +90,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          numPolyhedrons = startNumber;
       // Si hay relaciones se vecindad
       } else {
-         startIndex += this.cpuModel.polygons.length;
+         startIndex += this.model.polygons.length;
          const newStartLineWords = getLineWords(this.fileArray[startIndex]);
          if (newStartLineWords.length != 1 || !isNonNegativeInteger(newStartLineWords[0])) {
             throw new Error('polyhedronError');
@@ -114,7 +114,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          // para cada índice de vértice
          for(let j = 1; j <= facesCount; j++) {
             const polygonIndex = parseInt(lineWords[j]);
-            const polygon = this.cpuModel.polygons[polygonIndex];
+            const polygon = this.model.polygons[polygonIndex];
 
             // agrega cada cara a las caras del poliedro.
             polyhedron.polygons.push(polygon);
@@ -123,7 +123,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          }
          polyhedrons[i] = polyhedron;
       }
-      this.cpuModel.polyhedrons = polyhedrons;
+      this.model.polyhedrons = polyhedrons;
    }
 
    _exportToVisf() {

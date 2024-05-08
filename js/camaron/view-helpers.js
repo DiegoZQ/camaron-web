@@ -25,17 +25,17 @@ const updateInfo = () => {
    const heightInfo = document.getElementById("height_info");
    const depthInfo = document.getElementById("depth_info");
 
-   verticesInfo.innerHTML = `Vertices: ${cpuModel.vertices.length}`;
-   polygonsInfo.innerHTML = `Polygons: ${cpuModel.polygons?.length}`;
-   widthInfo.innerHTML = `Width: ${Math.round(gpuModel.MVPManager.modelWidth)}`;
-   heightInfo.innerHTML = `Height: ${Math.round(gpuModel.MVPManager.modelHeight)}`;
-   depthInfo.innerHTML = `Depth: ${Math.round(gpuModel.MVPManager.modelDepth)}`;
+   verticesInfo.innerHTML = `Vertices: ${model.vertices.length}`;
+   polygonsInfo.innerHTML = `Polygons: ${model.polygons?.length}`;
+   widthInfo.innerHTML = `Width: ${Math.round(model.modelWidth)}`;
+   heightInfo.innerHTML = `Height: ${Math.round(model.modelHeight)}`;
+   depthInfo.innerHTML = `Depth: ${Math.round(model.modelDepth)}`;
    scaleInfo.value = scalator.scaleFactor.toFixed(1);
 };
   
 // Creates a main renderer and assigns it to the main renderer variable.
 const setMainRenderer = (renderer=null) => {
-   if (!gpuModel)
+   if (!model || !mvpManager)
       return;
 
    if (!renderer) 
@@ -49,7 +49,7 @@ const setMainRenderer = (renderer=null) => {
 
    const RendererClass = rendererMap[renderer?.id]
    if (RendererClass) {
-      mainRenderer = new RendererClass(gpuModel);
+      mainRenderer = new RendererClass(mvpManager, model);
       mainRenderer.init();
    } else {
       mainRenderer = null;
@@ -59,7 +59,7 @@ const setMainRenderer = (renderer=null) => {
 // Creates a new list of  every secondary renderer selected created and 
 // adds it to the secondary renderers variable.
 const setSecondaryRenderers = () => {
-   if (!gpuModel)
+   if (!model || !mvpManager)
       return;
 
    secondaryRenderers = [];
@@ -76,7 +76,7 @@ const setSecondaryRenderers = () => {
    for (const element of elements) {
       const RendererClass = rendererMap[element?.id]
       if (RendererClass) {
-         const secondaryRenderer = new RendererClass(gpuModel);
+         const secondaryRenderer = new RendererClass(mvpManager, model);
          secondaryRenderer.init();
          secondaryRenderers.push(secondaryRenderer);
       } 
@@ -85,19 +85,19 @@ const setSecondaryRenderers = () => {
 
 // Changes the viewtype between perspective and orthogonal.
 const changeViewType = (viewType=null) => {
-   if (!gpuModel)
+   if (!mvpManager)
       return;
    
    if (!viewType) {
       const sceneElement = document.querySelector("[name='view_type'] .scene");
       viewType = Array.from(sceneElement.classList).find(className => className !== 'scene');
    }
-   gpuModel.MVPManager.viewType = viewType;
+   mvpManager.viewType = viewType;
 }
 
 // Changes the viewtype between perspective and orthogonal.
 const setUIStartConfiguration = () => {
-   if (!gpuModel || !gpuModel.loaded) {
+   if (!model || !model.loaded) {
       return;
    }
    const mainRenderers = document.querySelectorAll('a[name="main_renderer"]');
@@ -112,12 +112,12 @@ const setUIStartConfiguration = () => {
    secondaryRenderersMenu.classList.remove('disabled'); 
 
    for (const renderer of renderers) {
-      if (!gpuModel.cpuModel.availableRenderers.includes(renderer.id)) {
+      if (!model.availableRenderers.includes(renderer.id)) {
          renderer.classList.add('disabled');
       } else {
          renderer.classList.remove('disabled');
       }
-      if (gpuModel.cpuModel.activeRenderers.includes(renderer.id)) {
+      if (model.activeRenderers.includes(renderer.id)) {
          renderer.classList.add('active');
       } else {
          renderer.classList.remove('active');
@@ -135,7 +135,7 @@ const resetView = () => {
    translator.reset();
    scalator.reset();
    scaleInfo.value = scalator.scaleFactor.toFixed(1);
-   gpuModel.MVPManager.reset();
+   mvpManager.reset();
    draw();
 }
 
@@ -148,7 +148,7 @@ const rescaleView = () => {
    rotator.rescale();
    translator.rescale();
    scalator.rescale();
-   gpuModel.MVPManager.rescale();
+   mvpManager.rescale();
    draw();
 } 
 

@@ -4,9 +4,11 @@
 // requires "../shaders";
 
 
-class FlatRenderer extends MainRenderer {
+class CuttingPlaneRenderer extends MainRenderer {
 	constructor(mvpManager, model) {
-	  super(mvpManager, model, basicVertexShader, basicFragmentShader);
+	  super(mvpManager, model, cuttingPlaneVertexShader, cuttingPlaneFragmentShader);
+      this.translation = [0,0,0];
+      this.translationLocation = null;
 	}
 
 	init() {
@@ -14,7 +16,7 @@ class FlatRenderer extends MainRenderer {
 
 		// Obtiene las posiciones de las variables en el shader
 		this.positionAttributeLocation = gl.getAttribLocation(this.program, "a_position");
-		this.colorAttributeLocation = gl.getAttribLocation(this.program, "a_color");
+		this.translationLocation = gl.getUniformLocation(this.program, "u_translation");
 		this.MVPLocation = gl.getUniformLocation(this.program, "u_worldViewProjection");
 
 		// Inicializa el Vertex Array Object (VAO)
@@ -22,7 +24,6 @@ class FlatRenderer extends MainRenderer {
 
 		// Asigna los valores de los buffers dentro de las variables del shader
 		this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer);
-		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer, 4);
 	}
 
 	draw() {
@@ -32,6 +33,7 @@ class FlatRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP a la variable u_worldViewProjection del shader
+        gl.uniform3fv(this.translationLocation, this.translation); 
 		gl.uniformMatrix4fv(this.MVPLocation, false, this.mvpManager.MVP);
 
 		this.renderWithCulling();

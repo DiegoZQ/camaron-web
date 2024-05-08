@@ -4,8 +4,8 @@
 
 
 class SecondaryRenderer extends Renderer {
-	constructor(gpuModel, vertexShader, fragmentShader, positionBuffer, color, drawingPrimitive, numPrimitives) {
-	   super(gpuModel, vertexShader, fragmentShader);
+	constructor(mvpManager, vertexShader, fragmentShader, positionBuffer, color, drawingPrimitive, numPrimitives) {
+	   super(mvpManager, vertexShader, fragmentShader);
        this.positionBuffer = positionBuffer;
        this.color = color;
        this.drawingPrimitive = drawingPrimitive;
@@ -34,7 +34,7 @@ class SecondaryRenderer extends Renderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y color a las variables u_worldViewProjection y u_color del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.mvpManager.MVP);
 		gl.uniform4fv(this.colorAttributeLocation, this.color);
 
 		gl.drawArrays(this.drawingPrimitive, 0, this.numPrimitives);

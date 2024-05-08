@@ -5,12 +5,8 @@
 
 
 class MVPManager {
-   constructor(cpuModel) {
-      // Canvas
-      this.center = null;
-      this.modelWidth = null;
-      this.modelHeight = null;
-      this.modelDepth = null;
+   constructor(model) {
+      this.model = model;
       // Movement Vectors/Matrices
       this._translation = vec3.fromValues(0, 0, 0);
       this._scale = vec3.fromValues(1, 1, 1);
@@ -24,23 +20,12 @@ class MVPManager {
       this.recalculateMV = true;
       this.recalculateMVP = true;
 
-      this.initModelView(cpuModel);
+      this.initModelView();
    }
 
-   // Inicializa los campos para visualizar un modelo, como el centro del modelo y la view Matrix a partir de un cpuModel.
-   initModelView(cpuModel) {
-      // Set Canvas
-      const bounds = cpuModel.bounds;
-      this.center = vec3.fromValues(
-         (bounds[0] + bounds[3]) / 2,
-         (bounds[1] + bounds[4]) / 2,
-         (bounds[2] + bounds[5]) / 2
-      );
-      this.modelWidth = Math.abs(bounds[3] - bounds[0]);
-      this.modelHeight = Math.abs(bounds[4] - bounds[1]);
-      this.modelDepth = Math.abs(bounds[5] - bounds[2]);
-      const maxModelDimension = Math.max(this.modelWidth, this.modelHeight, this.modelDepth);
-      this.modelDepth = this.modelDepth != 0 ? this.modelDepth: Math.max(this.modelWidth, this.modelHeight);
+   // Inicializa los campos para visualizar un modelo, como el centro del modelo y la view Matrix a partir de un model.
+   initModelView() {
+      const maxModelDimension = Math.max(this.model.modelWidth, this.model.modelHeight, this.model.modelDepth);
       // Set View Matrix
       const camera = vec3.fromValues(0, 0, 2.5*maxModelDimension)
       const target = vec3.fromValues(0, 0, 0)
@@ -58,8 +43,8 @@ class MVPManager {
 
    // Establece una translación del modelo en el plano xy a partir de un vector de translación.
    set translation(translationVector) {
-      const xFactor = this.modelWidth/500;
-      const yFactor = this.modelHeight/500;
+      const xFactor = this.model.modelWidth/500;
+      const yFactor = this.model.modelHeight/500;
  
       this._translation[0] = translationVector[0] * xFactor;
       this._translation[1] = translationVector[1] * yFactor;
@@ -100,7 +85,7 @@ class MVPManager {
    // Obtiene la matriz del modelo, transladándolo al origen y aplicándole las matrices de escala, translación y rotación.
    get modelMatrix() {
       const modelMatrix = mat4.create();
-      const translation = vec3.fromValues(-this.center[0], -this.center[1], -this.center[2]);
+      const translation = vec3.fromValues(-this.model.center[0], -this.model.center[1], -this.model.center[2]);
     
       mat4.scale(modelMatrix, modelMatrix, this._scale);
       mat4.translate(modelMatrix, modelMatrix, this._translation);
@@ -128,14 +113,14 @@ class MVPManager {
       let width;
       let height;
       if (gl.canvas.clientWidth < gl.canvas.clientHeight) {
-         width = this.modelWidth;
-         height = this.modelWidth/this.aspect
+         width = this.model.modelWidth;
+         height = this.model.modelWidth/this.aspect
       } 
       else {
-         width = this.modelHeight*this.aspect;
-         height = this.modelHeight;
+         width = this.model.modelHeight*this.aspect;
+         height = this.model.modelHeight;
       }
-      mat4.ortho(orthoProjectionMatrix, -(width/2)*margin, (width/2)*margin, -(height/2)*margin, (height/2)*margin, 1, this.modelDepth*50)
+      mat4.ortho(orthoProjectionMatrix, -(width/2)*margin, (width/2)*margin, -(height/2)*margin, (height/2)*margin, 1, this.model.modelDepth*50)
       return orthoProjectionMatrix;
    }
 
@@ -143,7 +128,7 @@ class MVPManager {
    get perspectiveProjectionMatrix() {
       const perspectiveProjectionMatrix = mat4.create();
       const fieldOfViewRadians = degToRad(60);
-      mat4.perspective(perspectiveProjectionMatrix, fieldOfViewRadians, this.aspect, 1, this.modelDepth*50);
+      mat4.perspective(perspectiveProjectionMatrix, fieldOfViewRadians, this.aspect, 1, this.model.modelDepth*50);
       return perspectiveProjectionMatrix;
    }
 

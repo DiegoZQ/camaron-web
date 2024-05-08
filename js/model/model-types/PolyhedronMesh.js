@@ -1,7 +1,5 @@
 "use strict";
 
-// requires "./CPUModel";
-
 
 class PolyhedronMesh extends PolygonMesh {
    constructor() {

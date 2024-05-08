@@ -19,6 +19,7 @@ class Polygon extends Shape {
       this._geometricCenter = null;
       this.neighbours = [];
       this.holes = [];
+      this.isVisible = true;
    }
 
    // Obtiene una lista con los vértices del polígono mapeados a 2 dimensiones.

@@ -5,9 +5,9 @@
 
 
 class BillboardIdRenderer extends TextureRenderer {
-	constructor(gpuModel, positionBuffer, texcoordBuffer, color, billboardLength) {
+	constructor(mvpManager, model, positionBuffer, texcoordBuffer, color, billboardLength) {
 		super(
-			gpuModel,
+			mvpManager,
 			billboardVertexShader, 
 			billboardFragmentShader,
 			positionBuffer, 
@@ -15,6 +15,7 @@ class BillboardIdRenderer extends TextureRenderer {
 			gl.TRIANGLES, 
 			billboardLength*6,
 		);
+		this.fontScale = model.fontScale;
 		this.texcoordBuffer = texcoordBuffer;
 		this.centerAttributeLocation = null;
 		this.texcoordAttributeLocation = null;
@@ -61,11 +62,11 @@ class BillboardIdRenderer extends TextureRenderer {
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
 
-		gl.uniform1f(this.fontScaleLocation, this.gpuModel.fontScale);
-		gl.uniform1f(this.scaleLocation, this.gpuModel.MVPManager._scale[0]); 
-		gl.uniformMatrix4fv(this.VLocation, false, this.gpuModel.MVPManager.viewMatrix);
-        gl.uniformMatrix4fv(this.PLocation, false, this.gpuModel.MVPManager.projectionMatrix);
-        gl.uniformMatrix4fv(this.MVLocation, false, this.gpuModel.MVPManager.MV);
+		gl.uniform1f(this.fontScaleLocation, this.fontScale);
+		gl.uniform1f(this.scaleLocation, this.mvpManager._scale[0]); 
+		gl.uniformMatrix4fv(this.VLocation, false, this.mvpManager.viewMatrix);
+        gl.uniformMatrix4fv(this.PLocation, false, this.mvpManager.projectionMatrix);
+        gl.uniformMatrix4fv(this.MVLocation, false, this.mvpManager.MV);
 		
 		gl.cullFace(gl.FRONT);
 		gl.drawArrays(this.drawingPrimitive, 0, this.numPrimitives);		

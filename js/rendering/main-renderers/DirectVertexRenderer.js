@@ -5,10 +5,9 @@
 
 
 class DirectVertexRenderer extends MainRenderer {
-	constructor(gpuModel) {
-	   super(gpuModel, normalVertexShader, normalFragmentShader);
-	   this.normalBuffer = this.normalBuffer = this.gpuModel.verticesNormalsBuffer;;
-  
+	constructor(mvpManager, model) {
+	   super(mvpManager, model, normalVertexShader, normalFragmentShader);
+	   this.normalBuffer = this.model.verticesNormalsBuffer;
 	   this.normalAttributeLocation = null;
 	   this.modelLocation = null;
 	   this.reverseLightDirectionLocation = null;
@@ -31,7 +30,7 @@ class DirectVertexRenderer extends MainRenderer {
 		// Asigna los valores de los buffers dentro de las variables del shader
 		this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer);
 		this.setupAttributePointer(this.normalAttributeLocation, this.normalBuffer);
-		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer);
+		this.setupAttributePointer(this.colorAttributeLocation, this.colorBuffer, 4);
 	}
 
 	draw() {
@@ -41,8 +40,8 @@ class DirectVertexRenderer extends MainRenderer {
 		gl.bindVertexArray(this.vao);
 
 		// Asigna los valores de MVP y modelMatrix a las variables u_worldViewProjection y u_world del shader
-		gl.uniformMatrix4fv(this.MVPLocation, false, this.gpuModel.MVPManager.MVP);
-		gl.uniformMatrix4fv(this.modelLocation, false, this.gpuModel.MVPManager.modelMatrix);
+		gl.uniformMatrix4fv(this.MVPLocation, false, this.mvpManager.MVP);
+		gl.uniformMatrix4fv(this.modelLocation, false, this.mvpManager.modelMatrix);
 
 		const lightDirection = vec3.normalize(vec3.fromValues(0.5, 0.7, 1), vec3.fromValues(0.5, 0.7, 1));
 		this.renderWithCulling(this.reverseLightDirectionLocation, lightDirection);

@@ -5,13 +5,14 @@
 
 
 class FaceIdRenderer extends BillboardIdRenderer {
-	constructor(gpuModel) {
+	constructor(mvpManager, model) {
 		super(
-			gpuModel, 
-			gpuModel.faceIdsBuffer.position, 
-			gpuModel.faceIdsBuffer.texcoord, 
+			mvpManager,
+			model, 
+			model.faceIdsBuffer.position, 
+			model.faceIdsBuffer.texcoord, 
 			colorConfig.vertexCloudColor, 
-			gpuModel.polygonIdsLength
+			model.polygonIdsLength
 		)
 	}
 }

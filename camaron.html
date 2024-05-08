@@ -20,6 +20,7 @@
     <link rel="stylesheet" type="text/css" href="css/modal_colors.css">
     <link rel="stylesheet" type="text/css" href="css/main_view.css">
     <link rel="stylesheet" type="text/css" href="css/view_type.css">
+    <link rel="stylesheet" type="text/css" href="css/cutting_plane.css">
     <link rel="stylesheet" type="text/css" href="css/anim.css">
 </head>
 
@@ -291,6 +292,9 @@
                 <div class="zoom">
                     <i class="material-icons">zoom_in</i>
                     <input readonly="" id="scale_info" type="text" value="1.0">
+                </div>
+                <div class="plane_position_bar">
+                    <div class="plane_position_picker"></div>
                 </div>
             </div>
             <!-- Model stadistics -->
@@ -663,13 +667,12 @@
     <script type="text/javascript" src="js/model/shapes/Hole.js"></script>
     <script type="text/javascript" src="js/model/shapes/Vertex.js"></script>
     <script type="text/javascript" src="js/model/shapes/Polyhedron.js"></script>
-    <script type="text/javascript" src="js/model/model-types/CPUModel.js"></script>
+    <script type="text/javascript" src="js/model/MVPManager.js"></script>
+    <script type="text/javascript" src="js/model/model-types/AbstractModel.js"></script>
     <script type="text/javascript" src="js/model/model-types/VertexCloud.js"></script>
     <script type="text/javascript" src="js/model/model-types/PSLG.js"></script>
     <script type="text/javascript" src="js/model/model-types/PolygonMesh.js"></script>
     <script type="text/javascript" src="js/model/model-types/PolyhedronMesh.js"></script>
-    <script type="text/javascript" src="js/model/MVPManager.js"></script>
-    <script type="text/javascript" src="js/model/GPUModel.js"></script>
     <!-- File Loader -->
     <script type="text/javascript" src="js/fileloader/ModelLoadStrategy.js"></script>
     <script type="text/javascript" src="js/fileloader/OffLoadStrategy.js"></script>
@@ -682,6 +685,7 @@
     <script type="text/javascript" src="js/rendering/main-renderers/DirectFaceRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/main-renderers/DirectVertexRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/main-renderers/FlatRenderer.js"></script>
+    <script type="text/javascript" src="js/rendering/main-renderers/CuttingPlaneRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/SecondaryRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/FNormalsRenderer.js"></script>
     <script type="text/javascript" src="js/rendering/secondary-renderers/VNormalsRenderer.js"></script>
@@ -712,6 +716,7 @@
     <script type="text/javascript" src="js/camaron/evaluation.js"></script>
     <script type="text/javascript" src="js/camaron/model-uploader.js"></script>
     <script type="text/javascript" src="js/camaron/color_picker.js"></script>
+    <script type="text/javascript" src="js/camaron/cutting_plane.js"></script>
     <script type="text/javascript" src="js/camaron/camaron.js"></script>
     <script type="text/javascript" src="js/camaron/sitio.js"></script>
 

@@ -5,13 +5,14 @@
 
 
 class VertexIdRenderer extends BillboardIdRenderer {
-	constructor(gpuModel) {
+	constructor(mvpManager, model) {
 		super(
-			gpuModel, 
-			gpuModel.vertexIdsBuffer.position, 
-			gpuModel.vertexIdsBuffer.texcoord, 
+			mvpManager,
+			model, 
+			model.vertexIdsBuffer.position, 
+			model.vertexIdsBuffer.texcoord, 
 			colorConfig.vertexCloudColor, 
-			gpuModel.vertexIdsLength
+			model.vertexIdsLength
 		)
 	}
 }

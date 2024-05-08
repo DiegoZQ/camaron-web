@@ -5,8 +5,8 @@
 
 
 class AngleSelectionStrategy extends SelectionStrategy {
-	constructor(cpuModel, mode, minAngle, maxAngle) {
-	  	super(cpuModel, mode);
+	constructor(model, mode, minAngle, maxAngle) {
+	  	super(model, mode);
 	  	this.minAngle = minAngle;
 	  	this.maxAngle = maxAngle;
 	}

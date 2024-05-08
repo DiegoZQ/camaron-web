@@ -15,10 +15,7 @@ class TextureRenderer extends SecondaryRenderer {
 		gl.bindTexture(gl.TEXTURE_2D, glTexture);
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, icon);
 		gl.generateMipmap(gl.TEXTURE_2D);
-
-		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
+		
 		const textureAttributeLocation = gl.getUniformLocation(this.program, 'u_texture');
 		gl.uniform1i(textureAttributeLocation, position);
 	}

@@ -4,8 +4,8 @@
 
 
 class IdSelectionStrategy extends SelectionStrategy {
-	constructor(cpuModel, mode, minId, maxId, idList) {
-	  super(cpuModel, mode);
+	constructor(model, mode, minId, maxId, idList) {
+	  super(model, mode);
 	  this.minId = minId;
 	  this.maxId = maxId;
 	  this.idList = idList;

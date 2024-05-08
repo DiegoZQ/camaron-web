@@ -6,14 +6,14 @@
 
 
 class VCloudRenderer extends TextureRenderer {
-	constructor(gpuModel) {
-		const numVertices = gpuModel.cpuModel.vertices.length;
-		const numHoles = gpuModel.cpuModel.holes ? gpuModel.cpuModel.holes.length : 0;
+	constructor(mvpManager, model) {
+		const numVertices = model.vertices.length;
+		const numHoles = model.holes ? model.holes.length : 0;
 		super(
-			gpuModel,
+			mvpManager,
 			pointVertexShader, 
 			pointFragmentShader,
-			gpuModel.verticesBuffer, 
+			model.verticesBuffer, 
         	colorConfig.vertexCloudColor, 
 			gl.POINTS, 
 			numVertices + numHoles

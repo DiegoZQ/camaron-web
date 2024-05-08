@@ -1,5 +1,6 @@
 "use strict";
 
+// https://stackoverflow.com/questions/50815380/webgl-how-to-handle-drawing-order-in-3d
 // TODO: VER COMO SE RENDERIZA BIEN LA LUZ CUANDO ESTOY MIRANDO UN POLÍGONO CUYA NORMAL NO APUNTA DESDE DONDE MIRO
 // NORMAL PROGRAM
 const normalVertexShader = `#version 300 es
@@ -35,7 +36,7 @@ out vec4 outColor;
 void main() {
   vec3 normal = normalize(v_normal);
   float light = dot(normal, u_reverseLightDirection);
-
+  if (v_color.a <= 0.5) discard;
   outColor = v_color;
   outColor.rgb *= light;
 }
@@ -67,6 +68,7 @@ in vec4 v_color;
 out vec4 outColor;
 
 void main() {
+  if (v_color.a <= 0.5) discard;
   outColor = v_color;
 }
 `;
@@ -197,5 +199,28 @@ void main() {
   if (texColor.a <= 0.5) discard;
   outColor = texColor;
   outColor.rgb *= outColor.a;
+}
+`;
+
+
+const cuttingPlaneVertexShader = `#version 300 es
+
+in vec4 a_position;
+
+uniform vec3 u_translation;
+uniform mat4 u_worldViewProjection;
+
+void main() {
+  gl_Position = u_worldViewProjection * vec4(a_position.xyz + u_translation, 1.0);
+}
+`;
+
+const cuttingPlaneFragmentShader = `#version 300 es
+
+precision mediump float;
+out vec4 outColor;
+
+void main() {
+  outColor = vec4(0.0, 0.84, 0.9, 0.3);
 }
 `;

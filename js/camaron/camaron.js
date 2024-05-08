@@ -10,11 +10,12 @@
 ----------------------------------- GLOBAL VARIABLES -----------------------------------
 --------------------------------------------------------------------------------------*/
 
-let cpuModel = null;
-let gpuModel = null;
+let model = null;
+let mvpManager = null;
 let loader = null;
 let mainRenderer = null;
 let secondaryRenderers = [];
+let cuttingPlaneRenderer = null;
 
 let rotator = null;
 let scalator = null;
@@ -47,10 +48,16 @@ const draw = () => {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
   gl.enable(gl.CULL_FACE);
   if (mainRenderer) {
     mainRenderer.draw();
+  }
+  if (cuttingPlaneRenderer) {
+    cuttingPlaneRenderer.draw();
   }
   for (const secondaryRenderer of secondaryRenderers) {
     secondaryRenderer.draw();

@@ -4,8 +4,8 @@
 
 
 class EdgesSelectionStrategy extends SelectionStrategy {
-	constructor(cpuModel, mode, edgesNumber) {
-		super(cpuModel, mode);
+	constructor(model, mode, edgesNumber) {
+		super(model, mode);
 		this.edgesNumber = edgesNumber;
 	}
 

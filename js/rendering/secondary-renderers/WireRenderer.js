@@ -6,15 +6,15 @@
 
 
 class WireRenderer extends SecondaryRenderer {
-	constructor(gpuModel) {
+	constructor(mvpManager, model) {
 		super(
-			gpuModel, 
+			mvpManager, 
 			sCVertexShader, 
 			sCFragmentShader, 
-			gpuModel.edgesBuffer, 
+			model.edgesBuffer, 
             colorConfig.wireFrameColor, 
 			gl.LINES, 
-			gpuModel.edgesCount*2
+			model.edgesCount*2
 		);
 	}
 }

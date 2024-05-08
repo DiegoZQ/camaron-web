@@ -7,7 +7,7 @@ class ModelLoadStrategy {
    constructor(fileArray) {
       this.fileArray = this.normalizeFileArray(fileArray);
       this.isValid = null;
-      this.cpuModel = null;
+      this.model = null;
    }
 
    normalizeFileArray(fileArray) {
@@ -24,13 +24,14 @@ class ModelLoadStrategy {
    load(fun) {
       try {
          fun();
+         mvpManager = new MVPManager(this.model);
          this.isValid = true;
       } catch (error) {
          this.isValid = false;
-         this.cpuModel = null;
+         this.model = null;
          console.warn(error);
       }
-      return this.cpuModel;
+      return this.model;
    }
 
    // Carga todos los vértices del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
@@ -82,8 +83,16 @@ class ModelLoadStrategy {
             bounds[5] = Math.max(bounds[5], z);
          }
       }
-      this.cpuModel.vertices = vertices;
-      this.cpuModel.bounds = bounds;
+      this.model.vertices = vertices;
+      this.model.bounds = bounds;
+      this.model.center = vec3.fromValues(
+         (bounds[0] + bounds[3]) / 2,
+         (bounds[1] + bounds[4]) / 2,
+         (bounds[2] + bounds[5]) / 2
+      );
+      this.model.modelWidth = Math.abs(bounds[3] - bounds[0]);
+      this.model.modelHeight = Math.abs(bounds[4] - bounds[1]);
+      this.model.modelDepth = Math.abs(bounds[5] - bounds[2]);
       return startIndex + numVertices;
    }
 
@@ -104,7 +113,7 @@ class ModelLoadStrategy {
          // para cada índice de vértice
          for(let j = 1; j <= sidesCount; j++) {
             const vertexIndex = parseInt(lineWords[j]);
-            const vertex = this.cpuModel.vertices[vertexIndex];
+            const vertex = this.model.vertices[vertexIndex];
             // agrega cada vértice a los vértices del polígono
             polygon.vertices.push(vertex);
             // y agrega el nuevo polígono como parte de los polígonos de cada vértice
@@ -112,17 +121,17 @@ class ModelLoadStrategy {
          }
          polygons[i] = polygon;
       }
-      this.cpuModel.polygons = polygons;
+      this.model.polygons = polygons;
       return polygonIndices ? polygonIndices[polygonIndices.length-1] + 1 : startIndex + numPolygons;
    }
 
    _exportToOff() {
       const allowedTypes = ['VertexCloud', 'PolygonMesh'];
-      if (allowedTypes.includes(this.cpuModel.modelType)) {
-         this.cpuModel.vertices.sort((a, b) => a.id - b.id);
-         const vertices = this.cpuModel.vertices;
+      if (allowedTypes.includes(this.model.modelType)) {
+         this.model.vertices.sort((a, b) => a.id - b.id);
+         const vertices = this.model.vertices;
          const vertexIds = vertices.map(vertex => vertex.id);
-         const polygons = this.cpuModel.polygons ? this.cpuModel.polygons : [];
+         const polygons = this.model.polygons ? this.model.polygons : [];
 
          // OFF Header
          let content = `OFF\n${vertices.length} ${polygons.length} 0\n`;
@@ -148,9 +157,9 @@ class ModelLoadStrategy {
    }
 
    _exportToPoly() {
-      if (['VertexCloud', 'PolygonMesh'].includes(this.cpuModel.modelType)) {
-         const vertices = this.cpuModel.vertices;
-         const polygons = this.cpuModel.polygons ? this.cpuModel.polygons : [];
+      if (['VertexCloud', 'PolygonMesh'].includes(this.model.modelType)) {
+         const vertices = this.model.vertices;
+         const polygons = this.model.polygons ? this.model.polygons : [];
 
          // Vertices
          let content = `${vertices.length} 3\n`;
@@ -172,15 +181,15 @@ class ModelLoadStrategy {
 
    _exportToVisf() {
       const allowedTypes = ['VertexCloud', 'PolygonMesh', 'PolyhedronMesh'];
-      if (allowedTypes.includes(this.cpuModel.modelType)) {
-         this.cpuModel.vertices.sort((a, b) => a.id - b.id);
-         const vertices = this.cpuModel.vertices;
+      if (allowedTypes.includes(this.model.modelType)) {
+         this.model.vertices.sort((a, b) => a.id - b.id);
+         const vertices = this.model.vertices;
          const vertexIds = vertices.map(vertex => vertex.id);
-         const polygons = this.cpuModel.polygons ? this.cpuModel.polygons : [];
-         const polyhedrons = this.cpuModel.polyhedrons ? this.cpuModel.polyhedrons : [];
+         const polygons = this.model.polygons ? this.model.polygons : [];
+         const polyhedrons = this.model.polyhedrons ? this.model.polyhedrons : [];
 
          // ViSF Header
-         let content = `2 ${allowedTypes.indexOf(this.cpuModel.modelType)}\n`
+         let content = `2 ${allowedTypes.indexOf(this.model.modelType)}\n`
          // Vertices
          content += `${vertices.length}\n`;
          for (const vertex of vertices) {
@@ -226,7 +235,7 @@ class ModelLoadStrategy {
       }
       
       if (!content) {
-         throw new Error(`Cannot export ${this.cpuModel.modelType} to .${format}`);
+         throw new Error(`Cannot export ${this.model.modelType} to .${format}`);
       }
       return header + content;
    }

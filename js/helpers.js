@@ -150,3 +150,34 @@ const rgbToHsl = (rgbArr) => {
     }
     return [H, S, L].map(value => Math.round(value + 0.05));
 }
+
+
+const isWindow = (obj) => {
+    return obj !== null && obj === obj.window;
+}
+
+const getWindow = (elem) => {
+    return isWindow(elem) ? elem : elem.nodeType === 9 && elem.defaultView;
+}
+
+const offset = (elem) => {
+    let box = {top: 0, left: 0};
+    const doc = elem && elem.ownerDocument;
+    const docElem = doc.documentElement;
+
+    if (typeof elem.getBoundingClientRect !== typeof undefined) {
+        box = elem.getBoundingClientRect();
+    }
+    const win = getWindow(doc);
+    return {
+        top: box.top + win.pageYOffset - docElem.clientTop,
+        left: box.left + win.pageXOffset - docElem.clientLeft
+    };
+}
+
+// Escala un vlor que está en un rango [minInput, maxInput] a su equivalente en un rango [minOutput, maxOutput].
+const scaleValue = (value, minInput, maxInput, minOutput, maxOutput) => {
+    const normalizedValue = (value - minInput) / (maxInput - minInput);
+    const scaledValue = normalizedValue * (maxOutput - minOutput) + minOutput;
+    return scaledValue;
+}

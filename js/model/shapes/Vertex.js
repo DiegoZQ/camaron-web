@@ -29,5 +29,12 @@ class Vertex extends Hole {
       if (this._normal == null) 
          this.calculateNormal();
       return vec3.clone(this._normal);
+   } 
+
+   // Sea un plano definido por la ecuación ax + by + cz + d = 0, retorna True si el vértice está en el lado positivo del plano;
+   // retorna false en otro caso.
+   orientationInPlane(a, b, c, d) {
+      const orientation = vec3.dot(this.coords, [a,b,c]) - d > 0; 
+      return orientation;
    }
 }

@@ -40,9 +40,9 @@ const evalButtonHandler = () => {
    let evaluation = null;
 
    if (evaluationMethod == 'angle')
-      evaluation = new AngleEvaluationStrategy(cpuModel, evaluationMode);
+      evaluation = new AngleEvaluationStrategy(model, evaluationMode);
    else if(evaluationMethod == 'area')
-      evaluation = new AreaEvaluationStrategy(cpuModel, evaluationMode);
+      evaluation = new AreaEvaluationStrategy(model, evaluationMode);
    else {
       alert("not implemented... yet");
       return;

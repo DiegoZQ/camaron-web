@@ -5,8 +5,8 @@
 
 
 class AngleEvaluationStrategy extends EvaluationStrategy {
-   constructor(cpuModel, mode) {
-      super(cpuModel, mode);
+   constructor(model, mode) {
+      super(model, mode);
    }
 
    evaluate() {
@@ -15,8 +15,8 @@ class AngleEvaluationStrategy extends EvaluationStrategy {
       let minAngle = 360;
     	let maxAngle = 0;
 
-    	const polygons = this.cpuModel.polygons;
-		// Itera sobre los polígonos del cpuModel
+    	const polygons = this.model.polygons;
+		// Itera sobre los polígonos del model
     	for (const polygon of polygons) {
     	   if (this.mode === "selection" && !polygon.isSelected) 
     			continue;

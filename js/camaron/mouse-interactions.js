@@ -32,12 +32,12 @@ const mousemove = (event) => {
    const y = event.clientY - rect.top;
    if (rotating) {
       rotator.rotateTo(x, y);
-      gpuModel.MVPManager.rotation = rotator.rotationMatrix;
+      mvpManager.rotation = rotator.rotationMatrix;
       draw();
    }
    if (moving) {
       translator.moveTo(x, y);
-      gpuModel.MVPManager.translation = translator.movementVector;
+      mvpManager.translation = translator.movementVector;
       draw();
    }
 }
@@ -45,7 +45,7 @@ const mousemove = (event) => {
 const onwheel = (event) => {
    event.preventDefault();
    scalator.scale(0.1 * -Math.sign(event.deltaY));
-   gpuModel.MVPManager.scale = scalator.scaleFactor;
+   mvpManager.scale = scalator.scaleFactor;
    scaleInfo.value = scalator.scaleFactor.toFixed(1);
    draw();
 }

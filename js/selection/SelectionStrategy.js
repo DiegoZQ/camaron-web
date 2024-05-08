@@ -2,8 +2,8 @@
 
 
 class SelectionStrategy {
-   constructor(cpuModel, mode) {
-      this.polygons = cpuModel.polygons;
+   constructor(model, mode) {
+      this.polygons = model.polygons;
       this.mode = mode;
    }
 

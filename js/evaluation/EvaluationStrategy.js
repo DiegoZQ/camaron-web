@@ -2,8 +2,8 @@
 
 
 class EvaluationStrategy {
-	constructor(cpuModel, mode) {
-		this.cpuModel = cpuModel;
+	constructor(model, mode) {
+		this.model = model;
   		this.mode = mode;
 	}
 
