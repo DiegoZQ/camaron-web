@@ -173,7 +173,8 @@ void main() {
   vec3 cameraDir = normalize(-position);
   
   // Translate the vertex position towards the camera a specific distance
-  position += cameraDir * font_scale * scale * 10.0;
+  position += cameraDir * font_scale * scale * 400.0;
+  //position += cameraDir * font_scale * scale * 10.0;
 
   // Translate the vertex from the center to its relative position (a_position) in the billboard
   position += (camera_right * a_position.x * scale) + (camera_up * a_position.y * scale);

@@ -9,9 +9,10 @@ const cuttingPlaneElements = {
 const initCuttingPlaneRenderer = () => {
     if (!model || !mvpManager) return;
     const cuttingPlane = new PolygonMesh();
-    cuttingPlaneElements.dWidth = model.modelWidth * 0.1;
-    cuttingPlaneElements.dHeight = model.modelHeight * 0.1;
-    cuttingPlaneElements.dDepth = model.modelDepth * 0.01;
+    const maxDimension = Math.max(model.modelWidth, model.modelHeight, model.modelDepth);
+    cuttingPlaneElements.dWidth = model.modelWidth == 0 ? maxDimension * 0.1 : model.modelWidth * 0.1;
+    cuttingPlaneElements.dHeight = model.modelHeight == 0 ? maxDimension * 0.1 : model.modelHeight * 0.1;
+    cuttingPlaneElements.dDepth = model.modelDepth == 0 ? maxDimension * 0.01 : model.modelDepth * 0.01;
     const dWidth = cuttingPlaneElements.dWidth;
     const dHeight = cuttingPlaneElements.dHeight;
     const dDepth = cuttingPlaneElements.dDepth;

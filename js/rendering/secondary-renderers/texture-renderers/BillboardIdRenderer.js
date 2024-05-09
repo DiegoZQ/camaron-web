@@ -16,6 +16,7 @@ class BillboardIdRenderer extends TextureRenderer {
 			billboardLength*6,
 		);
 		this.fontScale = model.fontScale;
+		//console.log(this.fontScale);
 		this.texcoordBuffer = texcoordBuffer;
 		this.centerAttributeLocation = null;
 		this.texcoordAttributeLocation = null;
@@ -53,7 +54,7 @@ class BillboardIdRenderer extends TextureRenderer {
 	}
 
 	loadTexture() {        
-        super.loadTexture('alfa', 0);	
+        super.loadTexture('numbers', 0);	
     }
 
 	draw() {

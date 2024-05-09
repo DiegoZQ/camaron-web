@@ -214,17 +214,17 @@ class PolygonMesh extends VertexCloud {
       for (const polygon of polygons) {
          const id = `${polygon.id}`;
          this.polygonIdsLength += id.length;
-         const idWidth = id.length*(fontInfo.width)*scale;
+         const idWidth = id.length*(fontInfo.letterWidth)*scale;
          const idHeight = fontInfo.letterHeight*scale;
          const polygonIdCenter = polygon.geometricCenter;
          let x = -idWidth/2;
          for (const number of id) {
             const glyphInfo = fontInfo.glyphInfos[number];
             if (glyphInfo) {
-               const x2 = x + glyphInfo.width*scale;
+               const x2 = x + fontInfo.letterWidth*scale;
                const u1 = glyphInfo.x / maxX;
                const v1 = (glyphInfo.y + fontInfo.letterHeight - 1) / maxY;
-               const u2 = (glyphInfo.x + glyphInfo.width - 1) / maxX;
+               const u2 = (glyphInfo.x + fontInfo.letterWidth - 1) / maxX;
                const v2 = glyphInfo.y / maxY;
             
                // triangle 1
@@ -247,7 +247,7 @@ class PolygonMesh extends VertexCloud {
                positions.push(...polygonIdCenter, x, idHeight/2);
                texcoords.push(u1, v2);
 
-               x += glyphInfo.width*scale;
+               x += fontInfo.letterWidth*scale;
             } 
          }
       }

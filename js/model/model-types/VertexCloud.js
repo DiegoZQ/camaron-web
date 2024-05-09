@@ -53,11 +53,13 @@ class VertexCloud extends AbstractModel {
         const minValue = Math.min(...values);
         const minValueIndex = values.indexOf(minValue);
         let maxArea = 1;
+
         for (let i = 0; i < values.length; i++) {
             if (i != minValueIndex) {
                 maxArea *= values[i];
             }
         }
+        //const volume = Math.max(this.modelWidth, 1) * Math.max(this.modelHeight, 1) * Math.max(this.modelDepth, 1)
         return (Math.sqrt(maxArea/this.vertices.length)/fontInfo.letterHeight) * 0.1; 
     }
 
@@ -73,17 +75,17 @@ class VertexCloud extends AbstractModel {
         for (const vertex of vertices) {
             const id = `${vertex.id}`;
             this.vertexIdsLength += id.length;
-            const idWidth = id.length*(fontInfo.width)*scale;
+            const idWidth = id.length*(fontInfo.letterWidth)*scale;
             const idHeight = fontInfo.letterHeight*scale;
             const vertexIdCenter = vertex.coords;
             let x = -idWidth/2;
             for (const number of id) {
                 const glyphInfo = fontInfo.glyphInfos[number];
                 if (glyphInfo) {
-                    const x2 = x + glyphInfo.width*scale;
+                    const x2 = x + fontInfo.letterWidth*scale;
                     const u1 = glyphInfo.x / maxX;
                     const v1 = (glyphInfo.y + fontInfo.letterHeight - 1) / maxY;
-                    const u2 = (glyphInfo.x + glyphInfo.width - 1) / maxX;
+                    const u2 = (glyphInfo.x + fontInfo.letterWidth - 1) / maxX;
                     const v2 = glyphInfo.y / maxY;
               
                     // triangle 1
@@ -106,7 +108,7 @@ class VertexCloud extends AbstractModel {
                     positions.push(...vertexIdCenter, x, idHeight/2);
                     texcoords.push(u1, v2);
   
-                    x += glyphInfo.width*scale;
+                    x += fontInfo.letterWidth*scale;
                 } 
             }
         }

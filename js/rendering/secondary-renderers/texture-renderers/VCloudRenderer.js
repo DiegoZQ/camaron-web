@@ -47,6 +47,6 @@ class VCloudRenderer extends TextureRenderer {
 	}
 
 	loadTexture() {
-		super.loadTexture('icon', 1);
+		super.loadTexture('x', 1);
 	}
 }
