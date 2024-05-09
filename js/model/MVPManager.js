@@ -120,7 +120,8 @@ class MVPManager {
          width = this.model.modelHeight*this.aspect;
          height = this.model.modelHeight;
       }
-      mat4.ortho(orthoProjectionMatrix, -(width/2)*margin, (width/2)*margin, -(height/2)*margin, (height/2)*margin, 1, this.model.modelDepth*50)
+      const maxModelDimension = Math.max(this.model.modelWidth, this.model.modelHeight, this.model.modelDepth);
+      mat4.ortho(orthoProjectionMatrix, -(width/2)*margin, (width/2)*margin, -(height/2)*margin, (height/2)*margin, 1, maxModelDimension*50)
       return orthoProjectionMatrix;
    }
 
@@ -128,7 +129,8 @@ class MVPManager {
    get perspectiveProjectionMatrix() {
       const perspectiveProjectionMatrix = mat4.create();
       const fieldOfViewRadians = degToRad(60);
-      mat4.perspective(perspectiveProjectionMatrix, fieldOfViewRadians, this.aspect, 1, this.model.modelDepth*50);
+      const maxModelDimension = Math.max(this.model.modelWidth, this.model.modelHeight, this.model.modelDepth);
+      mat4.perspective(perspectiveProjectionMatrix, fieldOfViewRadians, this.aspect, 1, maxModelDimension*50);
       return perspectiveProjectionMatrix;
    }
 
