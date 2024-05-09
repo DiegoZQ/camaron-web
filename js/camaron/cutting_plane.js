@@ -46,6 +46,7 @@ const setPlanePosition = (e) => {
     cuttingPlaneRenderer.translation = [0,0, scaledPercent];
     mainRenderer.updateColor();
     draw();
+    cuttingPlaneRenderer.draw();
 }
     
 
@@ -85,6 +86,7 @@ const handlePlanePositionMouseUp = () => {
     if (plane_position_drag_started) {
         cuttingPlaneElements.plane_position_picker.classList.remove("active");
         plane_position_drag_started = false;
+        draw();
     }
 }
 

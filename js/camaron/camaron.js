@@ -59,9 +59,6 @@ const draw = () => {
   for (const secondaryRenderer of secondaryRenderers) {
     secondaryRenderer.draw();
   }
-  if (cuttingPlaneRenderer) {
-    cuttingPlaneRenderer.draw();
-  }
 }
 
 /*--------------------------------------------------------------------------------------
