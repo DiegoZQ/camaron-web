@@ -11,7 +11,7 @@ class VertexIdRenderer extends BillboardIdRenderer {
 			model, 
 			model.vertexIdsBuffer.position, 
 			model.vertexIdsBuffer.texcoord, 
-			colorConfig.vertexCloudColor, 
+			colorConfig.vertexIdColor, 
 			model.vertexIdsLength
 		)
 	}

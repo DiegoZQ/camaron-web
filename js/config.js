@@ -8,6 +8,8 @@ const defaultColorConfig = {
 	faceNormalColor: vec4.fromValues(0.145, 0.619, 0.109, 1),
 	vertexNormalColor: vec4.fromValues(1, 0, 0, 1),
 	vertexCloudColor: vec4.fromValues(0, 0, 1, 1),
+    faceIdColor: vec4.fromValues(0.34, 0.55, 0.61, 1),
+    vertexIdColor: vec4.fromValues(0.54, 0.23, 0.42, 1)
 }
 
 const defaultBackgroundColor = document.getElementById("model-view").style.backgroundColor;
@@ -18,8 +20,23 @@ const colorConfig = {
 	wireFrameColor: vec4.fromValues(0, 0, 0, 1),
 	faceNormalColor: vec4.fromValues(0.145, 0.619, 0.109, 1),
 	vertexNormalColor: vec4.fromValues(1, 0, 0, 1),
-	vertexCloudColor: vec4.fromValues(0, 0, 1, 1)
+	vertexCloudColor: vec4.fromValues(0, 0, 1, 1),
+    faceIdColor: vec4.fromValues(0.34, 0.55, 0.61, 1),
+    vertexIdColor: vec4.fromValues(0.54, 0.23, 0.42, 1)
 };
+
+const colorMap = {
+    baseColor: "face_color",
+    selectedColor: "selected_face_color",
+    wireFrameColor: "wireframe_color",
+    faceNormalColor: "face_normals_color",
+    vertexNormalColor: "vertex_normals_color",
+    vertexCloudColor: "vertex_cloud_color",
+    faceIdColor: "face_id_color",
+    vertexIdColor: "vertex_id_color"
+}
+
+const inverseColorMap = Object.entries(colorMap).reduce((acc, [key, value]) => (acc[value] = key, acc), {});
 
 const fontInfo = {
     letterWidth: 242,

@@ -35,6 +35,7 @@ class BillboardIdRenderer extends TextureRenderer {
 		this.centerAttributeLocation = gl.getAttribLocation(this.program, "a_center");
         this.texcoordAttributeLocation = gl.getAttribLocation(this.program, "a_texcoord");
 
+		this.colorAttributeLocation = gl.getUniformLocation(this.program, "u_color");
 		this.fontScaleLocation = gl.getUniformLocation(this.program, "font_scale");
 		this.scaleLocation = gl.getUniformLocation(this.program, "scale");
 		this.VLocation = gl.getUniformLocation(this.program, "u_view");
@@ -63,6 +64,7 @@ class BillboardIdRenderer extends TextureRenderer {
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
 
+		gl.uniform4fv(this.colorAttributeLocation, this.color);
 		gl.uniform1f(this.fontScaleLocation, this.fontScale);
 		gl.uniform1f(this.scaleLocation, this.mvpManager._scale[0]); 
 		gl.uniformMatrix4fv(this.VLocation, false, this.mvpManager.viewMatrix);

@@ -11,7 +11,7 @@ class FaceIdRenderer extends BillboardIdRenderer {
 			model, 
 			model.faceIdsBuffer.position, 
 			model.faceIdsBuffer.texcoord, 
-			colorConfig.vertexCloudColor, 
+			colorConfig.faceIdColor, 
 			model.polygonIdsLength
 		)
 	}

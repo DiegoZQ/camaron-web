@@ -11,14 +11,6 @@ const parseColorConfigValueToRgb = (colorConfig, key) => {
 // Actualiza cada campo de colorConfig con su respectivo valor asociado en el backgroundColor de los color-indicators
 // y redibuja el modelo con este nuevo colorConfig. 
 const updateColorConfig = () => {
-    const colorMap = {
-        baseColor: "face_color",
-        selectedColor: "selected_face_color",
-        wireFrameColor: "wireframe_color",
-        faceNormalColor: "face_normals_color",
-        vertexNormalColor: "vertex_normals_color",
-        vertexCloudColor: "vertex_cloud_color"
-    }
     Object.keys(colorConfig).forEach(key => {
         const keyId = colorMap[key];
         if (!keyId) return;
@@ -36,14 +28,6 @@ const updateColorConfig = () => {
 
 // Regresa el color de cada color-indicator a su estado inicial dado por defaultColorConfig.
 const resetColorIndicators = () => {
-    const colorMap = {
-        baseColor: "face_color",
-        selectedColor: "selected_face_color",
-        wireFrameColor: "wireframe_color",
-        faceNormalColor: "face_normals_color",
-        vertexNormalColor: "vertex_normals_color",
-        vertexCloudColor: "vertex_cloud_color"
-    }
     Object.keys(defaultColorConfig).forEach(key => {
         const keyId = colorMap[key];
         if (!keyId) return;
@@ -100,15 +84,7 @@ const setInterfacePreviousColor = (interface) => {
     if (interface.id === 'background_color') {
         elements.previous_color.style.backgroundColor = elements.background.style.backgroundColor;
     } else {
-        const colorMap = {
-            face_color: "baseColor",
-            selected_face_color: "selectedColor",
-            wireframe_color: "wireFrameColor",
-            face_normals_color: "faceNormalColor",
-            vertex_normals_color: "vertexNormalColor",
-            vertex_cloud_color: "vertexCloudColor"
-        } 
-        elements.previous_color.style.backgroundColor = parseColorConfigValueToRgb(colorConfig, colorMap[interface.id]);
+        elements.previous_color.style.backgroundColor = parseColorConfigValueToRgb(colorConfig, inverseColorMap[interface.id]);
     }
 }
 
