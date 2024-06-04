@@ -7,6 +7,20 @@ class Polyhedron extends Shape {
         this.vertices = {};
         this.polygons = [];
         this._area = null;
+        this._solidAngles = [];
+        this.isVisible = true;
+        this._minAngle = null;
+    }
+
+    get isSelected() {
+        return this._isSelected;
+    }
+
+    set isSelected(value) {
+        this._isSelected = value;
+        for (const polygon of this.polygons) {
+            polygon._isSelected = value;
+        }
     }
 
     // Obtiene el área del poliedro.
@@ -42,10 +56,57 @@ class Polyhedron extends Shape {
                     total += mat4.determinant(matrix);
                 }
             }
-            this._volume = total/6;
+            this._volume = Math.abs(total/6);
         }
         return this._volume;
     }
 
+    // Calcula el ángulo sólido de los vértices del poliedro. 
+    // Sólo calcula los ángulos sólidos de aquellos vértices que tienen a lo más 3 caras,
+    // ya sea convexo o no convexo.
+    // https://en.wikipedia.org/wiki/Spherical_law_of_cosines
+    // https://vanderbei.princeton.edu/WebGL/GirardThmProof.html
+    get solidAngles() {
+        if (!this._solidAngles.length) {
+            for (const vertex of this.vertices) {
+                const faces = vertex.polygons.filter(polygon => this.polygons.includes(polygon));
+                if (faces.length > 3) {
+                    throw Error('Solid angle calculus between more than 3 faces is not implemented yet');
+                }
+                const angles = [];
+                for (const face of faces) {
+                    const faceVertexIndex = face.vertices.findIndex(v => v.id == vertex.id);
+                    angles.push(face.angles[faceVertexIndex]);
+                }
+                const [a, b, c] = angles;
+                // Normaliza los lados mayores a PI.
+                const aPrime = (a > Math.PI) ? 2 * Math.PI - a : a;
+                const bPrime = (b > Math.PI) ? 2 * Math.PI - b : b;
+                const cPrime = (c > Math.PI) ? 2 * Math.PI - c : c;
 
+                // spherical law of cosines states
+                // cos(c) = cos(a)cos(b) + sin(a)sin(b)cos(gamma);
+                // => gamma = arcos((cos(c) - cos(a)cos(b) / (sin(a)sin(b)))
+                const alfa = Math.acos((Math.cos(aPrime) - Math.cos(bPrime)*Math.cos(cPrime)) / (Math.sin(bPrime)*Math.sin(cPrime)));
+                const beta = Math.acos((Math.cos(bPrime) - Math.cos(aPrime)*Math.cos(cPrime)) / (Math.sin(aPrime)*Math.sin(cPrime)));
+                const gamma = Math.acos((Math.cos(cPrime) - Math.cos(aPrime)*Math.cos(bPrime)) / (Math.sin(aPrime)*Math.sin(bPrime)));
+                // Corrige los lados si los ángulos iniciales eran mayores a PI.
+                const correctedAlfa = (a > Math.PI) ? 2 * Math.PI - alfa : alfa;
+                const correctedBeta = (b > Math.PI) ? 2 * Math.PI - beta : beta;
+                const correctedGamma = (c > Math.PI) ? 2 * Math.PI - gamma : gamma;
+                // Girard's theorem
+                // Area(Triangle) = Radius^2 x AngleExcess; AngleExcess = alfa + beta + gamma - Math.PI;
+                this._solidAngles.push(correctedAlfa + correctedBeta + correctedGamma - Math.PI);
+            }
+        }
+        return this._solidAngles;
+    }
+
+    get minAngle() {
+        if (this._minAngle == null) {
+            const angles = this.solidAngles;
+            this._minAngle = Math.min(...angles);
+        }
+        return this._minAngle;
+     }
 }

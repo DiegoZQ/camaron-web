@@ -10,6 +10,7 @@ class Vertex extends Hole {
       super(id, x, y, z);
       this._normal = null;
       this.polygons = [];
+      this.polyhedrons = [];
    }
   
    // Calcula la normal de un vértice a partir de los polígonos que lo comprenden.

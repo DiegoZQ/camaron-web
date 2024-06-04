@@ -9,10 +9,14 @@ class EdgesSelectionStrategy extends SelectionStrategy {
 		this.edgesNumber = edgesNumber;
 	}
 
-   // Selecciona un polígono si cumple con el número de lados.
-	selectPolygon(polygon) {
-		const isMatch = polygon.vertices.length == this.edgesNumber;
-		polygon.isSelected = isMatch;
+   // Selecciona un polítopo si cumple con el número de lados.
+	selectPolytope(polytope) {
+		const availableModelTypes = ['PolygonMesh'];
+		if (!availableModelTypes.includes(this.model.modelType)) {
+			return;
+		}
+		const isMatch = polytope.vertices.length == this.edgesNumber;
+		polytope.isSelected = isMatch;
 	}
 
 	get text() {

@@ -11,20 +11,18 @@ class PolyLoadStrategy extends ModelLoadStrategy {
     // https://wias-berlin.de/software/tetgen/fformats.poly.html
     // https://people.sc.fsu.edu/~jburkardt/data/poly/poly.html
     load() {
-        return super.load(() => {
-            const [numVertices, dimensions] = this.loadModelHeader();
-            if (dimensions == 2) {
-                this.model = new PSLG();
-                let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
-                startIndex = this.loadModelEdges(startIndex);
-                this.loadModelHoles(startIndex, dimensions);
-            } else {
-                this.model = new PolygonMesh();
-                let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
-                this.loadModelFacets(startIndex);
-            }
-            this.model.vertices = new Array(...Object.values(this.model.vertices));
-        });
+        const [numVertices, dimensions] = this.loadModelHeader();
+        if (dimensions == 2) {
+            this.model = new PSLG();
+            let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
+            startIndex = this.loadModelEdges(startIndex);
+            this.loadModelHoles(startIndex, dimensions);
+        } else {
+            this.model = new PolygonMesh();
+            let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
+            this.loadModelFacets(startIndex);
+        }
+        this.model.vertices = Array.from(Object.values(this.model.vertices));
     }
 
     loadModelHeader() {
@@ -70,7 +68,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
    
             edges[parseInt(index)] = new Edge(parseInt(index), vertex1, vertex2);
         }
-        this.model.edges = new Array(...Object.values(edges));
+        this.model.edges = Array.from(Object.values(edges));
         return startIndex + numEdges;
     }
 
@@ -123,7 +121,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             if (!facetHoleCount) {
                 polygons.push(...facetPolygons);
             }
-            // Si hay agujeros, debo matar a algunos polígonos
+            // Si hay agujeros, debo remover a algunos polígonos
             else {
                 // Crea un diccionario con los polígonos activos para hacer merge a otro
                 const activeFacetPolygons = {};
@@ -168,13 +166,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
                             //for (const vertex of smallPolygon.vertices) {
                             //    bigPolygon.vertices[vertex.id] = vertex;
                             //}
-                            const bigPolygonVerticesLength = bigPolygon.vertices.length;
-                            bigPolygon.vertices.push(...smallPolygon.vertices);
-                            bigPolygon.angles.push(...smallPolygon.angles.map(angle => 2*Math.PI - angle));
-                            bigPolygon.isConvex = false;
-                            bigPolygon.trianglesVertexIndices = [];
-                            bigPolygon.area = bigPolygon.area - smallPolygon.area;
-                            bigPolygon.holes.push(bigPolygonVerticesLength);
+                            bigPolygon.addPolygonAsHole(smallPolygon);
                             finalFacetPolygons[bigPolygon.id] = bigPolygon;
                             continue outerLoop;
                         }
@@ -194,7 +186,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             offset += 1 + facetPolygonCount + facetHoleCount;
             polygonCount += facetPolygonCount;
         }
-        this.model.polygons = new Array(...polygons);
+        this.model.polygons = polygons;
     }
 
     loadModelHoles(startIndex, dimensions) {
@@ -223,7 +215,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             }
             holes[id] = new Hole(id, ...holeCoords);;
         }
-        this.model.holes = new Array(...Object.values(holes));
+        this.model.holes = Array.from(Object.values(holes));
         return startIndex + numHoles;
     }
 

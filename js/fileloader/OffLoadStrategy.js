@@ -11,21 +11,19 @@
 class OffLoadStrategy extends ModelLoadStrategy {
    // https://segeval.cs.princeton.edu/public/off_format.html
    load() {
-      return super.load(() => {
-         const [numVertices, numPolygons, vertexStartIndex] = this.loadHeader();
-         // Vertex cloud
-         if (!numPolygons) {
-            this.model = new VertexCloud();
-            this.loadModelVertices(numVertices, vertexStartIndex);
-         }
-         // Polygon mesh
-         else {
-            this.model = new PolygonMesh();
-            const polygonStartIndex = this.loadModelVertices(numVertices, vertexStartIndex);
-            this.loadModelPolygons(numPolygons, polygonStartIndex);
-         }
-         this.model.vertices = new Array(...Object.values(this.model.vertices));
-      });
+      const [numVertices, numPolygons, vertexStartIndex] = this.loadHeader();
+      // Vertex cloud
+      if (!numPolygons) {
+         this.model = new VertexCloud();
+         this.loadModelVertices(numVertices, vertexStartIndex);
+      }
+      // Polygon mesh
+      else {
+         this.model = new PolygonMesh();
+         const polygonStartIndex = this.loadModelVertices(numVertices, vertexStartIndex);
+         this.loadModelPolygons(numPolygons, polygonStartIndex);
+      }
+      this.model.vertices = Array.from(Object.values(this.model.vertices));
    }
 
    // Lee el header del .off y si no encuentra cualquiera de los 2 formatos conocidos de off arroja un error;

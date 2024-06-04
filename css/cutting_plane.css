@@ -13,7 +13,12 @@
     position: relative;
     display: flex;
     cursor: pointer;
+    margin-right: 10px;
 }
+.plane_position_bar.disabled {
+    cursor: default;
+}
+
 /* plane_position_picker style */
 .plane_position_bar .plane_position_picker {
     position: absolute;
@@ -26,11 +31,38 @@
     width: 14px;
     border: 2px solid white;
     /*pointer-events: none;*/
-    cursor: pointer;
     box-shadow: 2px 2px 6px 0 rgba(0, 0, 0, .3);
     background: #7e7d7d;
+}
+.plane_position_bar:not(.disabled) .plane_position_picker {
+    cursor: pointer;
 }
 .plane_position_bar .plane_position_picker.active {
     width: 18px;
     height: 18px;
+}
+
+.plane_button {
+    cursor: default;
+    display: flex;
+    justify-content: center;
+    align-items: center;   
+    border-radius: 5px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    background-color: #F5F5F5;
+    box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.05);
+}
+.plane_button:not(.disabled) {
+    cursor: pointer;
+}
+.plane_button:not(:last-child) {
+    margin-bottom: 5px; 
+}
+.plane_button span {
+    color: #666666;
+}
+.plane_button.active span {
+    color: #0F9DDD;
 }

@@ -27,6 +27,7 @@ let scaleInfo = document.getElementById("scale_info");
 let canvas = document.getElementById("glCanvas");
 let mainView = document.getElementById('main-view');
 
+let hideUnselected = false;
 let appliedSelections = [];
 let evaluationResults = {};
 
@@ -65,18 +66,18 @@ const draw = () => {
 --------------------------------- BUTTONS INTERACTIONS ---------------------------------
 --------------------------------------------------------------------------------------*/
 
-const downloadFileHandler = (exportFormat) => {
+const downloadFileHandler = (...exportFormats) => {
   try {
-    const content = loader.export(exportFormat);
-
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', `model.${exportFormat}`);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-
-    document.body.removeChild(element);    
+    for (const exportFormat of exportFormats) {
+      const content = loader.export(exportFormat);
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+      element.setAttribute('download', `model.${exportFormat}`);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);    
+    }
   } catch (error) {
     openModal('modal-error', error.message);
   }

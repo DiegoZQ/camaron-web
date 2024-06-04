@@ -10,30 +10,28 @@
 class VisfLoadStrategy extends ModelLoadStrategy {
    // https://repositorio.uchile.cl/bitstream/handle/2250/191821/Generador-de-mallas-de-poliedros-en-tres-dimensiones.pdf?sequence=5&isAllowed=y
    load() {
-      return super.load(() => {
-         const meshType = this.loadModelHeader();
-         // Vertex cloud
-         if (meshType === 0) {
-            this.model = new VertexCloud();
-            this.loadModelVertices(1);
-         }
-         // Polygonal mesh
-         else if (meshType === 1) {
-            this.model = new PolygonMesh();
-            const polygonStartIndex = this.loadModelVertices(1);
-            this.loadModelPolygons(polygonStartIndex);
-         }
-         // Polyhedral mesh
-         else if (meshType === 2) {
-            this.model = new PolyhedronMesh();
-            const polygonStartIndex = this.loadModelVertices(1);
-            const polyhedronStartIndex = this.loadModelPolygons(polygonStartIndex);
-            this.loadModelPolyhedrons(polyhedronStartIndex);
-         } else {
-            throw new Error('mesh type error');
-         }
-         this.model.vertices = new Array(...Object.values(this.model.vertices));
-      });
+      const meshType = this.loadModelHeader();
+      // Vertex cloud
+      if (meshType === 0) {
+         this.model = new VertexCloud();
+         this.loadModelVertices(1);
+      }
+      // Polygonal mesh
+      else if (meshType === 1) {
+         this.model = new PolygonMesh();
+         const polygonStartIndex = this.loadModelVertices(1);
+         this.loadModelPolygons(polygonStartIndex);
+      }
+      // Polyhedral mesh
+      else if (meshType === 2) {
+         this.model = new PolyhedronMesh();
+         const polygonStartIndex = this.loadModelVertices(1);
+         const polyhedronStartIndex = this.loadModelPolygons(polygonStartIndex);
+         this.loadModelPolyhedrons(polyhedronStartIndex);
+      } else {
+         throw new Error('mesh type error');
+      }
+      this.model.vertices = Array.from(Object.values(this.model.vertices));
    }
 
    // Lee el header del .ViSF y si no encuentra el formato conocido para la lectura del modelo en ASCII (primer valor == 2),
@@ -111,19 +109,25 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          	throw new Error('polyhedronFaceCountError');
 
          const polyhedron = new Polyhedron(i+1);
-         // para cada índice de vértice
+         // para cada índice de polígono
          for(let j = 1; j <= facesCount; j++) {
             const polygonIndex = parseInt(lineWords[j]);
             const polygon = this.model.polygons[polygonIndex];
-
+            for (const polygonVertex of polygon.vertices) {
+               polyhedron.vertices[polygonVertex.id] = polygonVertex;
+               polygonVertex.polyhedrons[polyhedron.id] = polyhedron;
+            }
             // agrega cada cara a las caras del poliedro.
             polyhedron.polygons.push(polygon);
-            // y agrega el nuevo poliedro como parte de los poliedros de cada polígono
-            polygon.polyhedrons.push(polyhedron);
          }
+         polyhedron.vertices = Array.from(Object.values(polyhedron.vertices));
          polyhedrons[i] = polyhedron;
       }
+      Object.keys(this.model.vertices).forEach(key => {
+         this.model.vertices[key].polyhedrons = Array.from(Object.values(this.model.vertices[key].polyhedrons));
+      })
       this.model.polyhedrons = polyhedrons;
+
    }
 
    _exportToVisf() {

@@ -11,20 +11,15 @@ class AngleSelectionStrategy extends SelectionStrategy {
 	  	this.maxAngle = maxAngle;
 	}
 
-	// Selecciona un poligono si al menos uno de sus ángulos internos está en el rango de ángulos.
-	selectPolygon(polygon) {
-		const angles = polygon.angles;
-		let isInRange = false;
-
-		for (let i = 0; i < angles.length; i++) {
-			const angle = radToDeg(angles[i]);
-
-			if (this.minAngle <= angle && angle <= this.maxAngle) {
-				isInRange = true;
-				break;
-			}
+	// Selecciona un polítopo si está en el rango de ángulos.
+	selectPolytope(polytope) {
+		const availableModelTypes = ['PolygonMesh', 'PolyhedronMesh'];
+		if (!availableModelTypes.includes(this.model.modelType)) {
+			return;
 		}
-		polygon.isSelected = isInRange;
+		const angles = this.model.modelType === 'PolygonMesh' ? polytope.angles : polytope.solidAngles;
+		const isInRange = angles.some(angle => this.minAngle <= angle && angle <= this.maxAngle);
+		polytope.isSelected = isInRange;
 	}
 
 	get text() {

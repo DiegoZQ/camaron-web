@@ -10,14 +10,18 @@ class AreaSelectionStrategy extends SelectionStrategy {
 	  	this.maxArea = maxArea;
 	}
 
-	// Selecciona un polígono si está en el rango de área.
-	selectPolygon(polygon) {
-		const area = polygon.area;
+	// Selecciona un polítopo si está en el rango de área.
+	selectPolytope(polytope) {
+		const availableModelTypes = ['PolygonMesh', 'PolyhedronMesh'];
+		if (!availableModelTypes.includes(this.model.modelType)) {
+			return;
+		}
+		const area = polytope.area;
 		const isInRange = this.minArea <= area && area <= this.maxArea;
-		polygon.isSelected = isInRange;
+		polytope.isSelected = isInRange;
 	}
 
-	getText() {
+	get text() {
 		return `By Area: ${this.minArea} - ${this.maxArea}`;
 	}
 }

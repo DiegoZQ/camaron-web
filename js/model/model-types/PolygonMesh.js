@@ -127,7 +127,6 @@ class PolygonMesh extends VertexCloud {
             vertexNormalData[j] = vertexNormal[0]; 
             vertexNormalData[j+1] = vertexNormal[1]; 
             vertexNormalData[j+2] = vertexNormal[2];
-
             j += 3;
          }
       }
@@ -150,7 +149,6 @@ class PolygonMesh extends VertexCloud {
             triangleNormalData[j] = normal[0]; triangleNormalData[j+1] = normal[1]; triangleNormalData[j+2] = normal[2];
             triangleNormalData[j+3] = normal[0]; triangleNormalData[j+4] = normal[1]; triangleNormalData[j+5] = normal[2];
             triangleNormalData[j+6] = normal[0]; triangleNormalData[j+7] = normal[1]; triangleNormalData[j+8] = normal[2];
-
             j += 9;
          }
       }
@@ -187,7 +185,7 @@ class PolygonMesh extends VertexCloud {
       const polygons = this.polygons;
       const faceNormalLineData = new Float32Array(polygons.length*6);
 
-      for(let i = 0; i < polygons.length; i++){
+      for (let i = 0; i < polygons.length; i++) {
          const j = i*6;
          const normal = polygons[i].normal;
          const center = polygons[i].geometricCenter;
@@ -271,11 +269,12 @@ class PolygonMesh extends VertexCloud {
       for (const polygon of polygons) {
          for (let i = 0; i < polygon.trianglesCount; i++) {
             let color;
-            if (polygon.isVisible && polygon.isSelected) 
+            if (polygon.isVisible && polygon.isSelected) {
                color = colorConfig.selectedColor;
+            }
             else {
                color = colorConfig.baseColor;
-               color[3] = polygon.isVisible ? 1.0 : 0.0;
+               color[3] = hideUnselected === false && polygon.isVisible ? 1.0 : 0.0;
             } 
             colorData[j] = color[0]; colorData[j+1] = color[1]; colorData[j+2] = color[2]; colorData[j+3] = color[3];
             colorData[j+4] = color[0]; colorData[j+5] = color[1]; colorData[j+6] = color[2]; colorData[j+7] = color[3];

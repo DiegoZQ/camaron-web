@@ -29,13 +29,22 @@ const closeModal = (id) => {
 };
 
 // Selects loading strategy
-const selectLoadingStrategy = (extension, fileArray) => {
-   if (extension === 'off') 
-      return new OffLoadStrategy(fileArray);
-   if (extension === 'visf')
-      return new VisfLoadStrategy(fileArray);
-   if (extension === 'poly')
-      return new PolyLoadStrategy(fileArray);
+const selectLoadingStrategy = (files) => {
+   if (Object.keys(files).length === 1) {
+      if (files.off) 
+         return new OffLoadStrategy(files.off);
+      if (files.visf)
+         return new VisfLoadStrategy(files.visf);
+      if (files.poly)
+         return new PolyLoadStrategy(files.poly);
+      if (files.node)
+         return new NodeLoadStrategy(files.node);
+   } else if (Object.keys(files).length === 2) {
+      if (files.node && files.face)
+         return new NodeFaceLoadStrategy(files.node, files.face);
+      if (files.node && files.ele)
+         return new NodeEleLoadStrategy(files.node, files.ele);
+   }
    closeModal('modal-loading');
    openModal('modal-error', 'Unsupported File Format');
 };
@@ -44,9 +53,11 @@ const selectLoadingStrategy = (extension, fileArray) => {
 const waitForModelLoaded = () => {
    // If its fully loaded, sets the renderers
    if (model && model.loaded) {
-      setUIStartConfiguration();
+      setHeaderStartConfiguration();
       setMainRenderer();
       setSecondaryRenderers();
+      setCuttingPlane();
+      setSelectionAndEvaluationOptions();
       updateInfo();
       draw();
       enableModelDependant();
@@ -59,7 +70,7 @@ const waitForModelLoaded = () => {
 };
 
 // Initializes model loading and waits for it to be loaded
-const loadModel = () => {
+const initModelView = () => {
    setTimeout(() => {
       model.loadBuffers();
    }, 0);
@@ -67,43 +78,56 @@ const loadModel = () => {
    rotator = new Rotator();
    translator = new Translator();
    scalator = new Scalator();
-   
    waitForModelLoaded();
 };
+
+const readFileAsText = (file) => {
+   return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = (event) => {
+         if (event.target.readyState === FileReader.DONE) {
+            resolve(event.target.result.split('\n'));
+         }
+      };
+      reader.onerror = (event) => {
+         reject(new Error(`Error reading file: ${file.name}`));
+      };
+      reader.readAsText(file);
+   });
+};
+
 
 // Here is were everything gets initialized.
 const uploadFileHandler = (file) => {
       if (!file.files.length)
          return;
-      const fileName = file.files[0].name.split('.');
-      const extension = fileName[fileName.length-1];
+      if (file.files.length > 2) {
+         openModal('modal-error', 'Too many files');
+         return;
+      }
       openModal('modal-loading');
-
-      const handleFileLoad = (event) => {
-         setTimeout(() => {
+      
+      const files = Array.from(file.files).slice(0, 2);
+      const fileExtensions = files.map(file => file.name.split('.').pop());
+      const filePromises = files.map(readFileAsText);
+      setTimeout(() => {
+         Promise.all(filePromises).then(fileArrays => {
             mainView.classList.remove('view2');
             mainView.classList.add('view0');
             disableEvaluationDependant();
             appliedSelections = [];
             updateActiveSelections();
-
-            const fileArray = event.target.result.split('\n');
-            loader = selectLoadingStrategy(extension, fileArray);
-
+            const fileMap = Object.fromEntries(fileExtensions.map((fileExtensions, index) => [fileExtensions, fileArrays[index]]));
+            loader = selectLoadingStrategy(fileMap);
             if (loader) {
-               model = loader.load();
+               model = loader.doLoad();
                if (loader.isValid) {
-                  loadModel(model);
-                  cuttingPlaneRenderer = initCuttingPlaneRenderer();
+                  initModelView();
                } else {
                   closeModal('modal-loading');
                   openModal('modal-error', 'Invalid File Content')
                } 
             }
-         }, 400); // 400ms delay after opening the file
-      };
-      const reader = new FileReader();
-      reader.onloadend = handleFileLoad;
-      reader.readAsText(file.files[0]);
-   
+         })
+      }, 400);
 }

@@ -16,11 +16,13 @@
     <link rel="stylesheet" type="text/css" href="css/header/main_renderers.css">
     <link rel="stylesheet" type="text/css" href="css/header/secondary_renderers.css">
     <link rel="stylesheet" type="text/css" href="css/header/logo.css">
+    <link rel="stylesheet" type="text/css" href="css/inputs.css">
     <link rel="stylesheet" type="text/css" href="css/modals.css">
     <link rel="stylesheet" type="text/css" href="css/modal_colors.css">
     <link rel="stylesheet" type="text/css" href="css/main_view.css">
     <link rel="stylesheet" type="text/css" href="css/view_type.css">
     <link rel="stylesheet" type="text/css" href="css/cutting_plane.css">
+    <link rel="stylesheet" type="text/css" href="css/selection_evaluation.css">
     <link rel="stylesheet" type="text/css" href="css/anim.css">
 </head>
 
@@ -68,21 +70,21 @@
                                 <span>.poly</span>
                             </div>  
                         </li>
-                        <li>   
+                        <li onclick="downloadFileHandler('node')">   
                             <div class="label">
                                 <span>.node</span>
                             </div>
                         </li>
-                        <li>
-                            <div class="label">
-                                <span>.node + .ele</span>
-                            </div>
-                        </li>
-                        <li>
+                        <li onclick="downloadFileHandler('node', 'face')">
                             <div class="label">
                                 <span>.node + .face</span>
                             </div>
                         </li>  
+                        <li onclick="downloadFileHandler('node', 'ele')">
+                            <div class="label">
+                                <span>.node + .ele</span>
+                            </div>
+                        </li>
                     </ul>
                 </a>
                 <!-- Take Screenshot -->
@@ -267,7 +269,7 @@
                 <div class="autogrid center">
                     <a class="modal-trigger" data-modal="modal-about">About</a>
                     <span>|</span>
-                    <a href="https://github.com/dmunozl/camaron-web" target="_blank">GitHub</a>
+                    <a href="https://github.com/DiegoZQ/camaron-web" target="_blank">GitHub</a>
                 </div>
             </div>
         </div>
@@ -294,8 +296,25 @@
                     <i class="material-icons">zoom_in</i>
                     <input readonly="" id="scale_info" type="text" value="1.0">
                 </div>
-                <div class="plane_position_bar">
-                    <div class="plane_position_picker"></div>
+                <!-- Cutting plane -->
+                <div class="flex h-center" style="margin-top: 10px;">
+                    <div class="plane_position_bar disabled">
+                        <div class="plane_position_picker"></div>
+                    </div>
+                    <div>
+                        <div class="plane_button disabled" value="x">
+                            <span>x</span>
+                        </div>
+                        <div class="plane_button disabled" value="y">
+                            <span>y</span>
+                        </div>
+                        <div class="plane_button disabled" value="z">
+                            <span>z</span>
+                        </div>
+                        <div class="plane_button disabled">
+                            <span>r</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- Model stadistics -->
@@ -308,8 +327,7 @@
                     </div>
                     <div class="stadistics">
                         <span id="vertices_info">Vertices: -</span>
-                        <span>•</span>
-                        <span id="polygons_info">Polygons: -</span>
+                        <span id="polytopes_info"></span>
                     </div>
                 </div>
             </div>
@@ -323,14 +341,16 @@
                 <div class="tabs-body">
                     <div id="tab-selection" class="tab-content active">
                         <div id="selection-type" class="select drop-down">
-                            <select id="selection-method">
-                                <option value="angle" data-img="img/icon-ev-angles.svg">By Internal Angles</option>
-                                <option value="area" data-img="img/icon-ev-area.svg">By Polygons Area</option>
-                                <option value="id" data-img="img/img-id.svg">By ID</option>
-                                <option value="edges" data-img="img/icon-ev-edges.svg">By Polygons Edges Number</option>
-                            </select>
+                            <div class="button disabled">
+                                <div>
+                                    <i class="material-icons" style="color: #7B7BDD;">block</i>
+                                    <span>Not available</span>
+                                </div>
+                            </div>
+                            <ul class="select-list"></ul>
                         </div>
-                        <div class="angle-box select-box active">
+                        <div class="none-box select-box active"></div>
+                        <div class="angle-box select-box">
                             <div class="flex v-center">
                                 <label class="radio">
                                     <span>Range</span>
@@ -338,8 +358,22 @@
                                 <div class="flex v-center">
                                     <input id="angle_from" type="text" placeholder="0">
                                     <i class="material-icons">remove</i>
-                                    <input id="angle_to" type="text" placeholder="180">
+                                    <input id="angle_to" type="text" placeholder="-">
                                 </div>
+                                <span>rad</span>
+                            </div>
+                        </div>
+                        <div class="angle2-box select-box">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <span>Range</span>
+                                </label>
+                                <div class="flex v-center">
+                                    <input id="angle_from2" type="text" placeholder="0">
+                                    <i class="material-icons">remove</i>
+                                    <input id="angle_to2" type="text" placeholder="-">
+                                </div>
+                                <span>sr</span>
                             </div>
                         </div>
                         <div class="area-box select-box">
@@ -351,6 +385,30 @@
                                     <input id="area_from" type="text" placeholder="0">
                                     <i class="material-icons">remove</i>
                                     <input id="area_to" type="text" placeholder="-">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="volume-box select-box">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <span>Range</span>
+                                </label>
+                                <div class="flex v-center">
+                                    <input id="volume_from" type="text" placeholder="0">
+                                    <i class="material-icons">remove</i>
+                                    <input id="volume_to" type="text" placeholder="-">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="aspect-ratio-box select-box">
+                            <div class="flex v-center">
+                                <label class="radio">
+                                    <span>Range</span>
+                                </label>
+                                <div class="flex v-center">
+                                    <input id="aspect_ratio_from" type="text" placeholder="0">
+                                    <i class="material-icons">remove</i>
+                                    <input id="aspect_ratio_to" type="text" placeholder="1">
                                 </div>
                             </div>
                         </div>
@@ -374,10 +432,10 @@
                                         <div class="input-radio"></div>
                                         <span>Paste List</span>
                                     </label>
-                                    <button class="btn min hidden" disabled>Attach</button>
+                                    <button class="btn min hidden disabled">Attach</button>
                                 </div>
                                 <div class="attached-list">
-                                    <textarea id="id_list" disabled placeholder="Ej: 34"></textarea>
+                                    <textarea id="id_list disabled" placeholder="Ej: 34"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -430,8 +488,15 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="flex center" style="margin-bottom: 10px;">
+                            <label class="checkbox">
+                                <input type="checkbox" id="hide-unselected">
+                                <div class="input-checkbox"></div>
+                                <span>Hide non-selected</span>
+                            </label>
+                        </div>
                         <div class="flex center">
-                            <a id="apply_btn" class="btn">Apply</a>
+                            <a id="apply_btn" class="btn disabled">Apply</a>
                         </div>
                     </div>
                     <div id="tab-history" class="tab-content">
@@ -453,12 +518,13 @@
         <div class="card evaluate">
             <h4>Evaluate model</h4>
             <div id="evaluation-type" class="select drop-down">
-                <select id=evaluation-method>
-                    <option value="angle" data-img="img/icon-ev-angles.svg">Internal Angles</option>
-                    <option value="area" data-img="img/icon-ev-area.svg">Polygons Area</option>
-                    <option value="edges" data-img="img/icon-ev-edges.svg">Polygons Edges Number</option>
-                    <option value="dihedral" data-img="img/icon-ev-dihedral.svg">Dihedral Angles</option>
-                </select>
+                <div class="button disabled">
+                    <div>
+                        <i class="material-icons" style="color: #7B7BDD;">block</i>
+                        <span>Not available</span>
+                    </div>
+                </div>
+                <ul class="select-list"></ul>
             </div>
             <div class="grid g2 mgbot">
                  <label class="radio">
@@ -471,13 +537,19 @@
                     <div class="input-radio"></div>
                     <span>Over selection</span>
                 </label>
-               
+            </div>
+            <div class="flex center hidden" style="margin-bottom: 10px;">
+                <label class="checkbox">
+                    <input type="checkbox" id="ev-heatmap">
+                    <div class="input-checkbox"></div>
+                    <span>Heatmap</span>
+                </label>
             </div>
             <div class="flex center">
-                <a id="eval_btn" class="btn">Evaluate</a>
+                <a id="eval_btn" class="btn disabled">Evaluate</a>
             </div>
             <div class="grid g2 mgbot hidden">
-                <button class="btn min" disabled>Export to Pdf</button>
+                <button class="btn min disabled">Export to Pdf</button>
                 <button class="btn min">Evaluate</button>
             </div>
         </div>
@@ -654,11 +726,15 @@
     <script type="text/javascript" src="js/external/webgl-utils.js"></script>
     <script type="text/javascript" src="js/external/gl-matrix-old.js"></script>
     <script src="https://unpkg.com/earcut@2.2.4/dist/earcut.min.js"></script>
-
+    <script src="https://unpkg.com/tinyqueue@2.0.0/tinyqueue.min.js"></script>
     <!-- Source Files -->
     <!-- Generic -->
     <script type="text/javascript" src="js/config.js"></script>
-    <script type="text/javascript" src="js/helpers.js"></script>
+    <script type="text/javascript" src="js/helpers/helpers.js"></script>
+    <script type="text/javascript" src="js/helpers/plane-helpers.js"></script>
+    <script type="text/javascript" src="js/helpers/color-helpers.js"></script>
+    <script type="text/javascript" src="js/helpers/inradius-helpers.js"></script>
+    <script type="text/javascript" src="js/helpers/circumradius-helpers.js"></script>
     <!-- Model -->
     <script type="text/javascript" src="js/model/shapes/Shape.js"></script>
     <script type="text/javascript" src="js/model/shapes/Edge.js"></script>
@@ -677,6 +753,9 @@
     <script type="text/javascript" src="js/fileloader/OffLoadStrategy.js"></script>
     <script type="text/javascript" src="js/fileloader/VisfLoadStrategy.js"></script>
     <script type="text/javascript" src="js/fileloader/PolyLoadStrategy.js"></script>
+    <script type="text/javascript" src="js/fileloader/NodeLoadStrategy.js"></script>
+    <script type="text/javascript" src="js/fileloader/NodeFaceLoadStrategy.js"></script>
+    <script type="text/javascript" src="js/fileloader/NodeEleLoadStrategy.js"></script>
     <!-- Rendering -->
     <script type="text/javascript" src="js/rendering/shaders.js"></script>
     <script type="text/javascript" src="js/rendering/Renderer.js"></script>
@@ -700,10 +779,15 @@
     <script type="text/javascript" src="js/selection/AreaSelectionStrategy.js"></script>
     <script type="text/javascript" src="js/selection/EdgesSelectionStrategy.js"></script>
     <script type="text/javascript" src="js/selection/IdSelectionStrategy.js"></script>
+    <script type="text/javascript" src="js/selection/VolumeSelectionStrategy.js"></script>
+    <script type="text/javascript" src="js/selection/AspectRatioSelectionStrategy.js"></script>
     <!-- Evaluation -->
     <script type="text/javascript" src="js/evaluation/EvaluationStrategy.js"></script>
     <script type="text/javascript" src="js/evaluation/AngleEvaluationStrategy.js"></script>
     <script type="text/javascript" src="js/evaluation/AreaEvaluationStrategy.js"></script>
+    <script type="text/javascript" src="js/evaluation/EdgesEvaluationStrategy.js"></script>
+    <script type="text/javascript" src="js/evaluation/VolumeEvaluationStrategy.js"></script>
+    <script type="text/javascript" src="js/evaluation/AspectRatioEvaluationStrategy.js"></script>
     <!-- UI -->
     <script type="text/javascript" src="js/ui/translator.js"></script>
     <script type="text/javascript" src="js/ui/rotator.js"></script>

@@ -1,7 +1,5 @@
 "use strict";
 
-// requires "../helpers";
-
 
 class ModelLoadStrategy {
    constructor(fileArray) {
@@ -21,9 +19,13 @@ class ModelLoadStrategy {
       return normalizedFileArray;
    }
 
-   load(fun) {
+   load() {
+      // Implementar
+   }
+
+   doLoad() {
       try {
-         fun();
+         this.load()
          mvpManager = new MVPManager(this.model);
          this.isValid = true;
       } catch (error) {
@@ -97,13 +99,13 @@ class ModelLoadStrategy {
    }
 
    // Carga todos los polígonos del modelo partiendo por una cantidad de vértices a leer y un índice de inicio.
-   loadModelPolygons(numPolygons, startIndex, polygonIndices=null) {
+   loadModelPolygons(numPolygons, startIndex) {
       if (startIndex + numPolygons > this.fileArray.length) {
          throw new Error('polygonCountError');
       }
       const polygons = new Array(numPolygons);
       for (let i = 0; i < numPolygons; i++) {
-         const line = polygonIndices ? this.fileArray[polygonIndices[i]] : this.fileArray[startIndex + i];
+         const line = this.fileArray[startIndex + i];
          const lineWords = getLineWords(line);
          const sidesCount = parseInt(lineWords[0]);
          if (lineWords.length < sidesCount + 1 || lineWords.length > sidesCount + 1 + 3) {
@@ -122,7 +124,7 @@ class ModelLoadStrategy {
          polygons[i] = polygon;
       }
       this.model.polygons = polygons;
-      return polygonIndices ? polygonIndices[polygonIndices.length-1] + 1 : startIndex + numPolygons;
+      return startIndex + numPolygons;
    }
 
    _exportToOff() {
@@ -139,17 +141,12 @@ class ModelLoadStrategy {
          for (const vertex of vertices) {
             content += `${vertex.coords.join(' ')}\n`;
          }
-         // NO SE VE BIEN PORQUE CREO QUE EL FORMATO OFF ES INCAPAZ DE REPRESENTAR UN POLÍGONO QUE TIENE UN AGUJERO.
-         // CREO QUE DEBERÍA LANZAR UN ERROR YA QUE NO SE PUEDE EXPORTAR CORRECTAMENTE 
-         console.log(vertices);
          // Polygons
          for (const polygon of polygons) {
-            console.log(polygon.vertices);
             if (polygon.holes.length) {
                throw new Error('Cannot export .poly with holes to .off');
             }
             const vertexIndices = polygon.vertices.map(vertex => vertexIds.indexOf(vertex.id));
-            console.log(vertexIndices);
             content += `${vertexIndices.length} ${vertexIndices.join(' ')}\n`;
          }
          return content;
@@ -214,6 +211,68 @@ class ModelLoadStrategy {
       }
    }
 
+   _exportToNode() {
+      const vertices = this.model.vertices;
+      let content = `${vertices.length} 3\n`;
+      for (const vertex of vertices) {
+         content += `${vertex.id} ${vertex.coords.join(' ')}\n`;
+      }
+      return content;
+   }
+
+   _exportToFace() {
+      if (this.model.modelType == 'PolygonMesh') {
+         const polygons = this.model.polygons;
+         let content = `${polygons.length}\n`;
+         for (const polygon of polygons) {
+            const vertexIndices = polygon.vertices.map(vertex => vertex.id);
+            content += `${polygon.id} ${vertexIndices.join(' ')}\n`;
+         }
+         return content;
+      }
+   }
+
+   _exportToEle() {
+      if (this.model.modelType == 'PolyhedronMesh') {
+         const polyhedrons = this.model.polyhedrons;
+         let content = `${polyhedrons.length} 4\n`;
+         // Por cada poliedro, obtiene los vértices v0, v1, v2, v3 que definen al poliedro en formato .ele.
+         // Se calcula contando el número de ids repetidos por posición contemplando las 4 caras de cada poliedro.
+         // Utiliza la inversa de la matriz usada para obtener las caras un poliedro en formato .ele para obtener los vértices:
+         //    [v2, v1, v0],
+         //    [v0, v1, v3],
+         //    [v1, v2, v3],
+         //    [v2, v0, v3]
+         // v2 es el id que se repite 2 veces en la posición 0
+         // v1 es el id que se repite 2 veces en la posición 1
+         // v3 es el id que se repite 3 veces en la posición 2 
+         // v0 es el id que se repite 1 vez en la posición 2
+         for (const polyhedron of polyhedrons) {
+            const positionCounters = []
+            if (polyhedron.polygons.length > 4) {
+               throw new Error('Cannot convert non tetrahedron polyhedrons to .ele');
+            }
+            for (const polygon of polyhedron.polygons) {
+               if (polygon.vertices.length > 3) {
+                  throw new Error('Cannot convert non triangle polygons to .ele');
+               }
+               const vertexIds = polygon.vertices.map(vertex => vertex.id);
+               vertexIds.forEach((vertexId, index) => {
+                  const positionCounter = positionCounters[index] ? positionCounters[index] : {};
+                  positionCounter[vertexId] = positionCounter[vertexId] ? positionCounter[vertexId] + 1 : 1;
+                  positionCounters[index] = positionCounter;
+               });
+            }
+            const v0 = Object.keys(positionCounters[2]).reduce((a, b) => positionCounters[2][a] < positionCounters[2][b] ? a : b);
+            const v1 = Object.keys(positionCounters[1]).reduce((a, b) => positionCounters[1][a] > positionCounters[1][b] ? a : b);
+            const v2 = Object.keys(positionCounters[0]).reduce((a, b) => positionCounters[0][a] > positionCounters[0][b] ? a : b);
+            const v3 = Object.keys(positionCounters[2]).reduce((a, b) => positionCounters[2][a] > positionCounters[2][b] ? a : b);
+            content += `${polyhedron.id} ${v0} ${v1} ${v2} ${v3}\n`;
+         }
+         return content;
+      }
+   }
+
    export(format) {
       if (!this.isValid) {
          throw new Error('Model is not valid');
@@ -224,16 +283,19 @@ class ModelLoadStrategy {
 
       if (format === 'off') {
          content = this._exportToOff();
-      }
-      else if (format === 'poly') {
+      } else if (format === 'poly') {
          content = this._exportToPoly();
-      }
-      else if (format === 'visf') {
+      } else if (format === 'visf') {
          content = this._exportToVisf();
+      } else if (format === 'node') {
+         content = this._exportToNode();
+      }  else if (format === 'face') {
+         content = this._exportToFace();
+      } else if (format === 'ele') {
+         content = this._exportToEle();
       } else {
          throw new Error('Unknown export format');
       }
-      
       if (!content) {
          throw new Error(`Cannot export ${this.model.modelType} to .${format}`);
       }

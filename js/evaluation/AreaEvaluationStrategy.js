@@ -1,7 +1,5 @@
 "use strict";
 
-// requires './EvaluationStrategy'
-
 
 class AreaEvaluationStrategy extends EvaluationStrategy {
    constructor(model, mode) {
@@ -11,16 +9,20 @@ class AreaEvaluationStrategy extends EvaluationStrategy {
    evaluate() {
       const data = {};
       const areaList = [];
-      let minArea = 1000000;
+      let minArea = Infinity;
       let maxArea = 0;
 
-      const polygons = this.model.polygons;
-      // Itera sobre los polígonos del model
-      for (const polygon of polygons) {
-         if (this.mode === "selection" && !polygon.isSelected) 
+      const availableModelTypes = ['PolygonMesh', 'PolyhedronMesh'];
+		if (!availableModelTypes.includes(this.model.modelType)) {
+			return;
+		}
+      const polytopes = this.model.modelType === 'PolygonMesh' ? this.model.polygons : this.model.polyhedrons;
+      for (const polytope of polytopes) {
+         if ((this.mode === "selection" && !polytope.isSelected) || !polytope.isVisible) {
             continue;
-         // Obtiene el área de cada polígono	
-         const area = polygon.area;
+         }
+         // Obtiene el área de cada polítopo	
+         const area = polytope.area;
          areaList.push(area);
 
          maxArea = Math.max(maxArea, area);
@@ -31,7 +33,7 @@ class AreaEvaluationStrategy extends EvaluationStrategy {
       data.list = areaList;
       data.min = minArea;
       data.max = maxArea;
-
+      
       return data;
    }
 }

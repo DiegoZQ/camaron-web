@@ -3,40 +3,51 @@
 
 class SelectionStrategy {
    constructor(model, mode) {
-      this.polygons = model.polygons;
+      this.polytopes = this.getModelMainPolytopes(model);
+      this.model = model;
       this.mode = mode;
    }
 
-   selectPolygon(polygon) {
+   // Obtiene los polítopos principales de cada modelo.
+   getModelMainPolytopes(model) {
+      if (model.modelType === 'PolygonMesh') {
+         return model.polygons;
+      }
+      if (model.modelType === 'PolyhedronMesh') {
+         return model.polyhedrons;
+      }
+   }
+
+   selectPolytope(polytope) {
       warn("This should be implemented by specific strategies.");
    }
 
-   // Deselecciona todos los polígonos.
+   // Deselecciona todos los polítopos.
    clean() {
-      this.polygons.forEach(polygon => polygon.isSelected = false);
+      this.polytopes.forEach(polytope => polytope.isSelected = false);
    }
 
-   // Aplica el método selectElement sobre todos los polígono.
+   // Aplica el método selectElement sobre todos los polítopos.
    select() {
       this.clean();
-      this.polygons.forEach(polygon => this.selectPolygon(polygon));
+      this.polytopes.forEach(polytope => this.selectPolytope(polytope));
    }
 
-   // Aplica el método selectElement sobre todos los polígono con la propiedad isSelect=true.
+   // Aplica el método selectElement sobre todos los polítopos con la propiedad isSelect=true.
    intersect() {
-      this.polygons.filter(polygon => polygon.isSelected).forEach(polygon => this.selectPolygon(polygon));
+      this.polytopes.filter(polytope => polytope.isSelected).forEach(polytope => this.selectPolytope(polytope));
    }
 
-   // Aplica el método selectElement sobre todos los polígono con la propiedad isSelect=false.
+   // Aplica el método selectElement sobre todos los polítopos con la propiedad isSelect=false.
    add() {
-      this.polygons.filter(polygon => !polygon.isSelected).forEach(polygon => this.selectPolygon(polygon));
+      this.polytopes.filter(polytope => !polytope.isSelected).forEach(polytope => this.selectPolytope(polytope));
    }
 
-   // Aplica el método selectElement sobre todos los polígono con la propiedad isSelect=true y los deselecciona.
+   // Aplica el método selectElement sobre todos los polítopos con la propiedad isSelect=true y los deselecciona.
    substract() {
-      this.polygons.filter(polygon => polygon.isSelected).forEach(polygon => {
-         this.selectPolygon(polygon);
-         polygon.isSelected = !polygon.isSelected;
+      this.polytopes.filter(polytope => polytope.isSelected).forEach(polytope => {
+         this.selectPolytope(polytope);
+         polytope.isSelected = !polytope.isSelected;
       });
    }
 

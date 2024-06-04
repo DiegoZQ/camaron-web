@@ -5,37 +5,25 @@
 // requires "../external/earcut";
 
 
+
 class Polygon extends Shape {
    constructor(id) {
       super(id);
       this.vertices = [];
-      this.polyhedrons = [];
       this._angles = [];
       this._isConvex = null;
+      this._basisVectors = null;
+      this._normal = null;
+      this._vertices2D = [];
       this._trianglesVertexIndices = [];
       this._trianglesVertexCoords = [];
-      this._normal = null;
       this._area = null;
       this._geometricCenter = null;
       this.neighbours = [];
       this.holes = [];
       this.isVisible = true;
-   }
-
-   // Obtiene una lista con los vértices del polígono mapeados a 2 dimensiones.
-   mapVerticesTo2D() {
-      const points3D = []
-      const [u, v, vertexIndex] = findBasisVectorsFromVertices(this.vertices);
-      // si los vectores base u, v encontrados, fueron sobre un vértice que comprende un ángulo de +180 grados,
-      // se invierte la dirección de uno de los vectores base ya que el producto cruz de dichos vectores va en la dirección
-      // MINORITARIA, la cual NO es representativa para determinar la orientación real del polígono.
-      if (this.angles && this.angles[vertexIndex] > Math.PI) {
-         vec3.negate(v, v);
-      }
-      for (const i in this.vertices) {
-         points3D.push(...this.vertices[i].coords);
-      }
-      return mapTo2D(points3D, u, v);
+      this._minAngle = null;
+      this._aspectRatio = null;
    }
 
    // Obtiene los ángulos internos del polígono.
@@ -100,10 +88,60 @@ class Polygon extends Shape {
    // Asigna un valor booleno al campo _isConvex.
    set isConvex(value) {
       this._isConvex = value;
-   }  
+   }
+
+   // Obtiene los vectores base que definen el plano donde se encuentra el polígono.
+   get basisVectors() {
+      if (this._basisVectors == null) {
+         try {
+            const [u, v, vertexIndex] = findBasisVectorsFromVertices(this.vertices);
+            // si los vectores base u, v encontrados, fueron sobre un vértice que comprende un ángulo de +180 grados,
+            // se invierte la dirección de uno de los vectores base ya que el producto cruz de dichos vectores va en la dirección
+            // MINORITARIA, la cual NO es representativa para determinar la orientación real del polígono.
+            if (this.angles && this.angles[vertexIndex] > Math.PI) {
+               vec3.negate(v, v);
+            }
+            vec3.normalize(u, u);
+            vec3.normalize(v, v);
+            this._basisVectors = {u: u, v: v};
+            //this._basisVectors = {u: [1,0,0], v: [0,1,0]};
+            
+         } catch {
+            console.log(this.vertices, this.id);
+            console.error('Could not find basis vectors. All vertices are collinear')
+         }
+      }
+      return this._basisVectors;
+   }
+
+   // Obtiene la normal del polígono.
+   get normal() {
+      // Si todavía no la ha calculado, obtiene la normal del plano utilizando los vectores base qu lo define. 
+      // Se asume que el polígono es planar, ie, todos sus vértices se ubican en un mismo plano.
+      if (this._normal == null) {
+         this._normal = vec3.create();
+         const { u, v } = this.basisVectors;
+         vec3.cross(this._normal, u, v);
+         vec3.normalize(this._normal, this._normal);
+      }
+      return vec3.clone(this._normal);
+   }
+   
+   // Obtiene una lista con los vértices del polígono mapeados a 2 dimensiones.
+   get vertices2D() {
+      if (!this._vertices2D.length || this._vertices2D.length/2 != this.vertices.length) {
+         const points3D = []
+         const { u, v } = this.basisVectors;
+         for (const i in this.vertices) {
+            points3D.push(...this.vertices[i].coords);
+         }
+         this._vertices2D = mapTo2D(points3D, u, v);
+      }
+      return this._vertices2D;
+   }
 
    // Obtiene los índices de los vértices de cada triángulo perteneciente a la triangulación del polígono.
-   get trianglesVertexIndices() {
+   get trianglesVertexIndices() { 
       // Si todavía no lo ha calculado, obtiene los índices de los vértices de cada triángulo del polígono, cada 3 índices corresponde a un triángulo.
       // Para hacer esto, aplica una triangulación al polígono dependiendo de si es convexo o no convexo según corresponda.
       if (!this._trianglesVertexIndices.length) {
@@ -121,8 +159,7 @@ class Polygon extends Shape {
          }  
          // Caso 3: polígono no convexo
          else {
-            const points2D = this.mapVerticesTo2D();
-            this._trianglesVertexIndices = earcut(points2D, this.holes.length ? this.holes : null);
+            this._trianglesVertexIndices = earcut(this.vertices2D, this.holes.length ? this.holes : null);
          }
       }
       return this._trianglesVertexIndices;
@@ -150,26 +187,6 @@ class Polygon extends Shape {
          this._trianglesVertexCoords = orderedVertexCoords;
       }
       return this._trianglesVertexCoords;
-   }
-
-   // Obtiene la normal del polígono
-   get normal() {
-      // Si todavía no la ha calculado, obtiene la normal del polígono calculando la normal de uno de los triángulos que componen al polígono luego de
-      // haberlo trangulado con calculateTrianglesVertexIndices. Para esto asume que el polígono es planar, ie, todos sus vértices se ubican en un mismo plano.
-      if (this._normal == null) {
-         this._normal = vec3.create();
-         const u = vec3.create();
-         const v = vec3.create();
-         const vertices = this.vertices;
-         const trianglesVertexIndices = this.trianglesVertexIndices;
-         // Calcula el plano a partir de los vectores u, v que conforman un triángulo cualquiera del plano.
-         // Como es planar, dicho plano es compartido por todos los demás triángulos.
-         vec3.subtract(u, vertices[trianglesVertexIndices[1]].coords, vertices[trianglesVertexIndices[0]].coords); 
-         vec3.subtract(v, vertices[trianglesVertexIndices[2]].coords, vertices[trianglesVertexIndices[0]].coords);
-         vec3.cross(this._normal, u, v);
-         vec3.normalize(this._normal, this._normal);
-      }
-      return vec3.clone(this._normal);
    }
 
    // Obtiene el área del polígono.
@@ -210,51 +227,18 @@ class Polygon extends Shape {
       }
       return vec3.clone(this._geometricCenter);
    } 
+   // Asigna un valor para el centro geométrico del polígono.
+   set geometricCenter(value) {
+      this._geometricCenter = value;
+   }
 
    isNeighbour(polygon) {
       return this.neighbours.includes(polygon);
    }
-            
-   // Verifica si un punto está dentro del polígono mediante el Angle Sum Algorithm. Retorna true si está dentro y false si no.
-   // https://medium.com/@girishajmera/exploring-algorithms-to-determine-points-inside-or-outside-a-polygon-038952946f87
+
+   // Verifica si un punto está dentro del polígono mediante el ray-casting algorithm. Retorna true si está dentro y false si no.
    pointInPolygon(point) {
-      let totalAngle = 0;
-      const angles = [];
-      const normals = [];
-
-      // Si el punto es igual a uno de los vértices del polígono retorna true;
-      for (const vertex of this.vertices) {
-         if (vec3.equals(vertex.coords, point)) {
-            return true;
-         }
-      }
-      for (let i = 0; i < this.vertices.length; i++) {
-         const v1 = vec3.sub(vec3.create(), this.vertices[i].coords, point); 
-         const v2 = vec3.sub(vec3.create(), this.vertices[(i + 1) % this.vertices.length].coords, point); 
-         const angle = vec3.angle(v1, v2);
-         const normal = vec3.cross(vec3.create(), v1, v2);
-         angles.push(angle);
-         normals.push(normal);
-      }
-      const firstNormal = normals[0];
-      const orientation = normals.map(normal => sameDirection(firstNormal, normal) ? true : false);
-      const positive = orientation.reduce((acc, val) => acc + val, 1); 
-      const negative = this.vertices.length - positive;
-
-      for (let i = 0; i < this.vertices.length; i++) {
-         // Si el lado mayoritario es positivo, todos los ángulos cuya normal tenga orientación positiva, tendrán la forma angles[i];
-         // Si el lado mayoritario es negativo, todos los ángulos cuya normal tenga orientación negativa, tendrán la forma angles[i];
-         if (positive > negative == orientation[i]) {
-            totalAngle += angles[i]
-         }
-         // Si el lado minoritario es positivo, todos los ángulos cuya normal tenga orientación positiva, tendrán la forma -angles[i];
-         // Si el lado minoritario es negativo, todos los ángulos cuya normal tenga orientación negativa, tendrán la forma -angles[i]; 
-         else {
-            totalAngle -= angles[i]
-
-         }
-      }
-      return Math.abs(totalAngle - 2*Math.PI) <= 0.00001;
+      return pointToPolygonDist(point, this) >= 0;
    }
   
    // Verifica si un polígono está contenido en el polígono validando que todos sus vértices estén dentro del polígono; retorna true
@@ -266,5 +250,45 @@ class Polygon extends Shape {
          }
       }
       return true;
+   }
+
+   // Agrega un polígono más pequeño como agujero del polígono.
+   addPolygonAsHole(smallPolygon) {
+      const polygonVerticesLength = this.vertices.length;
+      // Calcula el nuevo centro geométrico
+      const polygonGC = this.geometricCenter;
+      vec3.scale(polygonGC, polygonGC, this.area);
+      vec3.scaleAndAdd(polygonGC, polygonGC, smallPolygon.geometricCenter, -smallPolygon.area); 
+      vec3.scale(polygonGC, polygonGC, 1/(this.area - smallPolygon.area));
+      this.geometricCenter = polygonGC;
+      // Agrega los nuevos vértices
+      this.vertices.push(...smallPolygon.vertices);
+      // Agrega los nuevos ángulos invirtiendo sus ángulos
+      this.angles.push(...smallPolygon.angles.map(angle => 2*Math.PI - angle));
+      // Automáticamente se vuelve no convexo
+      this.isConvex = false;
+      // Y se elimina la triangulación para dar paso a una nueva
+      this.trianglesVertexIndices = [];
+      // Se resta el área del polígono
+      this.area = this.area - smallPolygon.area;
+      // Y se agrega como agujero a partir del último vértice del polígono inicial
+      this.holes.push(polygonVerticesLength);
+   }
+
+   get minAngle() {
+      if (this._minAngle == null) {
+         const angles = this.angles;
+         this._minAngle = Math.min(...angles);
+      }
+      return this._minAngle;
+   }
+
+   // Obtiene el aspect ratio del polígono, el cual corresponde al cociente entre el inradio y el circunradio del polígono.
+   get aspectRatio() {
+      if (this._aspectRatio == null) {
+         const circumradius = polygonCircumradius(this);
+         this._aspectRatio = circumradius ? polygonInradius(this, 1.0) / circumradius : 0;
+      }
+      return this._aspectRatio;
    }
 }

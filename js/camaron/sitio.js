@@ -50,39 +50,6 @@ $( document ).ready(function() {
     
     
     // CUSTOM SELECT
-
-    $('.drop-down').append('<div class="button"></div>');    
-    $('.drop-down').append('<ul class="select-list"></ul>');
-
-    $('.drop-down select option').each(function() {  
-        var bg = $(this).data('img');    
-        $('.drop-down').has(this).find('.select-list').append('<li class="clsAnchor" value="' + $(this).val() + '"><img src="' + bg + '"/>' + '<span>' + $(this).text() + '</span></li>');   
-    });    
-
-    $('.drop-down .button').each(function() {  
-        $(this).html('<div><img src="' + $(this).parent().find('select').find(':selected').data('img') + '"/>' + '<span>' + $(this).parent().find('select').find(':selected').text() + '</span></div>' + '<a href="javascript:void(0);" class="select-list-link"><i class="material-icons">keyboard_arrow_down</i></a>');
-    });   
-
-    $('.drop-down ul li').each(function() {   
-        if ($(this).find('span').text() == $('.drop-down select').find(':selected').text()) {  
-            $(this).addClass('active');       
-        }      
-    });
-
-    $('.drop-down .select-list li').on('click', function() {          
-        var dd_text = $(this).find('span').text();  
-        var dd_img = $(this).find('img').attr('src'); 
-        var dd_val = $(this).attr('value');   
-        $('.drop-down').has(this).find('.button').html('<div><img src="' + dd_img + '"/>' + '<span>' + dd_text + '</span></div>' + '<a href="javascript:void(0);" class="select-list-link"><i class="material-icons">keyboard_arrow_down</i></a>');      
-        $('.drop-down').has(this).find('.select-list').removeClass('active');    
-        $(this).parent().addClass('active');     
-        $('.drop-down .select-list').removeClass('active').slideUp();
-        $('.drop-down').has(this).find('select').val(dd_val);
-    });  
-
-    $('.drop-down .button').on('click', function(){      
-        $('.drop-down').has(this).find('.select-list').toggleClass('active');  
-    });
     $(document).mouseup(function (e) {
         if (!$('.drop-down .select-list').is(e.target) // if the target of the click isn't the container...
            && $('.drop-down .select-list').has(e.target).length === 0 // ... nor a descendant of the container
@@ -91,44 +58,22 @@ $( document ).ready(function() {
                 $('.drop-down .select-list').removeClass('active');  
            }
     });
-    
-    // Activar opciones de select 
 
-    $('.select-box:not(.active)').hide();
-    $('#selection-type .select-list li').on('click', function() { 
-        if ($('#selection-type select').val() === 'angle') {
-            $('.select-box').removeClass('active').hide();
-            $('.select-box.angle-box').fadeIn().addClass('active');
-            }
-        else if ($('#selection-type select').val() === 'area') {
-            $('.select-box').removeClass('active').hide();
-            $('.select-box.area-box').fadeIn().addClass('active');
-            }
-        else if ($('#selection-type select').val() === 'id') {
-            $('.select-box').removeClass('active').hide();
-            $('.select-box.id-box').fadeIn().addClass('active');
-            }
-        else if ($('#selection-type select').val() === 'edges') {
-            $('.select-box').removeClass('active').hide();
-            $('.select-box.edges-box').fadeIn().addClass('active');
-            }
-        });  
-        
-    // Activar opciones de los radio buttons de New selecction
-        
+    // NEW SELECTION 
+    // Inicialmente desactiva todos los inputs cuyos radio button asociados estén desactivados.
+    $('.select-box .radio input:not(:checked)').closest('.select-box > #attach, .select-box > .flex.v-center').find('input:not([type="radio"]), textarea, button').addClass('disabled');
+    // Activa o desactiva los inputs asociados a los radio buttons cuando estos se activan
     $('.select-box .radio').on('change', function(){ 
         if ($('.select-box .radio input').is(':checked')) {
-            $('.select-box').has(this).find('input:not([type="radio"])').prop('disabled' , true);
-            $('.select-box').has(this).find('textarea,button').prop('disabled' , true);
-            $(this).parent().find('input:disabled').prop('disabled', false);
+            // Inicialmente desactiva todos los inputs que no sean radio y textarea
+            $('.select-box').has(this).find('input:not([type="radio"]), textarea, button').addClass('disabled');
+            // Activa los inputs de texto si el padre del radio activado tiene inputs hijos 
+            $(this).parent().find('input.disabled').removeClass('disabled');
+            // Activa el textarea si el padre del radio activado tiene el id attach
+            $('#attach').has(this).find('button, textarea').removeClass('disabled');
         }
     });
     
-    $('.select-box .radio').on('change', function(){
-        if ($('.select-box .radio input').is(':checked')){
-            $('#attach').has(this).find('button, textarea').prop('disabled' , false);
-        }
-    });
     
     $('#tab-history i.material-icons').on('click', function(){
         $(this).parent().remove();

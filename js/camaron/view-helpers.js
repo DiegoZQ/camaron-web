@@ -20,13 +20,20 @@ These are often used by buttons on the same view, or by other methods.
 // Updates the visible information of the model when is loaded.
 const updateInfo = () => {
    const verticesInfo = document.getElementById("vertices_info");
-   const polygonsInfo = document.getElementById("polygons_info");
+   const polytopesInfo = document.getElementById("polytopes_info");
    const widthInfo = document.getElementById("width_info");
    const heightInfo = document.getElementById("height_info");
    const depthInfo = document.getElementById("depth_info");
 
    verticesInfo.innerHTML = `Vertices: ${model.vertices.length}`;
-   polygonsInfo.innerHTML = `Polygons: ${model.polygons?.length}`;
+   polytopesInfo.innerHTML = '• ';
+   if (model.modelType === 'PSLG') {
+      polytopesInfo.innerHTML += `Edges: ${model.edges?.length}`;
+   } else if (model.modelType === 'PolygonMesh') {
+      polytopesInfo.innerHTML += `Polygons: ${model.polygons?.length}`;
+   } else if (model.modelType === 'PolyhedronMesh') {
+      polytopesInfo.innerHTML += `Polyhedrons: ${model.polyhedrons?.length}`;
+   }
    widthInfo.innerHTML = `Width: ${Math.round(model.modelWidth)}`;
    heightInfo.innerHTML = `Height: ${Math.round(model.modelHeight)}`;
    depthInfo.innerHTML = `Depth: ${Math.round(model.modelDepth)}`;
@@ -95,8 +102,8 @@ const changeViewType = (viewType=null) => {
    mvpManager.viewType = viewType;
 }
 
-// Changes the viewtype between perspective and orthogonal.
-const setUIStartConfiguration = () => {
+
+const setHeaderStartConfiguration = () => {
    if (!model || !model.loaded) {
       return;
    }

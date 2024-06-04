@@ -1,13 +1,6 @@
 // Color picker module
 
 
-// Convierte un valor de defaultColorConfig o colorConfig usando su key, a su formato
-// rgb css. Ej: (1,1,1,1) => rgb(255,255,255)
-const parseColorConfigValueToRgb = (colorConfig, key) => {
-    const rgbValues = colorConfig[key].slice(0,3).map(value => parseInt(value*255));
-    return `rgb(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]})`;
-}
-
 // Actualiza cada campo de colorConfig con su respectivo valor asociado en el backgroundColor de los color-indicators
 // y redibuja el modelo con este nuevo colorConfig. 
 const updateColorConfig = () => {
@@ -32,7 +25,7 @@ const resetColorIndicators = () => {
         const keyId = colorMap[key];
         if (!keyId) return;
         const colorIndicator = document.getElementById(keyId).querySelector(".color-indicator");
-        colorIndicator.style.backgroundColor = parseColorConfigValueToRgb(defaultColorConfig, key);
+        colorIndicator.style.backgroundColor = parseVectorToRGB(defaultColorConfig[key]);
     });
     const backgroundColorIndicator = document.querySelector('#background_color .color-indicator');
     backgroundColorIndicator.style.backgroundColor = defaultBackgroundColor;
@@ -84,7 +77,8 @@ const setInterfacePreviousColor = (interface) => {
     if (interface.id === 'background_color') {
         elements.previous_color.style.backgroundColor = elements.background.style.backgroundColor;
     } else {
-        elements.previous_color.style.backgroundColor = parseColorConfigValueToRgb(colorConfig, inverseColorMap[interface.id]);
+        const key = inverseColorMap[interface.id];
+        elements.previous_color.style.backgroundColor = parseVectorToRGB(colorConfig[key]);
     }
 }
 
