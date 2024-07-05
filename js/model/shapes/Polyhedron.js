@@ -6,7 +6,7 @@ class Polyhedron extends Shape {
         super(id);
         this.vertices = {};
         this.polygons = [];
-        this._area = null;
+        this._surface = null;
         this._solidAngles = [];
         this.isVisible = true;
         this._minAngle = null;
@@ -23,17 +23,17 @@ class Polyhedron extends Shape {
         }
     }
 
-    // Obtiene el área del poliedro.
-    get area() {
+    // Obtiene la superficie del poliedro.
+    get surface() {
         // Si todavía no la ha calculado, lo hace sumando las áreas de los polígonos que lo componen.
         if (this._area == null) {
             let total = 0;
             for (const polygon of this.polygons) {
                 total += polygon.area;
             }
-            this._area = total;
+            this._surface = total;
         }
-        return this._area;
+        return this._surface;
     }
 
     // Obtiene el volumen del poliedro.
@@ -79,17 +79,12 @@ class Polyhedron extends Shape {
                     angles.push(face.angles[faceVertexIndex]);
                 }
                 const [a, b, c] = angles;
-                // Normaliza los lados mayores a PI.
-                const aPrime = (a > Math.PI) ? 2 * Math.PI - a : a;
-                const bPrime = (b > Math.PI) ? 2 * Math.PI - b : b;
-                const cPrime = (c > Math.PI) ? 2 * Math.PI - c : c;
-
                 // spherical law of cosines states
                 // cos(c) = cos(a)cos(b) + sin(a)sin(b)cos(gamma);
                 // => gamma = arcos((cos(c) - cos(a)cos(b) / (sin(a)sin(b)))
-                const alfa = Math.acos((Math.cos(aPrime) - Math.cos(bPrime)*Math.cos(cPrime)) / (Math.sin(bPrime)*Math.sin(cPrime)));
-                const beta = Math.acos((Math.cos(bPrime) - Math.cos(aPrime)*Math.cos(cPrime)) / (Math.sin(aPrime)*Math.sin(cPrime)));
-                const gamma = Math.acos((Math.cos(cPrime) - Math.cos(aPrime)*Math.cos(bPrime)) / (Math.sin(aPrime)*Math.sin(bPrime)));
+                const alfa = Math.acos((Math.cos(a) - Math.cos(b)*Math.cos(c)) / (Math.sin(b)*Math.sin(c)));
+                const beta = Math.acos((Math.cos(b) - Math.cos(a)*Math.cos(c)) / (Math.sin(a)*Math.sin(c)));
+                const gamma = Math.acos((Math.cos(c) - Math.cos(a)*Math.cos(b)) / (Math.sin(a)*Math.sin(b)));
                 // Corrige los lados si los ángulos iniciales eran mayores a PI.
                 const correctedAlfa = (a > Math.PI) ? 2 * Math.PI - alfa : alfa;
                 const correctedBeta = (b > Math.PI) ? 2 * Math.PI - beta : beta;
@@ -108,5 +103,5 @@ class Polyhedron extends Shape {
             this._minAngle = Math.min(...angles);
         }
         return this._minAngle;
-     }
+    }
 }

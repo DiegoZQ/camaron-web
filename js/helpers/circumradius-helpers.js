@@ -111,7 +111,7 @@ const welzlHelper = (points2D, boundedPoints2D) => {
     return newCircle;
 }
 
-const polygonCircumradius = (polygon) => {
+const getPolygonCircumradius = (polygon) => {
     const points2D = polygon.vertices2D;
     const points2DCopy = [...points2D];
     return welzlHelper(points2DCopy, []).radius;

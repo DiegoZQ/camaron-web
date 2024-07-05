@@ -16,12 +16,12 @@ class AreaSelectionStrategy extends SelectionStrategy {
 		if (!availableModelTypes.includes(this.model.modelType)) {
 			return;
 		}
-		const area = polytope.area;
+		const area = this.model.modelType === 'PolygonMesh' ? polytope.area : polytope.surface;
 		const isInRange = this.minArea <= area && area <= this.maxArea;
 		polytope.isSelected = isInRange;
 	}
 
 	get text() {
-		return `By Area: ${this.minArea} - ${this.maxArea}`;
+		return `By ${this.model.modelType === 'PolygonMesh' ? 'Area' : 'Surface'}: ${this.minArea} - ${this.maxArea}`;
 	}
 }

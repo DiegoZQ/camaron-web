@@ -26,7 +26,6 @@ class ModelLoadStrategy {
    doLoad() {
       try {
          this.load()
-         mvpManager = new MVPManager(this.model);
          this.isValid = true;
       } catch (error) {
          this.isValid = false;
@@ -144,7 +143,7 @@ class ModelLoadStrategy {
          // Polygons
          for (const polygon of polygons) {
             if (polygon.holes.length) {
-               throw new Error('Cannot export .poly with holes to .off');
+               throw new Error('Cannot export polygons with holes to .off');
             }
             const vertexIndices = polygon.vertices.map(vertex => vertexIds.indexOf(vertex.id));
             content += `${vertexIndices.length} ${vertexIndices.join(' ')}\n`;
@@ -183,6 +182,7 @@ class ModelLoadStrategy {
          const vertices = this.model.vertices;
          const vertexIds = vertices.map(vertex => vertex.id);
          const polygons = this.model.polygons ? this.model.polygons : [];
+         const polygonIds = polygons.map(polygon => polygon.id);
          const polyhedrons = this.model.polyhedrons ? this.model.polyhedrons : [];
 
          // ViSF Header
@@ -204,7 +204,7 @@ class ModelLoadStrategy {
          // Polyhedrons
          content += polyhedrons.length ? `${polyhedrons.length}\n` : '';
          for (const polyhedron of polyhedrons) {
-            const polygonIndices = polyhedron.polygons.map(polygon => polygon.id - 1);
+            const polygonIndices = polyhedron.polygons.map(polygon => polygonIds.indexOf(polygon.id));
             content += `${polygonIndices.length} ${polygonIndices.join(' ')}\n`;
          }
       return content;
@@ -225,6 +225,9 @@ class ModelLoadStrategy {
          const polygons = this.model.polygons;
          let content = `${polygons.length}\n`;
          for (const polygon of polygons) {
+            if (polygon.vertices.length > 3) {
+               throw new Error('Cannot convert non triangle polygons to .face');
+            }
             const vertexIndices = polygon.vertices.map(vertex => vertex.id);
             content += `${polygon.id} ${vertexIndices.join(' ')}\n`;
          }
@@ -236,19 +239,7 @@ class ModelLoadStrategy {
       if (this.model.modelType == 'PolyhedronMesh') {
          const polyhedrons = this.model.polyhedrons;
          let content = `${polyhedrons.length} 4\n`;
-         // Por cada poliedro, obtiene los vértices v0, v1, v2, v3 que definen al poliedro en formato .ele.
-         // Se calcula contando el número de ids repetidos por posición contemplando las 4 caras de cada poliedro.
-         // Utiliza la inversa de la matriz usada para obtener las caras un poliedro en formato .ele para obtener los vértices:
-         //    [v2, v1, v0],
-         //    [v0, v1, v3],
-         //    [v1, v2, v3],
-         //    [v2, v0, v3]
-         // v2 es el id que se repite 2 veces en la posición 0
-         // v1 es el id que se repite 2 veces en la posición 1
-         // v3 es el id que se repite 3 veces en la posición 2 
-         // v0 es el id que se repite 1 vez en la posición 2
          for (const polyhedron of polyhedrons) {
-            const positionCounters = []
             if (polyhedron.polygons.length > 4) {
                throw new Error('Cannot convert non tetrahedron polyhedrons to .ele');
             }
@@ -256,18 +247,12 @@ class ModelLoadStrategy {
                if (polygon.vertices.length > 3) {
                   throw new Error('Cannot convert non triangle polygons to .ele');
                }
-               const vertexIds = polygon.vertices.map(vertex => vertex.id);
-               vertexIds.forEach((vertexId, index) => {
-                  const positionCounter = positionCounters[index] ? positionCounters[index] : {};
-                  positionCounter[vertexId] = positionCounter[vertexId] ? positionCounter[vertexId] + 1 : 1;
-                  positionCounters[index] = positionCounter;
-               });
             }
-            const v0 = Object.keys(positionCounters[2]).reduce((a, b) => positionCounters[2][a] < positionCounters[2][b] ? a : b);
-            const v1 = Object.keys(positionCounters[1]).reduce((a, b) => positionCounters[1][a] > positionCounters[1][b] ? a : b);
-            const v2 = Object.keys(positionCounters[0]).reduce((a, b) => positionCounters[0][a] > positionCounters[0][b] ? a : b);
-            const v3 = Object.keys(positionCounters[2]).reduce((a, b) => positionCounters[2][a] > positionCounters[2][b] ? a : b);
-            content += `${polyhedron.id} ${v0} ${v1} ${v2} ${v3}\n`;
+            const vertexIds = polyhedron.vertices.map(vertex => vertex.id);
+            // Los primeros 3 vértices se invierte su orientación, ya que por construcción, estos se obtienen siguiendo una
+            // dirección en contra de las agujas del reloj, no obstante la función que lee posteriormente esta línea para reconvertirla 
+            // en sus 4 caras, espera que los primeros 3 vértices estén a favor de las agujas del reloj.
+            content += `${polyhedron.id} ${vertexIds[0]} ${vertexIds[2]} ${vertexIds[1]} ${vertexIds[3]}\n`;
          }
          return content;
       }

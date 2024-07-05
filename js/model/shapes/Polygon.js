@@ -286,8 +286,8 @@ class Polygon extends Shape {
    // Obtiene el aspect ratio del polígono, el cual corresponde al cociente entre el inradio y el circunradio del polígono.
    get aspectRatio() {
       if (this._aspectRatio == null) {
-         const circumradius = polygonCircumradius(this);
-         this._aspectRatio = circumradius ? polygonInradius(this, 1.0) / circumradius : 0;
+         const circumradius = getPolygonCircumradius(this);
+         this._aspectRatio = circumradius ? getPolygonInradius(this, 1.0) / circumradius : 0;
       }
       return this._aspectRatio;
    }

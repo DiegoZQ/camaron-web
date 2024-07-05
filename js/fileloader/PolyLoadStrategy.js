@@ -11,12 +11,12 @@ class PolyLoadStrategy extends ModelLoadStrategy {
     // https://wias-berlin.de/software/tetgen/fformats.poly.html
     // https://people.sc.fsu.edu/~jburkardt/data/poly/poly.html
     load() {
-        const [numVertices, dimensions] = this.loadModelHeader();
+        const [numVertices, dimensions] = this.loadHeader();
         if (dimensions == 2) {
             this.model = new PSLG();
             let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
             startIndex = this.loadModelEdges(startIndex);
-            this.loadModelHoles(startIndex, dimensions);
+            this.loadModel2DHoles(startIndex);
         } else {
             this.model = new PolygonMesh();
             let startIndex = this.loadModelVertices(numVertices, 1, dimensions);
@@ -25,7 +25,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         this.model.vertices = Array.from(Object.values(this.model.vertices));
     }
 
-    loadModelHeader() {
+    loadHeader() {
         const vertexLineWords = getLineWords(this.fileArray[0]);
         if (![2,3,4].includes(vertexLineWords.length) || !isPositiveInteger(vertexLineWords[0]) || !['2', '3'].includes(vertexLineWords[1])) {
             throw new Error('Vertex format error');
@@ -38,7 +38,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         return super.loadModelVertices(numVertices, startIndex, dimensions, true);
     }
 
-    // Carga todos los lados del modelo partiendo por un índice de inicio.
+    // Carga todos los lados del modelo partiendo por un índice de inicio. Sólo funciona en 2D.
     loadModelEdges(startIndex) {
         const edgeLineWords = getLineWords(this.fileArray[startIndex]);
         // ej: Five segments with boundary markers.
@@ -72,6 +72,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         return startIndex + numEdges;
     }
 
+    // Carga las facetas del modelo. Sólo funciona en 3D.
     loadModelFacets(startIndex) {
         const facetHeaderLineWords = getLineWords(this.fileArray[startIndex]);
         if (![1,2].includes(facetHeaderLineWords.length) || !isPositiveInteger(facetHeaderLineWords[0])) {
@@ -81,7 +82,7 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         const polygons = [];
         startIndex++;
         let offset = 0;
-        let polygonCount = 0;
+        let polygonCount = 1;
         for (let i = 0; i < numFacets; i++) {
             const facet = this.fileArray[startIndex + offset];
             const facetLineWords = getLineWords(facet);
@@ -94,7 +95,8 @@ class PolyLoadStrategy extends ModelLoadStrategy {
             }
             const facetPolygonCount = parseInt(facetLineWords[0]);
             const facetHoleCount = facetLineWords[1] ? parseInt(facetLineWords[1]) : 0;
-            const facetPolygons = [];
+            const innerPolygons = [];
+            let outerPolygon;
 
             for (let j = 0; j < facetPolygonCount; j++) {
                 const polygonLineWords = getLineWords(this.fileArray[j + startIndex + offset + 1]);
@@ -102,94 +104,78 @@ class PolyLoadStrategy extends ModelLoadStrategy {
                 if (polygonLineWords.length != sidesCount + 1) {
                    throw new Error('Facet polygon side count error');
                 }
-                const polygon = new Polygon(polygonCount + j + 1);
+                // Ignora polígonos degenerados
+                if (sidesCount < 3) continue;
+
+                const polygon = new Polygon(polygonCount);
                 // para cada índice de vértice
                 for(let k = 1; k <= sidesCount; k++) {
                     const vertexIndex = parseInt(polygonLineWords[k]);
                     const vertex = this.model.vertices[vertexIndex];
                     // agrega cada vértice a los vértices del polígono
                     polygon.vertices.push(vertex);
-                    // y agrega el nuevo polígono como parte de los polígonos de cada vértice
-                    // si no tiene agujeros, ya que si tiene, este polígono podría ser eliminado.
+                    // y agrega el nuevo polígono como parte de los polígonos de cada vértice si la faceta no tiene agujeros
                     if (!facetHoleCount) {
                         vertex.polygons.push(polygon);
                     }
                 }
-                facetPolygons.push(polygon);
+                // Se asume que el outerPolygon siempre es el primer polígono especificado
+                if (j === 0) {
+                    outerPolygon = polygon;
+                } else {
+                    innerPolygons.push(polygon);
+                }
             }
-            // Si no hay agujeros, simplemente agrego todos los polígonos
-            if (!facetHoleCount) {
-                polygons.push(...facetPolygons);
+            if (!outerPolygon) {
+                throw new Error('The outer polygon must exist and not be degenerate'); 
             }
-            // Si hay agujeros, debo remover a algunos polígonos
-            else {
-                // Crea un diccionario con los polígonos activos para hacer merge a otro
-                const activeFacetPolygons = {};
-                facetPolygons.forEach(facetPolygon => {
-                    activeFacetPolygons[facetPolygon.id] = true;
-                })
-                const finalFacetPolygons = {};
+            if (facetHoleCount != innerPolygons.length) {
+                throw new Error('Facet holes must be equal to facet inner polygons'); 
+            }
+            // Si hay agujeros, debo agregar como agujeros todos los polígonos internos al polígono externo
+            if (facetHoleCount) {    
                 const holeInfo = {};
-                // Por cada agujero, busca todos los polígonos de facetPolygons que lo contengan y los asocia como lista en el diccionario holeInfo
+                // Por cada agujero, busca al polígono interno de innerPolygons que lo contenga y lo asocia en el diccionario holeInfo.
+                // Si hay más de un polígono interno que se podría asociar a un mismo agujero, se considera un error.
                 for (let j = 0; j < facetHoleCount; j++) {
                     const holeLineWords = getLineWords(this.fileArray[j + startIndex + offset + 1 + facetPolygonCount]);
                     const holeId = parseInt(holeLineWords[0]);
                     const holeCoords = holeLineWords.slice(1, holeLineWords.length).map(parseFloat);
-                    for (const facetPolygon of facetPolygons) {
-                        if (facetPolygon.pointInPolygon(holeCoords)) {
-                            if (holeInfo[holeId] && holeInfo[holeId].length) {
-                                holeInfo[holeId].push(facetPolygon);
+                    // Si el polígono exterior no contiene al agujero, se considera error.
+                    if (!outerPolygon.pointInPolygon(holeCoords)) {
+                        throw new Error('Could not triangulate facet due to bad hole position'); 
+                    }
+                    for (const innerPolygon of innerPolygons) {
+                        if (innerPolygon.pointInPolygon(holeCoords)) {
+                            // Si es el primer polígono interno que contiene al agujero, se convierte en agujero del polígono externo.
+                            if (!holeInfo[holeId]) {
+                                holeInfo[holeId] =  innerPolygon;
+                                if (outerPolygon.polygonInPolygon(innerPolygon)) {
+                                    outerPolygon.addPolygonAsHole(innerPolygon);
+                                } else {
+                                    throw new Error('Could not triangulate facet due to bad hole position');
+                                }
                             } else {
-                                holeInfo[holeId] =  [facetPolygon];
+                                throw new Error('Could not triangulate facet due to bad hole position');   
                             }
                         }
                     }            
                 }
-                // Ordena los polígonos que continen a cada agujero por su área
-                outerLoop: for (const holeId in holeInfo) {
-                    holeInfo[holeId] = holeInfo[holeId].sort((a, b) => a.area - b.area);
-                    // Toma el polígono más pequeño que contiene el agujero
-                    const smallPolygon = holeInfo[holeId][0];
-                    if (!activeFacetPolygons[smallPolygon.id]) {
-                        continue;
-                    } 
-                    // Itera sobre los polígonos más grandes y busca uno que contenga completamente al polígono pequeño
-                    for (let j = 1; j < holeInfo[holeId].length; j++) {
-                        const bigPolygon = holeInfo[holeId][j];
-                        // Si lo encuentra, agrega los vértices del polígono más pequeño al polígono más grande 
-                        // y lo triangula con earcut 
-                        if (bigPolygon.polygonInPolygon(smallPolygon)) {
-                            // Hace que ambos polígonos no se puedan unir a otro más grande como agujeros
-                            activeFacetPolygons[smallPolygon.id] = false;
-                            activeFacetPolygons[bigPolygon.id] = false; 
-                            // TODO: ver caso donde bigPolygon y smallPolygon comparten vértice.
-                            //for (const vertex of smallPolygon.vertices) {
-                            //    bigPolygon.vertices[vertex.id] = vertex;
-                            //}
-                            bigPolygon.addPolygonAsHole(smallPolygon);
-                            finalFacetPolygons[bigPolygon.id] = bigPolygon;
-                            continue outerLoop;
-                        }
-                    }
-                    throw new Error('Could not triangulate facet due to bad hole position');            
+                // Agrego el outerPolygon a los vértices que los comprenden.
+                for (const polygonVertex of outerPolygon.vertices) {
+                    polygonVertex.polygons.push(outerPolygon);
                 }
-                // Agrego los polígonos sobrevivientes a los vértices que los comprenden.
-                for (const facetPolygonId in finalFacetPolygons) {
-                    const facetPolygon = finalFacetPolygons[facetPolygonId];
-                    const polygonVertices = facetPolygon.vertices;
-                    for (const polygonVertex of polygonVertices) {
-                        polygonVertex.polygons.push(facetPolygon);
-                    }
-                }
-                polygons.push(...Object.values(finalFacetPolygons));
             }
+            // Finalmente agrego a la lista de polígonos el polígono externo.
+            polygons.push(outerPolygon);
             offset += 1 + facetPolygonCount + facetHoleCount;
-            polygonCount += facetPolygonCount;
+            polygonCount++;
         }
         this.model.polygons = polygons;
     }
 
-    loadModelHoles(startIndex, dimensions) {
+    // Carga los agujeros del modelo. Sólo funciona en 2D.
+    loadModel2DHoles(startIndex) {
         const holeStartLineWords = getLineWords(this.fileArray[startIndex]);
         if (holeStartLineWords.length != 1 || !isNonNegativeInteger(holeStartLineWords[0])) {
             throw new Error('holeError');
@@ -204,15 +190,13 @@ class PolyLoadStrategy extends ModelLoadStrategy {
         const holes = {};
         for (let i = 0; i < numHoles; i++) {
             const holeLineWords = getLineWords(this.fileArray[startIndex + i]);
-            if (holeLineWords.length != dimensions + 1 || !isNonNegativeInteger(holeLineWords[0])) {
+            if (holeLineWords.length != 3 || !isNonNegativeInteger(holeLineWords[0])) {
                 throw new Error('Holes dimension format');
             }
             const id = parseInt(holeLineWords[0]);
             const holeCoords = holeLineWords.slice(1, holeLineWords.length).map(parseFloat);
-
-            if (dimensions == 2) {
-                holeCoords.push(0);
-            }
+            holeCoords.push(0);
+            
             holes[id] = new Hole(id, ...holeCoords);;
         }
         this.model.holes = Array.from(Object.values(holes));

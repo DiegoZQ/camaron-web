@@ -39,14 +39,12 @@ class NodeEleLoadStrategy extends NodeLoadStrategy {
         for (let i = 0; i < numPolyhedrons; i++) {
             const line = this.eleFileArray[i + 1];
             const lineWords = getLineWords(line);
-
             if (lineWords.length < 5) {
                 throw new Error('Polyhedron format error');
             }
-
             const polyhedron = new Polyhedron(lineWords[0]);
             const triangularFaces = tetTriangularFaces(...lineWords.slice(1, 5));
-            // Cada nueva cara que se crea pertenece sólo a un poliedro, ya que dada su orientación
+            // Cada nueva cara que se crea pertenece sólo a un poliedro, ya que como sólo tiene una orientación
             // es imposible que otro poliedro adyacente tenga el mismo polígono a menos que esté mal diseñado.
             // Por tanto cada polígono sólo tiene 1 poliedro asociado.
             for (const triangularFace of triangularFaces) {
@@ -55,8 +53,8 @@ class NodeEleLoadStrategy extends NodeLoadStrategy {
                     const vertex = this.model.vertices[vertexId];
                     polygon.vertices.push(vertex);
                     vertex.polygons.push(polygon);
-                    polyhedron.vertices[vertexId] = vertex;
-                    vertex.polyhedrons[polyhedron.id] = polyhedron;
+                    polyhedron.vertices[' ' + vertexId] = vertex;
+                    vertex.polyhedrons[' ' + polyhedron.id] = polyhedron;
                 }
                 polygonId++;
                 polyhedron.polygons.push(polygon);

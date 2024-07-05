@@ -80,7 +80,7 @@ class Cell {
 // The closer the precision value is to 0, the more accurate the inradius will be.
 // The algorithm uses a quadtree-like approach to iteratively refine the search area 
 // by dividing the polygon into smaller cells and evaluating their potential to contain the circle's center.
-const polygonInradius = (polygon, precision) => {
+const getPolygonInradius = (polygon, precision) => {
     const {u, v} = polygon.basisVectors;
     // Obtiene el bounding box 2D del polígono.
     const vertices2D = polygon.vertices2D;

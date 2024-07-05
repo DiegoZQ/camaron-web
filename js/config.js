@@ -41,8 +41,6 @@ const inverseColorMap = Object.entries(colorMap).reduce((acc, [key, value]) => (
 const fontInfo = {
     letterWidth: 242,
     letterHeight: 310,
-    spaceWidth: 8,
-    spacing: -1,
     textureWidth: 1685,
     textureHeight: 1338,
     glyphInfos: {
@@ -62,8 +60,6 @@ const fontInfo = {
 const fontInfo2 = {
     letterWidth: 8,
     letterHeight: 8,
-    spaceWidth: 8,
-    spacing: -1,
     textureWidth: 64,
     textureHeight: 40,
     glyphInfos: {

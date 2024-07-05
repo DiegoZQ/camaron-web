@@ -10,6 +10,5 @@ class Edge extends Shape {
         super(id);
         this.startVertex = startVertex;
         this.endVertex = endVertex; 
-        this.adjacentEdges = []; 
     }
 }

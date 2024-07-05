@@ -1,18 +1,27 @@
 /* modal_colors.css */
 
-
-.modal.colors a {
-    width: 53px;
-    height: 20px;
-    background-color: #D9D9D9;
-    color: #000000;
-    border-radius: 3px;
-    text-transform: uppercase;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 4px 9px 4px 9px;
+.modal.colors .btn {
+    padding: 5px 22px 5px 22px;
+    min-width: 84px;
 }
 
+.modal.colors .modal-header {
+    padding: 12px 30px;
+    padding-right: 40px; 
+}
+.modal.colors .modal-body {
+    padding: 8px 0px 30px 30px;
+}
+
+.modal.colors span {
+    color: #898586;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.modal.colors h4 {
+    font-size: 15px;
+}
 .modal.colors h5 {
     font-size: 11px;
     text-transform: uppercase;
@@ -34,7 +43,7 @@
 }
 .modal.colors .ui-list li.active {
     background-color: #ffedf1;
-    border-left: 2px solid #ff7091;
+    border-left: 4px solid #ff7091;
     cursor: default; 
 }
 .modal.colors .ui-list .color-indicator {
@@ -46,8 +55,10 @@
 
 .modal.colors .config_buttons {
     display: flex;
+    justify-content: flex-end;
     margin-top: 30px;
-    gap: 40px;
+    gap: 20px;
+    min-width: 250px;
 }
 
 .modal.colors .color_picker_dialog {
@@ -86,7 +97,7 @@
     transform: translate(-50%, -50%);
     height: 14px;
     width: 14px;
-    border: 2px solid white;
+    border: 3px solid white;
     /*pointer-events: none;*/
     cursor: pointer;
     box-shadow: 2px 2px 6px 0 rgba(0, 0, 0, .3);
@@ -131,12 +142,12 @@
     position: absolute;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     top: 0;
     left: 100%;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 3px solid white;
     z-index: 10;
     -webkit-transition: width .25s, height .25s;
     transition: width .25s, height .25s;

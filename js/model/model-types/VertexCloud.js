@@ -6,7 +6,6 @@ class VertexCloud extends AbstractModel {
         super();
         this.modelType = 'VertexCloud';
         this.vertices = [];
-        this.loaded = false;
         this.verticesBuffer = gl.createBuffer();
         this.vertexIdsBuffer = {position: gl.createBuffer(), texcoord: gl.createBuffer()};
         this.vertexIdsLength = 0;
@@ -59,7 +58,6 @@ class VertexCloud extends AbstractModel {
                 maxArea *= values[i];
             }
         }
-        //const volume = Math.max(this.modelWidth, 1) * Math.max(this.modelHeight, 1) * Math.max(this.modelDepth, 1)
         return (Math.sqrt(maxArea/this.vertices.length)/fontInfo.letterHeight) * 0.1; 
     }
 

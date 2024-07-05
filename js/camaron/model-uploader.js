@@ -73,6 +73,7 @@ const waitForModelLoaded = () => {
 const initModelView = () => {
    setTimeout(() => {
       model.loadBuffers();
+      mvpManager = new MVPManager(model);
    }, 0);
    changeViewType();
    rotator = new Rotator();

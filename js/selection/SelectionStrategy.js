@@ -3,19 +3,15 @@
 
 class SelectionStrategy {
    constructor(model, mode) {
-      this.polytopes = this.getModelMainPolytopes(model);
+      if (model.modelType === 'PolygonMesh') {
+         this.polytopes = model.polygons;
+      } else if (model.modelType === 'PolyhedronMesh') {
+         this.polytopes = model.polyhedrons;
+      } else {
+         this.polytopes = null;
+      }
       this.model = model;
       this.mode = mode;
-   }
-
-   // Obtiene los polítopos principales de cada modelo.
-   getModelMainPolytopes(model) {
-      if (model.modelType === 'PolygonMesh') {
-         return model.polygons;
-      }
-      if (model.modelType === 'PolyhedronMesh') {
-         return model.polyhedrons;
-      }
    }
 
    selectPolytope(polytope) {

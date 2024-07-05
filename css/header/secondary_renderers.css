@@ -31,20 +31,26 @@ header #secondary_renderers_menu .submenu li.active .label:after {
 
 /* Add style for disabled secondary renderer labels */
 header #secondary_renderers_menu .submenu li.disabled .label {
-    background-color: #F5F5F5;
-    cursor: default;
+    background-color: #fafafa; /* Very light gray background */
+    color: #d0d0d0; /* Light muted text color */
+    cursor: default; /* Indicates that the item is not clickable */
+    border: 1px solid #e0e0e0; /* Subtle border for definition */
 }
+
+/* Add style for the icon in the disabled state */
 header #secondary_renderers_menu .submenu li.disabled .label:after {
-    content: 'block';
+    content: 'block'; /* You can change the icon if needed */
     font-family: 'Material Icons';
     text-transform: none;
     position: absolute;
     right: 10px;
     font-size: 20px;
-    color: #a09f9f;
-    display: block; 
+    color: #d0d0d0; /* Muted icon color to match the text */
+    display: block;
 }
-header #secondary_renderers_menu .submenu .disabled .label:hover {
-    background-color: #F5F5F5;
-    color: #666666;
+
+/* Ensure no hover effect on disabled labels */
+header #secondary_renderers_menu .submenu li.disabled .label:hover {
+    background-color: #fafafa; /* Matches the background color to prevent change on hover */
+    color: #d0d0d0; /* Matches the text color to prevent color change on hover */
 }

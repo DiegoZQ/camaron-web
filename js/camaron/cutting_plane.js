@@ -1,12 +1,13 @@
 const cuttingPlaneElements = {
     plane_position_bar: document.querySelector(".plane_position_bar"), // Barra de posición
     plane_position_picker: document.querySelector(".plane_position_picker"), // Picker de posición
+    plane_buttons: document.querySelectorAll('.plane_button'), // Botones que cambian la orientación o el eje del plano
+    plane_position_drag_started: false,
     dWidth: null,  
     dHeight: null,
     dDepth: null,
-    plane_buttons: document.querySelectorAll('.plane_button'), // Botones que cambian la orientación o el eje del plano
     axis: null, // Ej por donde se mueve el plano
-    reverse: false // Orientación del plano
+    reverse: false, // Orientación del plano
 }
 
 // Filtra todos los poliedros cuya posición de alguno de sus vértices esté con una orientación negativa
@@ -42,7 +43,7 @@ const filterByPlanePosition = (position) => {
 
 // Asigna la traslación en el eje dado un porcentaje de posición del plane position picker y también filtra
 // los poliedros del modelo dada la posición del plano luego de la traslación.
-const setPlanePositionByPercent = (percent) => {
+const setPlanePositionByPercent = (percent=null) => {
     if (!percent) {
         percent = cuttingPlaneElements.plane_position_picker.style.top.slice(0, -1);
     }
@@ -89,13 +90,12 @@ const setCuttingPlaneRenderer = () => {
     if (!model || !mvpManager) return;
     // Crea una malla simple con un cuadrado para representar el cutting plane.
     const cuttingPlane = new PolygonMesh();
-    const maxDimension = Math.max(model.modelWidth, model.modelHeight, model.modelDepth);
     const xscale = cuttingPlaneElements.axis == 'x' ? 0.01 : 0.1;
     const yscale = cuttingPlaneElements.axis == 'y' ? 0.01 : 0.1;
     const zscale = cuttingPlaneElements.axis == 'z' ? 0.01 : 0.1;
-    cuttingPlaneElements.dWidth = model.modelWidth == 0 ? maxDimension * xscale : model.modelWidth * xscale;
-    cuttingPlaneElements.dHeight = model.modelHeight == 0 ? maxDimension * yscale : model.modelHeight * yscale;
-    cuttingPlaneElements.dDepth = model.modelDepth == 0 ? maxDimension * zscale : model.modelDepth * zscale;
+    cuttingPlaneElements.dWidth = model.modelWidth * xscale;
+    cuttingPlaneElements.dHeight = model.modelHeight * yscale;
+    cuttingPlaneElements.dDepth = model.modelDepth * zscale;
     const dWidth = cuttingPlaneElements.dWidth;
     const dHeight = cuttingPlaneElements.dHeight;
     const dDepth = cuttingPlaneElements.dDepth;
@@ -132,24 +132,22 @@ const setCuttingPlaneRenderer = () => {
 }
 
 // HANDLERS
-let plane_position_drag_started = false;
-
-const planePositionBarHandleMouseDown = (e) => {
-    plane_position_drag_started = true;
+const handlePlaneMouseDown = (e) => {
+    cuttingPlaneElements.plane_position_drag_started = true;
     cuttingPlaneElements.plane_position_picker.classList.add("active");
     setPlanePosition(e);
 }
 
-const handlePlanePositionMouseMove = (e) => {
+const handlePlaneMouseMove = (e) => {
     //COLOR DRAG MOVE
-    if (plane_position_drag_started) {
+    if (cuttingPlaneElements.plane_position_drag_started) {
         setPlanePosition(e);
     }
 }
-const handlePlanePositionMouseUp = () => {
-    if (plane_position_drag_started) {
+const handlePlaneMouseUp = () => {
+    if (cuttingPlaneElements.plane_position_drag_started) {
         cuttingPlaneElements.plane_position_picker.classList.remove("active");
-        plane_position_drag_started = false;
+        cuttingPlaneElements.plane_position_drag_started = false;
         draw();
     }
 }
@@ -173,6 +171,11 @@ const handlePlaneButtonClick = (e) => {
     }
     // Si el botón no es uno que cambia de posición (es decir, es el botón de reversa) 
     else {
+        if (planeButton.classList.contains('reverse')) {
+            planeButton.classList.remove('reverse');
+        } else {
+            planeButton.classList.add('reverse');
+        }
         // Invierte el valor de la orientación del plano
         cuttingPlaneElements.reverse = !cuttingPlaneElements.reverse;
     }
@@ -189,9 +192,9 @@ const setCuttingPlane = () => {
     // Reinicia el estado del anterior cutting plane y quita los event listeners anteriores.
     cuttingPlaneElements.plane_position_bar.classList.add('disabled');
     cuttingPlaneElements.plane_position_picker.style.top = '0%';
-    cuttingPlaneElements.plane_position_bar.removeEventListener('mousedown', planePositionBarHandleMouseDown);    
-    document.removeEventListener('mousemove', handlePlanePositionMouseMove);
-    document.removeEventListener('mouseup', handlePlanePositionMouseUp);  
+    cuttingPlaneElements.plane_position_bar.removeEventListener('mousedown', handlePlaneMouseDown);    
+    document.removeEventListener('mousemove', handlePlaneMouseMove);
+    document.removeEventListener('mouseup', handlePlaneMouseUp);  
     cuttingPlaneElements.plane_buttons.forEach(planeButton => {
         planeButton.classList.remove('active');
         planeButton.classList.add('disabled');
@@ -199,13 +202,16 @@ const setCuttingPlane = () => {
     cuttingPlaneElements.plane_buttons.forEach(planeButton => planeButton.removeEventListener('click', handlePlaneButtonClick));
 
     // Retorna si el modelo no es una malla de poliedros.
-    if (!model || (model && model.modelType !== 'PolyhedronMesh') || !mvpManager) return;
+    if (!model || (model && model.modelType !== 'PolyhedronMesh') || !mvpManager) {
+        cuttingPlaneRenderer = null;
+        return;
+    };
 
     // Activa la interfaz para poder mover el plano y seleccionar botones.
     cuttingPlaneElements.plane_position_bar.classList.remove('disabled');
-    cuttingPlaneElements.plane_position_bar.addEventListener('mousedown', planePositionBarHandleMouseDown);    
-    document.addEventListener('mousemove', handlePlanePositionMouseMove);
-    document.addEventListener('mouseup', handlePlanePositionMouseUp);      
+    cuttingPlaneElements.plane_position_bar.addEventListener('mousedown', handlePlaneMouseDown);    
+    document.addEventListener('mousemove', handlePlaneMouseMove);
+    document.addEventListener('mouseup', handlePlaneMouseUp);      
     cuttingPlaneElements.plane_buttons.forEach(planeButton => planeButton.classList.remove('disabled'));
     cuttingPlaneElements.plane_buttons[0].classList.add('active');
     cuttingPlaneElements.axis = cuttingPlaneElements.plane_buttons[0].getAttribute('value');

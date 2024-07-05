@@ -9,5 +9,10 @@ class AbstractModel {
       this.modelHeight = 0;
       this.modelDepth = 0;
       this.modelType = null;
+      this.loaded = false;
    }
+
+   loadBuffers() {
+      this.loaded = true;
+  }
 }

@@ -44,13 +44,14 @@ class BillboardIdRenderer extends TextureRenderer {
 
 		// Inicializa el Vertex Array Object (VAO)
 		gl.bindVertexArray(this.vao);
+		
 
 		const stride = 5*Float32Array.BYTES_PER_ELEMENT;
 		// Asigna el valor del positionBuffer dentro de las variable a_position del shader
         this.setupAttributePointer(this.centerAttributeLocation, this.positionBuffer, 3, stride, 0);
 		this.setupAttributePointer(this.positionAttributeLocation, this.positionBuffer, 2, stride, 3*Float32Array.BYTES_PER_ELEMENT);
-
         this.setupAttributePointer(this.texcoordAttributeLocation, this.texcoordBuffer, 2);
+		gl.uniform1f(this.fontScaleLocation, this.fontScale);
         this.loadTexture();		
 	}
 
@@ -65,7 +66,6 @@ class BillboardIdRenderer extends TextureRenderer {
 		gl.bindVertexArray(this.vao);
 
 		gl.uniform4fv(this.colorAttributeLocation, this.color);
-		gl.uniform1f(this.fontScaleLocation, this.fontScale);
 		gl.uniform1f(this.scaleLocation, this.mvpManager._scale[0]); 
 		gl.uniformMatrix4fv(this.VLocation, false, this.mvpManager.viewMatrix);
         gl.uniformMatrix4fv(this.PLocation, false, this.mvpManager.projectionMatrix);

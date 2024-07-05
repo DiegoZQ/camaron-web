@@ -10,7 +10,7 @@
 class VisfLoadStrategy extends ModelLoadStrategy {
    // https://repositorio.uchile.cl/bitstream/handle/2250/191821/Generador-de-mallas-de-poliedros-en-tres-dimensiones.pdf?sequence=5&isAllowed=y
    load() {
-      const meshType = this.loadModelHeader();
+      const meshType = this.loadHeader();
       // Vertex cloud
       if (meshType === 0) {
          this.model = new VertexCloud();
@@ -36,7 +36,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
 
    // Lee el header del .ViSF y si no encuentra el formato conocido para la lectura del modelo en ASCII (primer valor == 2),
    // arroja un error.
-   loadModelHeader() {
+   loadHeader() {
       const headerLineWords = getLineWords(this.fileArray[0]);
       if (headerLineWords.length != 2 || headerLineWords[0] != '2' || !['0', '1', '2'].includes(headerLineWords[1])) {
          throw new Error('headerError');
@@ -88,7 +88,11 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          numPolyhedrons = startNumber;
       // Si hay relaciones se vecindad
       } else {
-         startIndex += this.model.polygons.length;
+         if (startIndex + startNumber == this.fileArray.length - 1) {
+            startIndex += 1;
+         } else {
+            startIndex += this.model.polygons.length;
+         }
          const newStartLineWords = getLineWords(this.fileArray[startIndex]);
          if (newStartLineWords.length != 1 || !isNonNegativeInteger(newStartLineWords[0])) {
             throw new Error('polyhedronError');
@@ -114,8 +118,8 @@ class VisfLoadStrategy extends ModelLoadStrategy {
             const polygonIndex = parseInt(lineWords[j]);
             const polygon = this.model.polygons[polygonIndex];
             for (const polygonVertex of polygon.vertices) {
-               polyhedron.vertices[polygonVertex.id] = polygonVertex;
-               polygonVertex.polyhedrons[polyhedron.id] = polyhedron;
+               polyhedron.vertices[' ' + polygonVertex.id] = polygonVertex;
+               polygonVertex.polyhedrons[' ' + polyhedron.id] = polyhedron;
             }
             // agrega cada cara a las caras del poliedro.
             polyhedron.polygons.push(polygon);

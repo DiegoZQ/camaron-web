@@ -1,0 +1,10 @@
+<svg id="eprXc37OmDl1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-3 -8 31 31" width="25px" height="25px" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+    <g transform="translate(-.012084 0)">
+        <!-- Cara izquierda -->
+        <polygon points="1.499365,0 12.952136,-3.639595 23.722752,0 12.952136,3.874848" transform="matrix(.961573 0 0 0.911547 0.667817-.528147)" fill="none" stroke="#7b7bdd" stroke-width="1.5"/>
+        <!-- Cara frontal -->
+        <polygon points="1,0 12.5,3.5 12.5,17.5 1,14" transform="translate(-.486374 0.45274)" fill="none" stroke="#7b7bdd" stroke-width="1.5"/>
+        <!-- Cara derecha -->
+        <polygon points="24,0 12.5,3.5 12.5,17.5 24,14" transform="translate(.976531 0.45274)" fill="none" stroke="#7b7bdd" stroke-width="1.5"/>
+    </g>
+</svg>
