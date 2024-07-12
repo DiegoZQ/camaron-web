@@ -14,9 +14,12 @@ class SelectionStrategy {
       this.mode = mode;
    }
 
-   selectPolytope(polytope) {
-      warn("This should be implemented by specific strategies.");
-   }
+   selectPolytope(polytope, availableModelTypes, selectionFun) {
+		if (!availableModelTypes.includes(this.model.modelType)) {
+			return;
+		}
+      polytope.isSelected = selectionFun(polytope);
+	}
 
    // Deselecciona todos los polítopos.
    clean() {

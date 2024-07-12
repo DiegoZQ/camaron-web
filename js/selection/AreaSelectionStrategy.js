@@ -12,13 +12,12 @@ class AreaSelectionStrategy extends SelectionStrategy {
 
 	// Selecciona un polítopo si está en el rango de área.
 	selectPolytope(polytope) {
-		const availableModelTypes = ['PolygonMesh', 'PolyhedronMesh'];
-		if (!availableModelTypes.includes(this.model.modelType)) {
-			return;
-		}
-		const area = this.model.modelType === 'PolygonMesh' ? polytope.area : polytope.surface;
-		const isInRange = this.minArea <= area && area <= this.maxArea;
-		polytope.isSelected = isInRange;
+		super.selectPolytope(polytope, ['PolygonMesh', 'PolyhedronMesh'], 
+			polytope => {
+				const area = this.model.modelType === 'PolygonMesh' ? polytope.area : polytope.surface;
+				return this.minArea <= area && area <= this.maxArea;
+			}
+		)
 	}
 
 	get text() {

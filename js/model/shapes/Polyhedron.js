@@ -9,7 +9,6 @@ class Polyhedron extends Shape {
         this._surface = null;
         this._solidAngles = [];
         this.isVisible = true;
-        this._minAngle = null;
     }
 
     get isSelected() {
@@ -95,13 +94,5 @@ class Polyhedron extends Shape {
             }
         }
         return this._solidAngles;
-    }
-
-    get minAngle() {
-        if (this._minAngle == null) {
-            const angles = this.solidAngles;
-            this._minAngle = Math.min(...angles);
-        }
-        return this._minAngle;
     }
 }

@@ -7,16 +7,15 @@ class AspectRatioSelectionStrategy extends SelectionStrategy {
 		this.minAspectRatio = minAspectRatio;
         this.maxAspectRatio = maxAspectRatio;
 	}
-
-   // Selecciona un polítopo si cumple con el número de lados.
-	selectPolytope(polytope) {
-		const availableModelTypes = ['PolygonMesh'];
-		if (!availableModelTypes.includes(this.model.modelType)) {
-			return;
-		}
-        const aspectRatio = polytope.aspectRatio;
-		const isInRange = this.minAspectRatio <= aspectRatio && aspectRatio <= this.maxAspectRatio;
-		polytope.isSelected = isInRange;
+	
+   	// Selecciona un polítopo si cumple con el aspect ratio.
+   	selectPolytope(polytope) {
+		super.selectPolytope(polytope, ['PolygonMesh'], 
+			polytope => {
+				const aspectRatio = polytope.aspectRatio;
+				return this.minAspectRatio <= aspectRatio && aspectRatio <= this.maxAspectRatio;
+			}
+		)
 	}
 
 	get text() {

@@ -276,22 +276,25 @@
                     <input readonly="" id="scale_info" type="text" value="1.0">
                 </div>
                 <!-- Cutting plane -->
-                <div class="flex h-center" style="margin-top: 10px;">
+                <div class="cutting_plane_tool">
                     <div class="plane_position_bar disabled">
                         <div class="plane_position_picker"></div>
                     </div>
-                    <div>
-                        <div class="plane_button disabled" value="x">
+                    <div class="button_container">
+                        <div class="plane_button x_button disabled" value="x">
                             <span>x</span>
                         </div>
-                        <div class="plane_button disabled" value="y">
+                        <div class="plane_button y_button disabled" value="y">
                             <span>y</span>
                         </div>
-                        <div class="plane_button disabled" value="z">
+                        <div class="plane_button z_button disabled" value="z">
                             <span>z</span>
                         </div>
-                        <div class="plane_button disabled">
-                            <span>r</span>
+                        <div class="plane_button invert_button disabled">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 -720 720 720" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="18" height="18">
+                                <path d="M210,-120L60,-270l150-150l42.6,42.6-77.4,77.4h215.4v64.8h-216l77.4,77.4-40.41186,39.407948L210,-120Z" fill="#5f6368"/>
+                                <path d="M210,-120L60,-270l150-150l42.6,42.6-77.4,77.4h215.4v64.8h-216l77.4,77.4-40.492995,39.347285L210,-120Z" transform="matrix(-1 0 0-1 720.6-719.614268)" fill="#5f6368"/>
+                            </svg>
                         </div>
                     </div>
                 </div>

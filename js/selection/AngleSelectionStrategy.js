@@ -13,13 +13,12 @@ class AngleSelectionStrategy extends SelectionStrategy {
 
 	// Selecciona un polítopo si está en el rango de ángulos.
 	selectPolytope(polytope) {
-		const availableModelTypes = ['PolygonMesh', 'PolyhedronMesh'];
-		if (!availableModelTypes.includes(this.model.modelType)) {
-			return;
-		}
-		const angles = this.model.modelType === 'PolygonMesh' ? polytope.angles : polytope.solidAngles;
-		const isInRange = angles.some(angle => this.minAngle <= angle && angle <= this.maxAngle);
-		polytope.isSelected = isInRange;
+		super.selectPolytope(polytope, ['PolygonMesh', 'PolyhedronMesh'], 
+			polytope => {
+				const angles = this.model.modelType === 'PolygonMesh' ? polytope.angles : polytope.solidAngles;
+				return angles.some(angle => this.minAngle <= angle && angle <= this.maxAngle);
+			}
+		)
 	}
 
 	get text() {

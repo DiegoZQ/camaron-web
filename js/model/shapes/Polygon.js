@@ -19,7 +19,6 @@ class Polygon extends Shape {
       this._trianglesVertexCoords = [];
       this._area = null;
       this._geometricCenter = null;
-      this.neighbours = [];
       this.holes = [];
       this.isVisible = true;
       this._minAngle = null;
@@ -104,9 +103,9 @@ class Polygon extends Shape {
             vec3.normalize(u, u);
             vec3.normalize(v, v);
             this._basisVectors = {u: u, v: v};
-            //this._basisVectors = {u: [1,0,0], v: [0,1,0]};
             
          } catch {
+            
             console.log(this.vertices, this.id);
             console.error('Could not find basis vectors. All vertices are collinear')
          }
@@ -230,10 +229,6 @@ class Polygon extends Shape {
    // Asigna un valor para el centro geométrico del polígono.
    set geometricCenter(value) {
       this._geometricCenter = value;
-   }
-
-   isNeighbour(polygon) {
-      return this.neighbours.includes(polygon);
    }
 
    // Verifica si un punto está dentro del polígono mediante el ray-casting algorithm. Retorna true si está dentro y false si no.

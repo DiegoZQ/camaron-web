@@ -8,15 +8,13 @@ class VolumeSelectionStrategy extends SelectionStrategy {
 	  	this.maxVolume = maxVolume;
 	}
 
-	// Selecciona un polítopo si está en el rango de área.
 	selectPolytope(polytope) {
-		const availableModelTypes = ['PolyhedronMesh'];
-		if (!availableModelTypes.includes(this.model.modelType)) {
-			return;
-		}
-		const volume = polytope.volume;
-		const isInRange = this.minVolume <= volume && volume <= this.maxVolume;
-		polytope.isSelected = isInRange;
+		super.selectPolytope(polytope, ['PolyhedronMesh'], 
+			polytope => {
+				const volume = polytope.volume;
+				return this.minVolume <= volume && volume <= this.maxVolume;
+			}
+		)
 	}
 
 	get text() {
