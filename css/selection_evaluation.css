@@ -1,0 +1,156 @@
+/* selection_evaluation.css */
+
+
+/* base drop down style */
+.drop-down {
+    position: relative;
+    display: flex;
+    font-size: 16px; 
+}
+
+.drop-down select {
+    display: none; 
+}
+
+
+/* button style */
+.drop-down .button {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 41px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #E4F7FF;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: .5s all; 
+}
+.drop-down .button img,
+.drop-down .button div > i {
+    margin-right: 10px; 
+}
+.drop-down .button > div {
+    display: flex;
+    align-items: center; 
+}
+.drop-down .button a {
+    line-height: 0;
+    font-size: 24px; 
+}
+.drop-down .button.disabled {
+    cursor: default;
+}
+.drop-down .button:not(.disabled):hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(0, 0, 0, 0.05); 
+}
+
+/* select list style */
+.drop-down .select-list {
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    padding: 0px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 5px 0 rgba(122, 144, 153, 0.47);
+    border-radius: 5px;
+    color: #666666; 
+}
+.drop-down .select-list li {
+    padding: 10px;
+    cursor: pointer; 
+}
+.drop-down .select-list li:hover {
+  background-color: #E4F7FF; 
+}
+.drop-down .select-list.active {
+      display: block; 
+}
+.drop-down .select-list li {
+  display: flex;
+  align-items: center; 
+}
+.drop-down .select-list li img {
+    margin-right: 10px; 
+}
+.drop-down .select-list li span {
+  width: 100%;
+  background-position: left 10px center;
+  background-repeat: no-repeat;
+  text-align: left;
+  box-sizing: border-box; 
+}
+.drop-down .select-list li span:hover, 
+.drop-down .select-list li span:focus {
+  opacity: 1; 
+}
+
+/* select boxes style */
+.select-box {
+    padding: 10px;
+    margin-bottom: 10px;
+    min-height: 175px;
+    display: none; 
+}
+.select-box.active {
+    display: block;
+}  
+.select-box > div:not(:last-child) {
+    margin-bottom: 15px; 
+}
+.select-box .flex.v-center > span {
+    margin-left: 6px;
+}
+
+.edges-box input {
+    width: 208px; 
+} 
+
+/* selection mode box style */
+.selectionmode-box {
+    margin-bottom: 10px; 
+}
+.selectionmode-box h4 {
+    margin-bottom: 10px; 
+}
+.selectionmode-box > div {
+  border-radius: 5px;
+  padding: 10px 0;
+  width: calc(100% - 20px);
+  margin: 0 auto;
+  background-color: #F5F5F5; 
+}
+.selectionmode-box .radio .input-radio {
+  width: 50px;
+  height: 50px;
+  margin: 0;
+  border-radius: 5px;
+  border: 0;
+  background-color: transparent;
+  transition: background-color .3s; 
+}
+.selectionmode-box .radio .input-radio:hover {
+    background-color: #e2e2e2; 
+}
+.selectionmode-box .radio .input-radio:hover path, 
+.selectionmode-box .radio .input-radio:hover rect {
+  stroke: #8B8B8B !important;
+  transition: stroke .3s; 
+}
+.selectionmode-box .radio .input-radio:before {
+  display: none; 
+}
+.selectionmode-box .radio input[type="radio"]:checked ~ .input-radio {
+  background-color: #ffedf1; 
+}
+.selectionmode-box .radio input[type="radio"]:checked ~ .input-radio path, 
+.selectionmode-box .radio input[type="radio"]:checked ~ .input-radio rect {
+    stroke: #FFA0B6 !important;
+    transition: stroke .3s; 
+}

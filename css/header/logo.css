@@ -1,0 +1,26 @@
+/* logo.css */
+
+
+/* Header logo style */
+header .logo {
+    grid-column: 10/13;
+    text-transform: uppercase; 
+}
+header .logo span {
+    color: #e2e2e2; 
+}
+header .logo a {
+    all: unset;
+    cursor: pointer;
+    color: #62C5E8;
+    font-weight: 600; 
+}
+header .logo a:hover {
+    color: #0F9DDD; 
+}
+header .logo path {
+    fill: #666666
+}
+header .logo rect {
+    fill: #fff
+}

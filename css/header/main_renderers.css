@@ -1,0 +1,51 @@
+/* main_renderers.css */
+
+
+/* Add style for active main renderer anchors and svgs */
+header a[name="main_renderer"].active, 
+header a[name="main_renderer"].active:hover {
+    background-color: #ffedf1;
+    opacity: 1; 
+}
+header a[name="main_renderer"].active polygon, 
+header a[name="main_renderer"].active path, 
+header a[name="main_renderer"].active:hover polygon, 
+header a[name="main_renderer"].active:hover path {
+    fill: #ff7091; 
+}
+
+/* Reduce opacity of Direct Face Renderer and Direct Vertex Renderer */
+header .btn-vertex,
+header .btn-faces,
+header .btn-vertex.disabled,
+header .btn-faces.disabled {
+    opacity: .8; 
+}
+
+/* Add different pink colors to the fill elements of the svg when Direct Face Renderer is active or active on hover */
+header .btn-faces.active #Fill-1, 
+header .btn-faces:hover.active #Fill-1 {
+    fill: #ff8ca7; 
+}
+header .btn-faces.active #Fill-2, 
+header .btn-faces:hover.active #Fill-2 {
+    fill: #FFA0B6; 
+}
+header .btn-faces.active #Fill-3,
+header .btn-faces:hover.active #Fill-3 {
+    fill: #ff7091; 
+}
+
+/* Add different pink gradient colors to the fill elements of the svg when Direct Vertex Renderer is active or active on hover */
+header .btn-vertex.active #XMLID_4_, 
+header .btn-vertex:hover.active #XMLID_4_ {
+    fill: url(#linearGradient-1hover); 
+}
+header .btn-vertex.active #XMLID_3_, 
+header .btn-vertex:hover.active #XMLID_3_ {
+    fill: url(#linearGradient-2hover); 
+}
+header .btn-vertex.active #XMLID_2_, 
+header .btn-vertex:hover.active #XMLID_2_ {
+    fill: url(#linearGradient-3hover); 
+}

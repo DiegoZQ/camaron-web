@@ -1,0 +1,152 @@
+/* base.css */
+
+
+/* Base header properties */
+header {
+    background-color: white;
+    box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.03);
+    display: grid;
+    grid-template-columns: repeat(9, 1fr) repeat(3, 100px);
+    padding: 15px;
+    grid-gap: 15px; 
+}
+
+/* Edit tooltiped base transform */
+header .tooltiped:before {
+    transform: translate(-50%, 100%); 
+} 
+header .tooltiped:hover:before {
+    transform: translate(-50%, 150%); 
+}
+/* Disable tooltip hover when along open menu and not disabled */
+header .tooltiped.open-menu:not(.disabled):hover:before {
+    visibility: hidden;
+}
+
+/* Add style to direct autogrid children of header */
+header > .autogrid {
+    grid-column: 1/10;
+    grid-gap: 0; 
+}
+header > .autogrid .autogrid:not(:last-child) {
+  border-right: 2px solid #e2e2e2; }
+header > .autogrid .autogrid {
+  justify-content: space-evenly;
+  padding: 0 15px; 
+}
+/* Add position relative to all autogrids */
+header .autogrid {
+    position: relative; 
+}
+
+/* Add anchor style and hover style */ 
+header a {
+    font-size: 32px;
+    line-height: 0;
+    padding: 0px;
+    border-radius: 10px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+header a:hover {
+    background-color: #E4F7FF;
+    opacity: 1; 
+}
+/* Make every svg inside of anchor color light blue and blue on hover except btn-faces and btn-vertex */ 
+header a:not(.btn-faces):not(.btn-vertex) polygon,
+header a:not(.btn-faces):not(.btn-vertex) path,
+header a:not(.btn-faces):not(.btn-vertex) circle {
+    fill: #62C5E8; 
+}
+header a:not(.btn-faces):not(.btn-vertex):hover polygon,
+header a:not(.btn-faces):not(.btn-vertex):hover path,
+header a:not(.btn-faces):not(.btn-vertex):hover circle {
+    fill: #0F9DDD; 
+}
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover polygon,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover path,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover circle {
+    fill: #62C5E8; 
+}
+
+/* Add style for disabled anchors */ 
+header a.disabled, 
+header .btn-vertex.disabled, 
+header .btn-faces.disabled {
+  cursor: default;
+  background-color: transparent !important; 
+}
+/* Reduce disabled anchors opacity */ 
+header a.disabled > *:not(.submenu) {
+    opacity: .6; 
+}
+/* Make disabled anchor use light blue instead of blue on hover */ 
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover polygon,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover path,
+header a.disabled:not(.btn-faces):not(.btn-vertex):hover circle {
+    fill: #62C5E8; 
+}
+/* Apply a grayscale filter to all disabled anchor svgs */ 
+header a.disabled polygon,
+header a.disabled path, 
+header a.disabled circle,
+header a.disabled i {
+    filter: grayscale(100%);
+}
+
+/* Header dropdown submenu style */ 
+header .submenu {
+    position: absolute;
+    transition: all .5s;
+    pointer-events: none;
+    z-index: 1;
+    width: auto;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -20%);
+    opacity: 0;
+    visibility: hidden;
+    background: #FEFEFE;
+    box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.03);
+    border-radius: 10px;
+    padding: 10px;
+}
+/* Adds a margin bottom of 10px to each li element of class submenu excepts by the last one */
+header .submenu li:not(:last-child) {
+    margin-bottom: 10px; 
+}
+/* Display the submenu on open-menu hover */
+header .open-menu:not(.disabled):hover .submenu {
+    display: block;
+    transform: translate(-50%, 0%);
+    opacity: 1;
+    visibility: visible;
+    transition: all .3s;
+    pointer-events: auto; 
+}
+/* Selectable options of submenu */
+header .submenu .label {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    line-height: normal;
+    width: auto;
+    height: auto;
+    padding: 5px 30px 5px 10px;
+    background-color: #F5F5F5;
+    border-radius: 10px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #666666;
+    font-weight: 600;
+    transition: all .3s; 
+}
+/* Changes the background color and text color on option hover */
+header .submenu .label:hover {
+    background-color: #E4F7FF;
+    color: #0F9DDD; 
+}

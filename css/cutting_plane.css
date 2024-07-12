@@ -1,0 +1,135 @@
+/* cutting_plane.css */
+
+
+/* Container for the cutting plane tool */
+.cutting_plane_tool {
+    margin: 0px 0px 0px 14px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F5F5F5;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #dee2e6;
+    width: 46px;
+}
+
+/* Sliding bar style */
+.plane_position_bar {
+    background: #e9ecef;
+    width: 12px;
+    height: 150px;
+    margin: 10px 0 5px 0;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    transition: background 0.3s;
+}
+.plane_position_bar:not(.disabled):hover {
+    background: #dee2e6;
+    cursor: pointer;
+}
+
+/* Picker style */
+.plane_position_bar .plane_position_picker {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: #AFAFAF; 
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s, transform 0.3s;
+}
+.plane_position_bar:not(.disabled) .plane_position_picker {
+    background: #62C5E8; 
+}
+
+.plane_position_bar:not(.disabled) .plane_position_picker:hover {
+    background: #0F9DDD; /* Slightly darker blue on hover */
+}
+
+/* Button container */
+.button_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Button style */
+.plane_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    margin: 5px 0;
+    background-color: #ffffff;
+    border: 2px solid #e9ecef;
+    border-radius: 5px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.plane_button:not(.disabled):hover {
+    background-color: #f1f3f5;
+    border-color: #62C5E8;
+    cursor: pointer;
+}
+
+.plane_button.active {
+    background-color: #62C5E8;
+    border-color: #0F9DDD;
+}
+
+.plane_button.active:hover {
+    background-color: #62C5E8;
+    border-color: #0F9DDD;
+}
+
+.plane_button span {
+    color: #AFAFAF;
+    font-weight: bold;
+}
+
+.plane_button:not(.disabled) span {
+    color: #62C5E8;
+    font-weight: bold;
+}
+
+.plane_button.active span {
+    color: #ffffff;
+}
+
+.invert_button:not(.disabled):hover {
+    background-color: #f1f3f5;
+    border-color: #62C5E8;
+    cursor: pointer;
+}
+
+.invert_button svg path {
+    fill: #AFAFAF;
+}
+.invert_button:not(.disabled) svg path {
+    fill: #62C5E8;
+}
+
+.invert_button.reverse {
+    background-color: #62C5E8;
+    border-color: #0F9DDD;
+}
+.invert_button.reverse:hover {
+    background-color: #62C5E8;
+    border-color: #0F9DDD;
+}
+
+.invert_button.reverse svg path {
+    fill: #ffffff;
+}
+
+/* Usar tonos grises en vez de azules para los botones, quizás también rosas */

@@ -1,0 +1,56 @@
+/* secondary_renderers.css */
+
+/* Header dropdown submenu style */ 
+header #secondary_renderers_menu .submenu {
+    min-width: 225px; 
+}
+
+
+/* Adds a margin between the image and the text of selectable renderer */
+header #secondary_renderers_menu .submenu .label img {
+    margin-right: 13px; 
+}
+
+/* Adds a selected style to a secondary renderer and secondary renderer on hover when renderer is active */
+header #secondary_renderers_menu .submenu li.active .label, 
+header #secondary_renderers_menu .submenu li.active .label:hover {
+    background-color: #ffedf1;
+    color: #666666; 
+}
+/* Adds a check icon at the end of label class when renderer is active */
+header #secondary_renderers_menu .submenu li.active .label:after {
+    content: 'check';
+    font-family: 'Material Icons';
+    text-transform: none;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+    color: #ff7091;
+    display: block; 
+}
+
+/* Add style for disabled secondary renderer labels */
+header #secondary_renderers_menu .submenu li.disabled .label {
+    background-color: #fafafa; /* Very light gray background */
+    color: #d0d0d0; /* Light muted text color */
+    cursor: default; /* Indicates that the item is not clickable */
+    border: 1px solid #e0e0e0; /* Subtle border for definition */
+}
+
+/* Add style for the icon in the disabled state */
+header #secondary_renderers_menu .submenu li.disabled .label:after {
+    content: 'block'; /* You can change the icon if needed */
+    font-family: 'Material Icons';
+    text-transform: none;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+    color: #d0d0d0; /* Muted icon color to match the text */
+    display: block;
+}
+
+/* Ensure no hover effect on disabled labels */
+header #secondary_renderers_menu .submenu li.disabled .label:hover {
+    background-color: #fafafa; /* Matches the background color to prevent change on hover */
+    color: #d0d0d0; /* Matches the text color to prevent color change on hover */
+}

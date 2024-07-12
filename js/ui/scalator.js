@@ -1,26 +1,26 @@
 "use strict";
 
-var Scalator = function(){
-  this.width = gl.canvas.clientWidth;
-  this.height = gl.canvas.clientHeight;
-  this.f = 1;
-};
 
-Scalator.prototype.scale = function(df){
-  this.f += df;
-  if(this.f < 0) this.f=0;
-}
+class Scalator {
+   constructor() {
+      this.width = gl.canvas.clientWidth;
+      this.height = gl.canvas.clientHeight;
+      this.scaleFactor = 1;
+   }
 
-Scalator.prototype.getScaleFactor = function(){
-  return this.f;
-}
+   scale(df) {
+      this.scaleFactor += df;
+      if (this.scaleFactor < 0)
+         this.scaleFactor = 0;
+   }
 
-Scalator.prototype.rescale = function(){
-  this.width = gl.canvas.clientWidth;
-  this.height = gl.canvas.clientHeight;
-}
+   rescale() {
+      this.width = gl.canvas.clientWidth;
+      this.height = gl.canvas.clientHeight;
+   }
 
-Scalator.prototype.reset = function(){
-  this.rescale();
-  this.f = 1;
+   reset() {
+      this.rescale();
+      this.scaleFactor = 1;
+   }
 }
