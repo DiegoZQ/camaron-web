@@ -68,7 +68,7 @@ const findBasisVectorsFromVertices = (vertices) => {
         const u = vec3.subtract(vec3.create(), p2.coords, p1.coords);
         const v = vec3.subtract(vec3.create(), p3.coords, p2.coords);
         const crossProduct = vec3.cross(vec3.create(), u, v);
-        return vec3.length(crossProduct) > 1e-6;
+        return vec3.length(crossProduct) > 1e-8;
     }
 
     // Itera sobre los vértices para encontrar 3 puntos colineles
