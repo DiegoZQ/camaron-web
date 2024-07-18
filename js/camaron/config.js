@@ -56,22 +56,3 @@ const fontInfo = {
         '9': { x: 0, y: 1028 }
     },
 };
-
-const fontInfo2 = {
-    letterWidth: 8,
-    letterHeight: 8,
-    textureWidth: 64,
-    textureHeight: 40,
-    glyphInfos: {
-        '0': { x: 16, y: 24},
-        '1': { x: 24, y: 24 },
-        '2': { x: 32, y: 24 },
-        '3': { x: 40, y: 24 },
-        '4': { x: 48, y: 24 },
-        '5': { x: 56, y: 24 },
-        '6': { x:  0, y: 32 },
-        '7': { x:  8, y: 32 },
-        '8': { x: 16, y: 32 },
-        '9': { x: 24, y: 32 }
-    },
-};

@@ -103,7 +103,7 @@ class PolygonMesh extends VertexCloud {
       const polygons = this.polygons;
       let polygonTrianglesVertexCoords = [];
       for (const polygon of polygons) {
-         polygonTrianglesVertexCoords = polygonTrianglesVertexCoords.concat(polygon.trianglesVertexCoords);
+         polygonTrianglesVertexCoords.push(...polygon.trianglesVertexCoords);
          this.trianglesCount += polygon.trianglesCount;
       }
       const triangleData = new Float32Array(polygonTrianglesVertexCoords);
