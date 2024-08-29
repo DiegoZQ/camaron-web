@@ -224,9 +224,9 @@ const setSelectionAndEvaluationOptions = () => {
    if (model.modelType === 'PolygonMesh') {
       options = [
          {value: 'angle', dataImg: 'img/icon-ev-angles.svg', text: 'By Polygon Internal Angles', evaluation: true},
-         {value: 'area', dataImg: 'img/icon-ev-area.svg', text: 'By Polygons Area', evaluation: true},
-         {value: 'edges', dataImg: 'img/icon-ev-edges.svg', text: 'By Polygons Edges Number', evaluation: true},
-         {value: 'aspect-ratio', dataImg: 'img/icon-ev-aspect-ratio.svg', text: 'By Polygons Aspect Ratio', evaluation: true},
+         {value: 'area', dataImg: 'img/icon-ev-area.svg', text: 'By Polygon Area', evaluation: true},
+         {value: 'edges', dataImg: 'img/icon-ev-edges.svg', text: 'By Polygon Edge Number', evaluation: true},
+         {value: 'aspect-ratio', dataImg: 'img/icon-ev-aspect-ratio.svg', text: 'By Polygon Aspect Ratio', evaluation: true},
          {value: 'id', dataImg: 'img/img-id.svg', text: 'By Polygon ID', evaluation: false}
       ]
    } else if (model.modelType === 'PolyhedronMesh') {
