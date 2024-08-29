@@ -88,9 +88,7 @@ class VisfLoadStrategy extends ModelLoadStrategy {
          numPolyhedrons = startNumber;
       // Si hay relaciones se vecindad
       } else {
-         if (startIndex + startNumber == this.fileArray.length - 1) {
-            startIndex += 1;
-         } else {
+         if (startNumber != 0) {
             startIndex += this.model.polygons.length;
          }
          const newStartLineWords = getLineWords(this.fileArray[startIndex]);

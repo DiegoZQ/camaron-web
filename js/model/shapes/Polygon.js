@@ -100,8 +100,8 @@ class Polygon extends Shape {
             if (this.angles && this.angles[vertexIndex] > Math.PI) {
                vec3.negate(v, v);
             }
-            vec3.normalize(u, u);
-            vec3.normalize(v, v);
+            //vec3.normalize(u, u);
+            //vec3.normalize(v, v);
             this._basisVectors = {u: u, v: v};
             
          } catch {
